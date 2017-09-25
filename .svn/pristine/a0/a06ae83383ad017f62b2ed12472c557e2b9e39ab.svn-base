@@ -1,0 +1,91 @@
+#!/bin/ksh
+#   $Author:   zf297a  $
+# $Revision:   1.9  $
+#     $Date:   30 Jan 2009 14:38:10  $
+# $Workfile:   execSqlplus.ksh  $
+#
+USAGE="usage: ${0##*/} [-c connection_string | -s ] [-n] sql [errorlog]
+\nwhere
+\t-s use the spo connection string
+\t\t(defaults to amd's connection string)
+\t-c connection_string is the OracleUserid@TNSNAME/password
+\t-n do not use a log file
+\t\tthe default is to create a log file based on the sql file name
+\tsql is the sql file that gets executed
+\terrorlog is the name of an optional file to create 
+\t\twhen sqlplus has an error"
+
+if [[ "$1" = "?" || "$#" -eq "0" ]] ; then
+	print "$USAGE"
+	exit 0
+fi
+
+export UNVAR=${UNVAR:-}
+if [[ -n $UNVAR ]] ; then
+	print "Using $UNVAR for amdconfig.ksh"
+fi
+
+if [[ -z $SRC_HOME || -z $DB_CONNECTION_STRING || -z $LOG_HOME  ]] ; then
+	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
+fi
+
+while getopts :ndsc: arguments
+do
+	case $arguments in
+	  c) THE_CONNECTION_STRING=${OPTARG};;
+	  s) THE_CONNECTION_STRING=$DB_CONNECTION_STRING_FOR_SPO;;
+	  d) debug=Y
+	     set -x ;;
+	  n) SQLPLUS_LOG=N;;
+	  *) print -u2 "$USAGE"
+	     exit 4;;
+	esac
+done
+# OPTIND now contains a numnber representing the identity of the first
+# nonswitch argument on the command line.  For example, if the first
+# nonswitch argume on the command line is positional parameter $<F5>,
+# OPTIND hold the number 5.
+((positions_occupied_by_switches = OPTIND - 1))
+# Use a shift statement to eliminate all switches and switch arguments
+# from the set of positional parameters.
+shift $positions_occupied_by_switches
+# After the shift, the set of positional parameter contains all
+# remaining nonswitch arguments.
+
+if [[ -z ${TimeStamp:-} ]] ; then
+	TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+else
+	TimeStamp=`print $TimeStamp | sed "s/:/_/g"`
+fi
+
+# default to the AMD Connection String
+THE_CONNECTION_STRING=${THE_CONNECTION_STRING:-$DB_CONNECTION_STRING}
+if [[ -z $THE_CONNECTION_STRING ]] ; then
+	print -u2 "System error: connection string not set"
+	print "$USAGE"
+	exit 4
+fi
+
+if [[ ! -f $SRC_HOME/${1}.sql ]] ; then
+	print -u2 "$SRC_HOME/${1}.sql does not exist."
+	exit 4
+fi
+
+SQLPLUS_INPUT_FILE=${1}
+shift
+
+if [[ "${SQLPLUS_LOG:-Y}" = "Y" ]] ; then
+	sqlplus -logon $THE_CONNECTION_STRING @$SRC_HOME/${SQLPLUS_INPUT_FILE}.sql \
+      	>> $LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${SQLPLUS_INPUT_FILE}.log 2>&1 "$@"
+else
+	sqlplus -logon $THE_CONNECTION_STRING @$SRC_HOME/${1}.sql  "$@"
+fi
+RC=$?
+if (($RC!=0)) ; then
+	# the error log file can be checked by any parent process
+	if [[ -n ${2:-} ]] ; then
+		print "Error: sqlplus exit code = $RC for $SRC_HOME/${SQLPLUS_INPUT_FILE}.sql" >>$2
+	fi
+	print -u2 "Error: sqlplus exit code = $RC for $SRC_HOME/${SQLPLUS_INPUT_FILE}.sql" 
+	exit 4
+fi

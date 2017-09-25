@@ -1,0 +1,1182 @@
+main started at Mon Aug  4 12:18:43 PDT 2008
+checkIfSendingParts started at Mon Aug  4 12:18:43 PDT 2008
+checkIfSendingParts ended at Mon Aug  4 12:18:43 PDT 2008
+replicateGoldInventoryTables started at Mon Aug  4 12:18:43 PDT 2008
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh started at  Mon Aug 4 12:18:43 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh ending at  Mon Aug 4 12:18:44 PDT 2008
+replicateGoldInventoryTables ended at Mon Aug  4 12:18:44 PDT 2008
+loadGoldInventory started at Mon Aug  4 12:18:44 PDT 2008
+loadGoldInventory ended at Mon Aug  4 12:18:44 PDT 2008
+loadAmdReqs started at Mon Aug  4 12:18:44 PDT 2008
+loadAmdReqs ended at Mon Aug  4 12:18:44 PDT 2008
+invDiff started at Mon Aug  4 12:18:44 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/invDiff.ksh starting at  Mon Aug 4 12:18:44 PDT 2008
+main started at Mon Aug  4 12:18:44 PDT 2008
+execJavaDiffApp OnOrder started at Mon Aug  4 12:18:44 PDT 2008
+Warning: Unable to load file OnOrder.properties via the classpath.
+start time: 8/04/08 12:18:50 PM
+amd_on_order_in=5446
+tmp_amd_on_order_in=5446
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/04/08 12:19:13 PM
+execJavaDiffApp OnOrder ended at Mon Aug  4 12:19:13 PDT 2008
+execJavaDiffApp OnHandInvs started at Mon Aug  4 12:19:13 PDT 2008
+Warning: Unable to load file OnHandInvs.properties via the classpath.
+start time: 8/04/08 12:19:17 PM
+amd_on_hand_invs_in=87845
+tmp_amd_on_hand_invs=87845
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/04/08 12:19:38 PM
+execJavaDiffApp OnHandInvs ended at Mon Aug  4 12:19:38 PDT 2008
+execJavaDiffApp OnHandInvsSum started at Mon Aug  4 12:19:38 PDT 2008
+Warning: Unable to load file OnHandInvsSum.properties via the classpath.
+start time: 8/04/08 12:19:42 PM
+amd_on_hand_invs_in=82609
+tmp_amd_on_hand_invs=82609
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/04/08 12:20:15 PM
+execJavaDiffApp OnHandInvsSum ended at Mon Aug  4 12:20:15 PDT 2008
+importFromAmdIntoSpo LpOnHand started at Mon Aug  4 12:20:15 PDT 2008
+start time: 8/04/08 12:25:07 PM
+flatfile: /apps/CRON/AMD/data/LpOnHand.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:94seconds
+v_lp_on_hand=72600
+x_lp_on_hand_v=72600
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/04/08 12:27:07 PM
+importFromAmdIntoSpo LpOnHand ended at Mon Aug  4 12:27:07 PDT 2008
+execJavaDiffApp InRepair started at Mon Aug  4 12:27:07 PDT 2008
+InRepair: warning: Unable to load file InRepair.properties via the classpath.
+start time: 8/04/08 12:27:12 PM
+amd_in_repair_in=5755
+tmp_amd_in_repair_in=5755
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/04/08 12:27:22 PM
+execJavaDiffApp InRepair ended at Mon Aug  4 12:27:22 PDT 2008
+exerJavaDiffApp RepairInvsSum started at Mon Aug  4 12:27:22 PDT 2008
+execSteps[34]: exerJavaDiffApp:  not found
+exerJavaDiffApp RepairInvsSum ended at Mon Aug  4 12:27:22 PDT 2008
+importFromAmdIntoSpo ConfirmedRequest started at Mon Aug  4 12:27:22 PDT 2008
+start time: 8/04/08 12:31:27 PM
+flatfile: /apps/CRON/AMD/data/ConfirmedRequest.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:14seconds
+v_confirmed_request=10189
+x_confirmed_request_v=9394
+rows inserted=0
+rows updated=0
+rows deleted=843
+end time: 8/04/08 12:31:46 PM
+LRM-00112: multiple values not allowed for parameter 'log'
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Mon Aug 4 12:31:48 2008
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+execSqlldr.ksh failed for invDiff's loadImportTable
+chmod: can't access 2008_05_invDiff.log
+/apps/CRON/AMD/lib/invDiff.ksh ending at  Mon Aug 4 12:31:49 PDT 2008
+invDiff ended at Mon Aug  4 12:31:49 PDT 2008
+notify ./loadInventory.ksh started at Mon Aug  4 12:31:49 PDT 2008
+notify ./loadInventory.ksh ended at Mon Aug  4 12:31:49 PDT 2008
+main ended at Mon Aug  4 12:31:49 PDT 2008
+main started at Thu Aug  7 13:02:24 PDT 2008
+checkIfSendingParts started at Thu Aug  7 13:02:25 PDT 2008
+checkIfSendingParts ended at Thu Aug  7 13:02:25 PDT 2008
+replicateGoldInventoryTables started at Thu Aug  7 13:02:25 PDT 2008
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh started at  Thu Aug 7 13:02:25 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh ending at  Thu Aug 7 13:02:25 PDT 2008
+replicateGoldInventoryTables ended at Thu Aug  7 13:02:25 PDT 2008
+loadGoldInventory started at Thu Aug  7 13:02:25 PDT 2008
+loadGoldInventory ended at Thu Aug  7 13:02:25 PDT 2008
+loadAmdReqs started at Thu Aug  7 13:02:25 PDT 2008
+loadAmdReqs ended at Thu Aug  7 13:02:25 PDT 2008
+invDiff started at Thu Aug  7 13:02:25 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/invDiff.ksh starting at  Thu Aug 7 13:02:26 PDT 2008
+main started at Thu Aug  7 13:02:26 PDT 2008
+execJavaDiffApp OnOrder started at Thu Aug  7 13:02:26 PDT 2008
+Warning: Unable to load file OnOrder.properties via the classpath.
+start time: 8/07/08 01:02:31 PM
+amd_on_order_in=5353
+tmp_amd_on_order_in=5353
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/07/08 01:02:52 PM
+execJavaDiffApp OnOrder ended at Thu Aug  7 13:02:53 PDT 2008
+execJavaDiffApp OnHandInvs started at Thu Aug  7 13:02:53 PDT 2008
+Warning: Unable to load file OnHandInvs.properties via the classpath.
+start time: 8/07/08 01:02:57 PM
+amd_on_hand_invs_in=87841
+tmp_amd_on_hand_invs=87841
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/07/08 01:03:16 PM
+execJavaDiffApp OnHandInvs ended at Thu Aug  7 13:03:17 PDT 2008
+execJavaDiffApp OnHandInvsSum started at Thu Aug  7 13:03:17 PDT 2008
+Warning: Unable to load file OnHandInvsSum.properties via the classpath.
+start time: 8/07/08 01:03:22 PM
+amd_on_hand_invs_in=82562
+tmp_amd_on_hand_invs=82562
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/07/08 01:03:52 PM
+execJavaDiffApp OnHandInvsSum ended at Thu Aug  7 13:03:52 PDT 2008
+importFromAmdIntoSpo LpOnHand started at Thu Aug  7 13:03:52 PDT 2008
+start time: 8/07/08 01:04:13 PM
+flatfile: /apps/CRON/AMD/data/LpOnHand.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:93seconds
+v_lp_on_hand=72567
+x_lp_on_hand_v=72567
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/07/08 01:06:14 PM
+importFromAmdIntoSpo LpOnHand ended at Thu Aug  7 13:06:15 PDT 2008
+execJavaDiffApp InRepair started at Thu Aug  7 13:06:15 PDT 2008
+InRepair: warning: Unable to load file InRepair.properties via the classpath.
+start time: 8/07/08 01:06:20 PM
+amd_in_repair_in=5780
+tmp_amd_in_repair_in=5780
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/07/08 01:06:28 PM
+execJavaDiffApp InRepair ended at Thu Aug  7 13:06:28 PDT 2008
+exerJavaDiffApp RepairInvsSum started at Thu Aug  7 13:06:28 PDT 2008
+execSteps[34]: exerJavaDiffApp:  not found
+exerJavaDiffApp RepairInvsSum ended at Thu Aug  7 13:06:28 PDT 2008
+importFromAmdIntoSpo ConfirmedRequest started at Thu Aug  7 13:06:28 PDT 2008
+start time: 8/07/08 01:06:41 PM
+flatfile: /apps/CRON/AMD/data/ConfirmedRequest.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:14seconds
+v_confirmed_request=10336
+x_confirmed_request_v=9338
+rows inserted=0
+rows updated=0
+rows deleted=1045
+end time: 8/07/08 01:06:58 PM
+LRM-00112: multiple values not allowed for parameter 'log'
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Thu Aug 7 13:07:00 2008
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+execSqlldr.ksh failed for invDiff's loadImportTable
+chmod: can't access 2008_05_invDiff.log
+/apps/CRON/AMD/lib/invDiff.ksh ending at  Thu Aug 7 13:07:00 PDT 2008
+invDiff ended at Thu Aug  7 13:07:00 PDT 2008
+notify ./loadInventory.ksh started at Thu Aug  7 13:07:00 PDT 2008
+notify ./loadInventory.ksh ended at Thu Aug  7 13:07:01 PDT 2008
+main ended at Thu Aug  7 13:07:01 PDT 2008
+ 1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) exit
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? execSteps[23]: ^[:q: syntax error
+ 1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) exit
+13) tacticsPostProcess
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticsPostProcess started at Thu Aug  7 13:36:19 PDT 2008
+execSteps[33]: tacticsPostProcess:  not found
+tacticsPostProcess ended at Thu Aug  7 13:36:19 PDT 2008
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? execSteps[23]: ksh: bad number
+ 1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) exit
+13) tacticsPostProcess
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticsPostProcess started at Thu Aug  7 13:39:36 PDT 2008
+execSteps[33]: tacticsPostProcess:  not found
+tacticsPostProcess ended at Thu Aug  7 13:39:36 PDT 2008
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]?  1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) tacticsPostProcess
+13) exit
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticsPostProcess started at Thu Aug  7 14:01:58 PDT 2008
+stty: : Unknown error
+stty: : Unknown error
+tacticsPostProcess ended at Thu Aug  7 14:30:48 PDT 2008
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]?  1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) tacticsPostProcess
+13) exit
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticsPostProcess started at Thu Aug  7 19:55:02 PDT 2008
+stty: : Unknown error
+stty: : Unknown error
+tacticsPostProcess ended at Thu Aug  7 20:33:41 PDT 2008
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? main started at Fri Aug  8 11:29:55 PDT 2008
+checkIfSendingParts started at Fri Aug  8 11:29:55 PDT 2008
+checkIfSendingParts ended at Fri Aug  8 11:29:55 PDT 2008
+replicateGoldInventoryTables started at Fri Aug  8 11:29:55 PDT 2008
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh started at  Fri Aug 8 11:29:56 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh ending at  Fri Aug 8 11:29:56 PDT 2008
+replicateGoldInventoryTables ended at Fri Aug  8 11:29:56 PDT 2008
+loadGoldInventory started at Fri Aug  8 11:29:56 PDT 2008
+loadGoldInventory ended at Fri Aug  8 11:29:56 PDT 2008
+loadAmdReqs started at Fri Aug  8 11:29:56 PDT 2008
+loadAmdReqs ended at Fri Aug  8 11:29:56 PDT 2008
+invDiff started at Fri Aug  8 11:29:56 PDT 2008
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+usage: execSqlplus.ksh [-c connection_string | -s ] [-n] sql [errorlog]
+
+where
+
+	-s use the spo connection string
+
+		(defaults to amd's connection string)
+
+	-c connection_string is the OracleUserid@TNSNAME/password
+
+	-n do not use a log file
+
+		the default is to create a log file based on the sql file name
+
+	sql is the sql file that gets executed
+
+	errorlog is the name of an optional file to create 
+
+		when sqlplus has an error
+/apps/CRON/AMD/lib/invDiff.ksh starting at  Fri Aug 8 11:29:56 PDT 2008
+main started at Fri Aug  8 11:29:56 PDT 2008
+execJavaDiffApp OnOrder started at Fri Aug  8 11:29:56 PDT 2008
+Warning: Unable to load file OnOrder.properties via the classpath.
+start time: 8/08/08 11:30:00 AM
+amd_on_order_in=5335
+tmp_amd_on_order_in=5335
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/08/08 11:30:23 AM
+execJavaDiffApp OnOrder ended at Fri Aug  8 11:30:24 PDT 2008
+execJavaDiffApp OnHandInvs started at Fri Aug  8 11:30:24 PDT 2008
+Warning: Unable to load file OnHandInvs.properties via the classpath.
+start time: 8/08/08 11:30:27 AM
+amd_on_hand_invs_in=87834
+tmp_amd_on_hand_invs=87834
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/08/08 11:30:45 AM
+execJavaDiffApp OnHandInvs ended at Fri Aug  8 11:30:45 PDT 2008
+execJavaDiffApp OnHandInvsSum started at Fri Aug  8 11:30:45 PDT 2008
+Warning: Unable to load file OnHandInvsSum.properties via the classpath.
+start time: 8/08/08 11:30:49 AM
+amd_on_hand_invs_in=82556
+tmp_amd_on_hand_invs=82556
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/08/08 11:31:18 AM
+execJavaDiffApp OnHandInvsSum ended at Fri Aug  8 11:31:18 PDT 2008
+importFromAmdIntoSpo LpOnHand started at Fri Aug  8 11:31:18 PDT 2008
+start time: 8/08/08 11:32:00 AM
+flatfile: /apps/CRON/AMD/data/LpOnHand.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:88seconds
+v_lp_on_hand=72555
+x_lp_on_hand_v=72555
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/08/08 11:33:51 AM
+importFromAmdIntoSpo LpOnHand ended at Fri Aug  8 11:33:52 PDT 2008
+execJavaDiffApp InRepair started at Fri Aug  8 11:33:52 PDT 2008
+InRepair: warning: Unable to load file InRepair.properties via the classpath.
+start time: 8/08/08 11:33:55 AM
+amd_in_repair_in=5748
+tmp_amd_in_repair_in=5748
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 8/08/08 11:34:02 AM
+execJavaDiffApp InRepair ended at Fri Aug  8 11:34:02 PDT 2008
+exerJavaDiffApp RepairInvsSum started at Fri Aug  8 11:34:02 PDT 2008
+execSteps[34]: exerJavaDiffApp:  not found
+exerJavaDiffApp RepairInvsSum ended at Fri Aug  8 11:34:02 PDT 2008
+importFromAmdIntoSpo ConfirmedRequest started at Fri Aug  8 11:34:02 PDT 2008
+start time: 8/08/08 11:34:29 AM
+flatfile: /apps/CRON/AMD/data/ConfirmedRequest.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:13seconds
+v_confirmed_request=10363
+x_confirmed_request_v=9303
+rows inserted=0
+rows updated=0
+rows deleted=1104
+end time: 8/08/08 11:34:46 AM
+LRM-00112: multiple values not allowed for parameter 'log'
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Fri Aug 8 11:34:46 2008
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+execSqlldr.ksh failed for invDiff's loadImportTable
+chmod: can't access 2008_05_invDiff.log
+/apps/CRON/AMD/lib/invDiff.ksh ending at  Fri Aug 8 11:34:46 PDT 2008
+invDiff ended at Fri Aug  8 11:34:46 PDT 2008
+tacticsPostProcess started at Fri Aug  8 11:34:46 PDT 2008
+stty: : Unknown error
+stty: : Unknown error
+tacticsPostProcess ended at Fri Aug  8 12:03:19 PDT 2008
+notify ./loadInventory.ksh started at Fri Aug  8 12:03:19 PDT 2008
+notify ./loadInventory.ksh ended at Fri Aug  8 12:03:19 PDT 2008
+main ended at Fri Aug  8 12:03:19 PDT 2008
+ 1) loadTmpAmdSpareParts
+ 2) sparePartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) tacticsPostProcess
+13) exit
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticsPostProcess started at Mon Aug 11 15:44:24 PDT 2008
+stty: : Unknown error
+stty: : Unknown error
+tacticsPostProcess ended at Mon Aug 11 16:12:42 PDT 2008
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? 

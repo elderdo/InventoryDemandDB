@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg:svg version="1.1" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1224.0000" height="792.0000" >
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M18.0000,72.0000
+L1206.0000,72.0000
+L1206.0000,54.0000
+L18.0000,54.0000
+L18.0000,72.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M18.0000,72.0000
+L1206.0000,72.0000
+L1206.0000,54.0000
+L18.0000,54.0000
+L18.0000,72.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="20.0000" y="63.0000">
+<svg:tspan font-family="Arial" font-size="14.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:path d=" 
+M18.0000,695.2500
+L1206.0000,695.2500
+L1206.0000,18.0000
+L18.0000,18.0000
+L18.0000,695.2500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M18.0000,54.0000
+L1206.0000,54.0000
+L1206.0000,18.0000
+L18.0000,18.0000
+L18.0000,54.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M18.0000,54.0000
+L1206.0000,54.0000
+L1206.0000,18.0000
+L18.0000,18.0000
+L18.0000,54.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="20.0000" y="36.0000">
+<svg:tspan font-family="Arial" font-size="14.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+&lt;Process Name&gt;
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:path d=" 
+M18.0000,695.2500
+L1206.0000,695.2500
+L1206.0000,477.0000
+L18.0000,477.0000
+L18.0000,695.2500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M18.0000,695.2500
+L54.0000,695.2500
+L54.0000,477.0000
+L18.0000,477.0000
+L18.0000,695.2500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M18.0000,695.2500
+L54.0000,695.2500
+L54.0000,477.0000
+L18.0000,477.0000
+L18.0000,695.2500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="-71.1250" y="586.1250" transform="rotate(-90.0000, 36.0000, 586.1250)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:text x="-71.1250" y="586.1250" transform="rotate(-90.0000, 36.0000, 586.1250)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+LoadRmads
+</svg:tspan>
+</svg:text>
+<svg:path d=" 
+M18.0000,477.0000
+L1206.0000,477.0000
+L1206.0000,255.3750
+L18.0000,255.3750
+L18.0000,477.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M18.0000,477.0000
+L54.0000,477.0000
+L54.0000,255.3750
+L18.0000,255.3750
+L18.0000,477.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M18.0000,477.0000
+L54.0000,477.0000
+L54.0000,255.3750
+L18.0000,255.3750
+L18.0000,477.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="-72.8125" y="366.1875" transform="rotate(-90.0000, 36.0000, 366.1875)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:text x="-72.8125" y="366.1875" transform="rotate(-90.0000, 36.0000, 366.1875)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+Post DIFF Process
+</svg:tspan>
+</svg:text>
+<svg:path d=" 
+M18.0000,255.3750
+L1206.0000,255.3750
+L1206.0000,72.0000
+L18.0000,72.0000
+L18.0000,255.3750
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M18.0000,255.3750
+L54.0000,255.3750
+L54.0000,72.0000
+L18.0000,72.0000
+L18.0000,255.3750
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M18.0000,255.3750
+L54.0000,255.3750
+L54.0000,72.0000
+L18.0000,72.0000
+L18.0000,255.3750
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="-53.6875" y="163.6875" transform="rotate(-90.0000, 36.0000, 163.6875)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:text x="-53.6875" y="163.6875" transform="rotate(-90.0000, 36.0000, 163.6875)" >
+<svg:tspan font-family="Arial" font-size="12.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+Trans DIFF
+</svg:tspan>
+</svg:text>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M119.2500,112.0037
+L217.5000,112.0037
+L217.5000,96.0001
+L119.2500,96.0001
+L119.2500,112.0037
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M119.2500,112.0037
+L217.5000,112.0037
+L217.5000,96.0001
+L119.2500,96.0001
+L119.2500,112.0037
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="121.2500" y="104.0019">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+invDiff
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M119.2500,228.7500
+L217.5000,228.7500
+L217.5000,112.0037
+L119.2500,112.0037
+L119.2500,228.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M119.2500,228.7500
+L217.5000,228.7500
+L217.5000,112.0037
+L119.2500,112.0037
+L119.2500,228.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="121.2500" y="170.3769">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+- OnOrder
+- OnHandInvs
+- OnHandInvsSum
+- InRepair
+- RepairInvsSum
+- InTransits
+- InTransitsSum
+- AmdReqs
+- Backorder
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M65.6250,162.7500
+A15.0000,15.0000 0.0000 0,1 95.6250,162.7500
+A15.0000,15.0000 0.0000 1,1 65.6250,162.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M65.6250,162.7500
+A15.0000,15.0000 0.0000 0,1 95.6250,162.7500
+A15.0000,15.0000 0.0000 1,1 65.6250,162.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="67.6250" y="162.7500">
+<svg:tspan font-family="Arial" font-weight="bold" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+C
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M95.6250,162.7500
+L119.2500,162.3750" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="91.4375" y="162.5625">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M241.5000,111.2537
+L339.7500,111.2537
+L339.7500,95.2500
+L241.5000,95.2500
+L241.5000,111.2537
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M241.5000,111.2537
+L339.7500,111.2537
+L339.7500,95.2500
+L241.5000,95.2500
+L241.5000,111.2537
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="243.5000" y="103.2518">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+partFactorsDiff
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M241.5000,230.6250
+L339.7500,230.6250
+L339.7500,111.2537
+L241.5000,111.2537
+L241.5000,230.6250
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M241.5000,230.6250
+L339.7500,230.6250
+L339.7500,111.2537
+L241.5000,111.2537
+L241.5000,230.6250
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="243.5000" y="170.9393">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+ 
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M217.5000,162.3750
+L241.5000,162.9375" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="213.5000" y="162.6563">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M366.0000,110.8787
+L464.2500,110.8787
+L464.2500,94.8750
+L366.0000,94.8750
+L366.0000,110.8787
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M366.0000,110.8787
+L464.2500,110.8787
+L464.2500,94.8750
+L366.0000,94.8750
+L366.0000,110.8787
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="368.0000" y="102.8769">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+partLocForecastsDiff
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M366.0000,230.2500
+L464.2500,230.2500
+L464.2500,110.8787
+L366.0000,110.8787
+L366.0000,230.2500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M366.0000,230.2500
+L464.2500,230.2500
+L464.2500,110.8787
+L366.0000,110.8787
+L366.0000,230.2500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="368.0000" y="170.5644">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+ 
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M339.7500,162.9375
+L366.0000,162.5625" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="336.8750" y="162.7500">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M489.7500,110.5037
+L588.0000,110.5037
+L588.0000,94.5000
+L489.7500,94.5000
+L489.7500,110.5037
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M489.7500,110.5037
+L588.0000,110.5037
+L588.0000,94.5000
+L489.7500,94.5000
+L489.7500,110.5037
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="491.7500" y="102.5019">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+locPartLeadtimeDiff
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M489.7500,231.0000
+L588.0000,231.0000
+L588.0000,110.5037
+L489.7500,110.5037
+L489.7500,231.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M489.7500,231.0000
+L588.0000,231.0000
+L588.0000,110.5037
+L489.7500,110.5037
+L489.7500,231.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="491.7500" y="170.7518">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+ 
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M464.2500,162.5625
+L489.7500,162.7500" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="461.0000" y="162.6563">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M612.7500,162.7500
+A15.0000,15.0000 0.0000 1,1 642.7500,162.7500
+A15.0000,15.0000 0.0000 1,1 612.7500,162.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M612.7500,162.7500
+A15.0000,15.0000 0.0000 1,1 642.7500,162.7500
+A15.0000,15.0000 0.0000 1,1 612.7500,162.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="614.7500" y="162.7500">
+<svg:tspan font-family="Arial" font-weight="bold" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+D
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M588.0000,162.7500
+L612.7500,162.7500" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="584.3750" y="162.7500">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M67.5000,364.5000
+A15.0000,15.0000 0.0000 0,1 97.5001,364.5000
+A15.0000,15.0000 0.0000 0,1 67.5000,364.5000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M67.5000,364.5000
+A15.0000,15.0000 0.0000 0,1 97.5001,364.5000
+A15.0000,15.0000 0.0000 0,1 67.5000,364.5000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="69.5000" y="364.5000">
+<svg:tspan font-family="Arial" font-weight="bold" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+D
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:text x="1124.0000" y="112.5000">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+Page 2
+</svg:tspan>
+</svg:text>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M118.5000,298.0037
+L300.3750,298.0037
+L300.3750,270.0001
+L118.5000,270.0001
+L118.5000,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M118.5000,298.0037
+L300.3750,298.0037
+L300.3750,270.0001
+L118.5000,270.0001
+L118.5000,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="120.5000" y="284.0019">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+amd_inventory.updateSpoTotalInventory
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M118.5000,459.7500
+L300.3750,459.7500
+L300.3750,298.0037
+L118.5000,298.0037
+L118.5000,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M118.5000,459.7500
+L300.3750,459.7500
+L300.3750,298.0037
+L118.5000,298.0037
+L118.5000,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="120.5000" y="378.8769">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+INPUT:
+- 
+
+OUTPUT:
+- 
+
+TRUNCATE:
+- 
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M97.5001,364.5000
+L118.5000,364.8750" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="92.0000" y="364.6875">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M327.0000,298.0037
+L474.7500,298.0037
+L474.7500,270.0001
+L327.0000,270.0001
+L327.0000,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M327.0000,298.0037
+L474.7500,298.0037
+L474.7500,270.0001
+L327.0000,270.0001
+L327.0000,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="329.0000" y="284.0019">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+amd_location_part_override_pkg.loadTmpAmdLocPartOverride
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M327.0000,459.7500
+L474.7500,459.7500
+L474.7500,298.0037
+L327.0000,298.0037
+L327.0000,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M327.0000,459.7500
+L474.7500,459.7500
+L474.7500,298.0037
+L327.0000,298.0037
+L327.0000,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="329.0000" y="378.8769">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+INPUT:
+- 
+
+OUTPUT:
+- 
+
+TRUNCATE:
+- 
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M501.7500,298.0037
+L648.0000,298.0037
+L648.0000,270.0001
+L501.7500,270.0001
+L501.7500,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M501.7500,298.0037
+L648.0000,298.0037
+L648.0000,270.0001
+L501.7500,270.0001
+L501.7500,298.0037
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="503.7500" y="284.0019">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+amd_location_part_override_pkg.loadZeroTslA2A
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M501.7500,459.7500
+L648.0000,459.7500
+L648.0000,298.0037
+L501.7500,298.0037
+L501.7500,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M501.7500,459.7500
+L648.0000,459.7500
+L648.0000,298.0037
+L501.7500,298.0037
+L501.7500,459.7500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="503.7500" y="378.8769">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+INPUT:
+- 
+
+OUTPUT:
+- 
+
+TRUNCATE:
+- 
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M300.3750,364.8750
+L327.0000,364.8750" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="297.6875" y="364.8750">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M474.7500,364.8750
+L501.7500,364.8750" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="472.2500" y="364.8750">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M671.2500,365.2500
+A15.0000,15.0000 0.0000 1,1 701.2500,365.2500
+A15.0000,15.0000 0.0000 1,1 671.2500,365.2500
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M671.2500,365.2500
+A15.0000,15.0000 0.0000 1,1 701.2500,365.2500
+A15.0000,15.0000 0.0000 1,1 671.2500,365.2500
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="673.2500" y="365.2500">
+<svg:tspan font-family="Arial" font-weight="bold" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+E
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M648.0000,364.8750
+L671.2500,365.2500" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="643.6250" y="365.0625">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M71.2500,585.0000
+A15.0000,15.0000 0.0000 0,1 101.2500,585.0000
+A15.0000,15.0000 0.0000 1,1 71.2500,585.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M71.2500,585.0000
+A15.0000,15.0000 0.0000 0,1 101.2500,585.0000
+A15.0000,15.0000 0.0000 1,1 71.2500,585.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="73.2500" y="585.0000">
+<svg:tspan font-family="Arial" font-weight="bold" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+E
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M122.2500,504.2537
+L249.7500,504.2537
+L249.7500,488.2500
+L122.2500,488.2500
+L122.2500,504.2537
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M122.2500,504.2537
+L249.7500,504.2537
+L249.7500,488.2500
+L122.2500,488.2500
+L122.2500,504.2537
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="124.2500" y="496.2519">
+<svg:tspan font-family="Arial" font-size="10.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+loadRmads
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:g >
+<svg:path d=" 
+M122.2500,681.0000
+L249.7500,681.0000
+L249.7500,504.2537
+L122.2500,504.2537
+L122.2500,681.0000
+Z" 
+style="stroke-width: 0.2400; stroke-linecap: round; stroke-linejoin: round; fill-rule: evenodd; fill: #ffffff; "/>
+<svg:path d=" 
+M122.2500,681.0000
+L249.7500,681.0000
+L249.7500,504.2537
+L122.2500,504.2537
+L122.2500,681.0000
+Z" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+</svg:g>
+<svg:text x="124.2500" y="592.6268">
+<svg:tspan font-family="Arial" font-size="9.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+INPUT:
+- 
+
+OUTPUT:
+- 
+
+TRUNCATE:
+- 
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+<svg:g >
+<svg:path d=" 
+M101.2500,585.0000
+L122.2500,584.6250" 
+style="stroke-width: 0.2400; stroke: #000000; stroke-dasharray:  solid; stroke-linecap: round; stroke-linejoin: round; fill: none; "/>
+<svg:text x="95.7500" y="584.8125">
+<svg:tspan font-family="Arial" font-size="8.0000" fill="#000000" fill-opacity="1.0000" stroke-opacity="1.0000" >
+
+</svg:tspan>
+</svg:text>
+</svg:g>
+</svg:svg>
+

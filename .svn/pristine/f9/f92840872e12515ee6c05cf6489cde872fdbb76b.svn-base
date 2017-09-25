@@ -1,0 +1,88 @@
+DROP VIEW AMD_OWNER.AMD_PSLMS_XA;
+
+/* Formatted on 6/10/2011 12:21:13 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.AMD_PSLMS_XA
+(
+   DBKEY,
+   UPDTCNT,
+   BCKP,
+   CAN_INT,
+   UPDTCD,
+   EIACODXA,
+   LCNSTRXA,
+   ADDLTMXA,
+   CTDLTMXA,
+   CONTNOXA,
+   CSREORXA,
+   CSPRRQXA,
+   DEMILCXA,
+   DISCNTXA,
+   ESSALVXA,
+   HLCSPCXA,
+   INTBINXA,
+   INCATCXA,
+   INTRATXA,
+   INVSTGXA,
+   LODFACXA,
+   WSOPLVXA,
+   OPRLIFXA,
+   PRSTOVXA,
+   PRSTOMXA,
+   PROFACXA,
+   RCBINCXA,
+   RCCATCXA,
+   RESTCRXA,
+   SAFLVLXA,
+   SECSFCXA,
+   TRNCSTXA,
+   WSTYAQXA,
+   TSSCODXA,
+   EXT_EIAC_ID
+)
+AS
+   SELECT "DBKEY",
+          "UPDTCNT",
+          "BCKP",
+          "CAN_INT",
+          "UPDTCD",
+          "EIACODXA",
+          "LCNSTRXA",
+          "ADDLTMXA",
+          "CTDLTMXA",
+          "CONTNOXA",
+          "CSREORXA",
+          "CSPRRQXA",
+          "DEMILCXA",
+          "DISCNTXA",
+          "ESSALVXA",
+          "HLCSPCXA",
+          "INTBINXA",
+          "INCATCXA",
+          "INTRATXA",
+          "INVSTGXA",
+          "LODFACXA",
+          "WSOPLVXA",
+          "OPRLIFXA",
+          "PRSTOVXA",
+          "PRSTOMXA",
+          "PROFACXA",
+          "RCBINCXA",
+          "RCCATCXA",
+          "RESTCRXA",
+          "SAFLVLXA",
+          "SECSFCXA",
+          "TRNCSTXA",
+          "WSTYAQXA",
+          "TSSCODXA",
+          "EXT_EIAC_ID"
+     FROM pslms_xa@amd_pslms_link.boeingdb;
+
+
+DROP PUBLIC SYNONYM AMD_PSLMS_XA;
+
+CREATE OR REPLACE PUBLIC SYNONYM AMD_PSLMS_XA FOR AMD_OWNER.AMD_PSLMS_XA;
+
+
+GRANT SELECT ON AMD_OWNER.AMD_PSLMS_XA TO AMD_READER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_PSLMS_XA TO BSRM_LOADER;

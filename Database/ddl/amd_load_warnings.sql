@@ -1,0 +1,67 @@
+SET DEFINE OFF;
+DROP TABLE AMD_OWNER.amd_load_warnings CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_OWNER.amd_load_warnings
+(
+  LOAD_NO         NUMBER,
+  DATA_LINE_NO    NUMBER,
+  DATA_LINE       VARCHAR2(2000 BYTE),
+  KEY_1           VARCHAR2(50 BYTE),
+  KEY_2           VARCHAR2(50 BYTE),
+  KEY_3           VARCHAR2(50 BYTE),
+  KEY_4           VARCHAR2(50 BYTE),
+  KEY_5           VARCHAR2(50 BYTE),
+  warning        VARCHAR2(2000 BYTE),
+  LAST_UPDATE_DT  DATE                          DEFAULT sysdate
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE INDEX AMD_OWNER.amd_load_warnings_nk01 ON AMD_OWNER.amd_load_warnings
+(LOAD_NO)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+DROP PUBLIC SYNONYM amd_load_warnings;
+
+CREATE PUBLIC SYNONYM amd_load_warnings FOR AMD_OWNER.amd_load_warnings;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.amd_load_warnings TO AMD_DATALOAD;
+
+GRANT SELECT ON AMD_OWNER.amd_load_warnings TO AMD_READER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.amd_load_warnings TO AMD_USER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.amd_load_warnings TO AMD_WRITER_ROLE;
+

@@ -1,0 +1,124 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:32  $
+     $Workfile:   amd_time_periods.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_time_periods.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:32   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_TIME_PERIODS
+(
+  TIME_PERIOD_START     DATE                    NOT NULL,
+  TIME_PERIOD_END       DATE                    NOT NULL,
+  TACTICAL_BUCKET_NAME  VARCHAR2(40 BYTE),
+  TACTICAL_BUCKET_ID    VARCHAR2(40 BYTE),
+  ACTION_CODE           VARCHAR2(1 BYTE),
+  LAST_UPDATE_DT        DATE
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_TIME_PERIODS_PK ON AMD_TIME_PERIODS
+(TIME_PERIOD_START, TIME_PERIOD_END)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_TIME_PERIODS_UC01 ON AMD_TIME_PERIODS
+(TACTICAL_BUCKET_NAME, TACTICAL_BUCKET_ID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_TIME_PERIODS FOR AMD_TIME_PERIODS;
+
+
+ALTER TABLE AMD_TIME_PERIODS ADD (
+  CHECK ("ACTION_CODE" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_TIME_PERIODS ADD (
+  CHECK ("LAST_UPDATE_DT" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_TIME_PERIODS ADD (
+  CONSTRAINT AMD_TIME_PERIODS_PK PRIMARY KEY (TIME_PERIOD_START, TIME_PERIOD_END)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+ALTER TABLE AMD_TIME_PERIODS ADD (
+  CONSTRAINT AMD_TIME_PERIODS_UC01 UNIQUE (TACTICAL_BUCKET_NAME, TACTICAL_BUCKET_ID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_TIME_PERIODS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_TIME_PERIODS TO AMD_WRITER_ROLE;
+
+

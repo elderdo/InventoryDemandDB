@@ -1,0 +1,393 @@
+/*
+      $Author:   c402417  $
+    $Revision:   1.3  $
+        $Date:   Sep 13 2006 14:34:20  $
+    $Workfile:   ReplicateGold.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\R
+	 eplicateGold.sql.-arc  $
+/*
+/*      Rev 1.0   Feb 17 2006 13:22:24   zf297a
+/*   Latest Prod Version
+*/
+--
+-- SCCSID: %M%  %I%  Modified: %G% %U%
+-- 
+-- 07/13/01  Fernando F.     Added last_changed_datetime column to ITEM
+-- 07/20/01  Fernando F.     Changed gldp to pgoldlb
+-- 08/13/01  Fernando F.     Changed pgoldlb back to gldp.
+--                           Changed nsn in RAMP to niin.
+-- 11/30/01  Thuy Pham	     Added 'I' to column status_3 in Item table.
+-- 11/30/01  Fernando F.     Added abbr_part column to select list of CAT1.
+-- 12/05/01  Fernando F.     Added selected columns to RAMP and CAT1.
+-- 12/10/01  Fernando F.     Added more columns to select to REQ1.
+-- 12/11/01  Fernando F.     Linked amd_spare_networks in with REQ1.
+-- 02/27/02  Fernando F.     Added RSV1.
+-- 11/05/02  Fernando F.     Added prc1.
+-- 03/06/03  Thuy Pham	     Added Mlit.
+-- 09/30/03  Fernando F.     Added code C172004CTLATLG to prc1.
+-- 04/15/04  Thuy Pham 	     Changed Seg Code = 'DEF' in PCR1.
+-- 05/07/04  Thuy Pham	     Removed Status_3 and replaced Status_1 and changed Condition in ITEM table.
+-- 11/18/04  Thuy Pham	     Added tables amd_use1 & amd_isgp for the TAV project.
+-- 12/02/04  Thuy Pham	     Added table NSN1.
+-- 08/05/05  Thuy Pham	     Added UIMS
+-- 08/09/05  Thuy Pham	     Added WHSE
+-- 10/03/05  Thuy Pham	     Added itemsa and whse from pgoldsa . 
+--
+SET ECHO ON TERMOUT ON AUTOCOMMIT ON TIME ON
+
+exec amd_owner.mta_truncate_table('poi1','reuse storage');
+exec amd_owner.mta_truncate_table('ord1','reuse storage');
+exec amd_owner.mta_truncate_table('cat1','reuse storage');
+exec amd_owner.mta_truncate_table('venc','reuse storage');
+exec amd_owner.mta_truncate_table('venn','reuse storage');
+exec amd_owner.mta_truncate_table('fedc','reuse storage');
+exec amd_owner.mta_truncate_table('ramp','reuse storage');
+exec amd_owner.mta_truncate_table('item','reuse storage');
+exec amd_owner.mta_truncate_table('mils','reuse storage');
+exec amd_owner.mta_truncate_table('chgh','reuse storage');
+exec amd_owner.mta_truncate_table('req1','reuse storage');
+exec amd_owner.mta_truncate_table('rsv1','reuse storage');
+exec amd_owner.mta_truncate_table('tmp1','reuse storage');
+exec amd_owner.mta_truncate_table('prc1','reuse storage');
+exec amd_owner.mta_truncate_table('mlit','reuse storage');
+exec amd_owner.mta_truncate_table('amd_isgp','reuse storage');
+exec amd_owner.mta_truncate_table('amd_use1','reuse storage');
+exec amd_owner.mta_truncate_table('nsn1','reuse storage');
+exec amd_owner.mta_truncate_table('ordv','reuse storage');
+exec amd_owner.mta_truncate_table('whse','reuse storage');
+exec amd_owner.mta_truncate_table('itemsa','reuse storage');
+exec amd_owner.mta_truncate_table('uims','reuse storage');
+
+
+insert into poi1
+(
+	order_no,seq,item,qty,item_line,ext_price,part,ccn
+)
+select 
+	order_no,seq,item,qty,item_line,ext_price,part,ccn 
+from poi1@pgoldlb 
+where 
+	ext_price is not null;
+
+insert into ord1
+(
+	order_no,order_type,sc,part,completed_docdate,created_docdate,
+	action_taken,original_location,qty_due, qty_completed,need_date,
+	created_datetime,condition,ecd,vendor_code,accountable_yn,
+	status
+)
+select 
+	order_no,order_type,sc,part,completed_docdate,created_docdate,
+	action_taken,original_location,qty_due, qty_completed,need_date,
+	created_datetime,condition,ecd,vendor_code,accountable_yn,
+	status
+from ord1@pgoldlb;
+
+insert into cat1
+(
+	part,nsn,noun,prime,um_show_code,um_issue_code,um_turn_code,
+	um_disp_code,um_cap_code,um_mil_code,asset_req_on_receipt,
+	record_changed1_yn,record_changed2_yn,record_changed3_yn,
+	record_changed4_yn,record_changed5_yn,record_changed6_yn,
+	record_changed7_yn,record_changed8_yn,manuf_cage,ims_designator_code,
+	source_code,serial_mandatory_b,smrc,isgp_group_no,
+	abbr_part,errc,user_ref4,hazardous_material_code,
+	user_ref7,mils_auto_process_b,remarks
+)
+select 
+	part,nsn,noun,prime,um_show_code,um_issue_code,um_turn_code,
+	um_disp_code,um_cap_code,um_mil_code,asset_req_on_receipt,
+	record_changed1_yn,record_changed2_yn,record_changed3_yn,
+	record_changed4_yn,record_changed5_yn,record_changed6_yn,
+	record_changed7_yn,record_changed8_yn,manuf_cage,ims_designator_code,
+	source_code,serial_mandatory_b,smrc,isgp_group_no,
+	abbr_part,errc,user_ref4,hazardous_material_code,
+	user_ref7,mils_auto_process_b,remarks
+from cat1@pgoldlb 
+where 
+	source_code = 'F77';
+
+insert into venc 
+(
+	part,seq,vendor_code,user_ref1
+)
+select 
+	part,seq,vendor_code,user_ref1 
+from venc@pgoldlb
+where 
+	seq=1;
+
+insert into venn
+(
+	vendor_code,vendor_name,cage_code,user_ref1
+) 
+select 
+	vendor_code,vendor_name,cage_code,user_ref1 
+from venn@pgoldlb
+where 
+	cage_code is not null;
+
+insert into fedc
+(
+	part_number,vendor_code,seq_number,gfp_price,nsn
+)
+select 
+	part_number,vendor_code,seq_number,gfp_price,nsn
+from fedc@pgoldlb;
+
+insert into ramp 
+(
+	nsn,sc,sran,serviceable_balance,due_in_balance,difm_balance,date_processed,
+	avg_repair_cycle_time,percent_base_condem,percent_base_repair,
+	daily_demand_rate,current_stock_number,
+	hpmsk_balance,
+	demand_level,
+	unserviceable_balance,
+	suspended_in_stock,
+	wrm_balance,
+	wrm_level,requisition_objective,hpmsk_level_qty,spram_level,spram_balance,delete_indicator,
+	total_inaccessible_qty
+)
+select 
+	niin,sc,substr(sc,8,6),serviceable_balance,due_in_balance,difm_balance,date_processed,
+	avg_repair_cycle_time,percent_base_condem,percent_base_repair,
+	daily_demand_rate,current_stock_number,
+	hpmsk_balance,
+	demand_level,
+	unserviceable_balance,
+	suspended_in_stock,
+	wrm_balance,
+	wrm_level,requisition_objective,hpmsk_level_qty,spram_level,spram_balance,delete_indicator,
+	total_inaccessible_qty
+from ramp@pgoldlb;
+
+insert into item 
+(
+	item_id,received_item_id,sc,part,prime,condition,status_del_when_gone,
+	status_servicable,status_new_order,status_accountable,status_avail,
+	status_frozen,status_active,status_mai,status_receiving_susp,status_2,status_3,
+	last_changed_datetime,status_1,
+	created_datetime,vendor_code,
+	qty,order_no,receipt_order_no
+)
+select 
+	item_id,received_item_id,sc,part,prime,condition,status_del_when_gone,
+	status_servicable,status_new_order,status_accountable,status_avail,
+	status_frozen,status_active,status_mai,status_receiving_susp,status_2,status_3,
+	last_changed_datetime,status_1,
+	created_datetime,vendor_code,
+	qty,order_no,receipt_order_no
+from item@pgoldlb  
+where
+	status_1 != 'D' and
+	condition not in ('LDD');
+
+
+	
+insert into mils
+(
+	mils_id,rec_types,created_datetime,status_line,part,default_name
+)
+select
+	mils_id,rec_types,created_datetime,status_line,part,default_name
+from mils@pgoldlb
+where
+	default_name = 'A0E';
+	
+	
+insert into chgh
+(
+	chgh_id,
+	key_value1,"TO",field,"FROM"
+)
+select 
+	chgh_id,
+	key_value1,"TO",field,"FROM"
+from chgh@pgoldlb
+where 
+	field= 'NSN';
+	
+
+insert into req1
+(
+	request_id,created_datetime,qty_requested,prime,nsn,status,
+	allow_alts_yn,qty_reserved,select_from_part,select_from_sc,
+	qty_canc,mils_source_dic,
+	qty_due,qty_issued,
+	need_date,
+	request_priority
+)
+select 
+	request_id,created_datetime,qty_requested,prime,nsn,status,
+	allow_alts_yn,qty_reserved,select_from_part,select_from_sc,
+	qty_canc,mils_source_dic,
+	qty_due,qty_issued,
+	need_date,
+	request_priority
+from req1@pgoldlb
+where 
+	status != 'X';
+	
+	
+insert into rsv1
+(
+	reserve_id,
+	form_required_yn,
+	remark_move_only_yn,
+	created_docdate,
+	to_sc,
+	item_id,
+	status
+)
+select 
+	reserve_id,
+	form_required_yn,
+	remark_move_only_yn,
+	created_docdate,
+	to_sc,
+	item_id,
+	status
+from rsv1@pgoldlb;
+	
+
+insert into tmp1
+(
+	qty_due,returned_voucher,status,tcn,from_sc, to_sc, from_datetime,
+	temp_out_id,from_part,est_return_date
+)
+select 
+	qty_due,returned_voucher,status,tcn,from_sc, to_sc, from_datetime,
+	temp_out_id,from_part,est_return_date
+from tmp1@pgoldlb
+where
+	returned_voucher is null
+	and status = 'O'
+	and tcn in ('LNI','LBR');
+	
+
+insert into prc1
+(
+	sc,part,cap_price,gfp_price
+)
+select 
+	sc,part,cap_price,gfp_price
+from prc1@pgoldlb
+where
+	sc = 'DEF';
+	
+
+
+insert into mlit
+(
+	document_id, customer, mils_activity, mils_ownership_code,
+	mils_profile, 
+	in_tran_from, in_tran_to, in_tran_type,  
+	part, abbr_part, create_date, ship_date,
+	receipt_date, start_date_time, create_qty, ship_qty, 
+	receipt_qty, mils_condition, status_ind 
+)
+select
+	document_id, customer, mils_activity, mils_ownership_code,  
+	mils_profile, in_tran_from, in_tran_to, in_tran_type, 
+	part, abbr_part, create_date, ship_date,
+	receipt_date, start_date_time, create_qty, ship_qty,	
+	receipt_qty, mils_condition, status_ind 
+from mlit@pgoldlb
+where 
+	part != abbr_part
+	and status_ind = 'I'
+	or abbr_part is null
+	and status_ind = 'I';
+
+
+
+insert into amd_isgp
+(
+	sc,part,group_no,sequence_no,group_priority
+)
+select 
+	rtrim(sc),rtrim(part),rtrim(group_no),sequence_no,rtrim(group_priority)
+from isgp@pgoldlb;
+
+
+
+insert into amd_use1
+(
+	userid,user_name,employee_no,employee_status,phone,ims_designator_code
+)
+select 
+	rtrim(userid),rtrim(user_name),rtrim(employee_no),employee_status,rtrim(phone),rtrim(ims_designator_code)
+from use1@pgoldlb
+where employee_no is not null;
+
+
+insert into nsn1
+(
+	nsn,nsn_smic
+)
+select
+	nsn,nsn_smic
+from nsn1@pgoldlb;
+
+
+insert into ordv
+(
+	order_no, site_code, vendor_est_cost, vendor_est_ret_date 
+)
+select 
+	order_no, site_code, vendor_est_cost, vendor_est_ret_date
+from ordv@pgoldlb;
+
+
+insert into whse
+(	
+	sc, part, prime, created_datetime, created_userid, stock_level, reorder_point, planner_code
+)
+select 
+	sc, part, prime, created_datetime, created_userid, stock_level, reorder_point, planner_code
+from  whse@pgoldlb
+where	sc like 'C17%CODUKBG';
+
+
+insert into whse
+(
+	sc, part,prime,created_datetime, created_userid, stock_level, reorder_point, planner_code
+)
+select
+	sc, part, prime, created_datetime, created_userid, stock_level, reorder_point, planner_code
+from 
+	whse@pgoldsa
+where	sc = 'C17PCAG';
+
+
+insert into itemsa
+(
+	item_id,received_item_id,sc,part,prime,condition,location,status_del_when_gone,
+	status_servicable,status_new_order,status_accountable,status_avail,
+	status_frozen,status_active,status_mai,status_receiving_susp,status_2,status_3,
+	last_changed_datetime,status_1,
+	created_datetime,vendor_code,
+	qty,order_no,receipt_order_no
+)
+select
+	item_id,received_item_id,sc,part,prime,condition,location,status_del_when_gone,
+	status_servicable,status_new_order,status_accountable,status_avail,
+	status_frozen,status_active,status_mai,status_receiving_susp,status_2,status_3,
+	last_changed_datetime,status_1,
+	created_datetime,vendor_code,
+	qty,order_no,receipt_order_no
+from item@pgoldsa
+where status_1 != 'D'
+      and condition not in ('LDD', 'B170-ATL')
+      and sc = 'C17PCAG';
+
+
+insert into uims
+(
+	userid,designator_code,alt_ims_des_code_b,alt_es_des_code_b,alt_sup_des_code_b
+)
+select
+	userid,designator_code,alt_ims_des_code_b,alt_es_des_code_b,alt_sup_des_code_b
+from  uims@pgoldlb;
+
+exit;

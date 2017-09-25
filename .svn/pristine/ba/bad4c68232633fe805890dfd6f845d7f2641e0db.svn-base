@@ -1,0 +1,23 @@
+DROP VIEW AMD_OWNER.LRU_MASTER_LCN_V;
+
+/* Formatted on 7/9/2012 4:39:33 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.LRU_MASTER_LCN_V
+(
+   LCN
+)
+AS
+     SELECT DISTINCT amd_owner.slic_hg_v.LSACONXB LCN
+       FROM amd_owner.slic_hg_v, cat1
+      WHERE     SUBSTR (cat1.smrc, 1, 3) = 'PAO'
+            AND SUBSTR (cat1.smrc, 6, 1) = 'T'
+            AND CAT1.USER_REF7 <> 'Y'
+            AND cat1.part = amd_owner.slic_hg_v.REFNUMHA
+   ORDER BY amd_owner.slic_hg_v.LSACONXB;
+
+
+DROP PUBLIC SYNONYM LRU_MASTER_LCN_V;
+
+CREATE OR REPLACE PUBLIC SYNONYM LRU_MASTER_LCN_V FOR AMD_OWNER.LRU_MASTER_LCN_V;
+
+
+GRANT SELECT ON AMD_OWNER.LRU_MASTER_LCN_V TO AMD_READER_ROLE;

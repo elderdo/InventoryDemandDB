@@ -1,0 +1,86 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:28  $
+     $Workfile:   amd_shelf_life_codes.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_shelf_life_codes.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:28   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_SHELF_LIFE_CODES
+(
+  SL_CODE       VARCHAR2(2 BYTE)                NOT NULL,
+  STORAGE_DAYS  NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_SHELF_LIFE_CODES_PK ON AMD_SHELF_LIFE_CODES
+(SL_CODE)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_SHELF_LIFE_CODES FOR AMD_SHELF_LIFE_CODES;
+
+
+ALTER TABLE AMD_SHELF_LIFE_CODES ADD (
+  CHECK ("STORAGE_DAYS" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_SHELF_LIFE_CODES ADD (
+  CONSTRAINT AMD_SHELF_LIFE_CODES_PK PRIMARY KEY (SL_CODE)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_SHELF_LIFE_CODES TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_SHELF_LIFE_CODES TO AMD_USER;
+
+GRANT SELECT ON  AMD_SHELF_LIFE_CODES TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_SHELF_LIFE_CODES TO AMD_WRITER_ROLE;
+
+

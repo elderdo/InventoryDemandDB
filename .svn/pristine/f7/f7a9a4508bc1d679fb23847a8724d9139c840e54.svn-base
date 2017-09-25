@@ -1,0 +1,449 @@
+ALTER TABLE AMD_OWNER.AMD_SPARE_NETWORKS
+ DROP PRIMARY KEY CASCADE;
+
+DROP TABLE AMD_OWNER.AMD_SPARE_NETWORKS CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_OWNER.AMD_SPARE_NETWORKS
+(
+  LOCATION_NAME   VARCHAR2(25 BYTE),
+  LOC_SID         NUMBER                        NOT NULL,
+  LOC_ID          VARCHAR2(13 BYTE),
+  CAPACITY        NUMBER,
+  LOC_TYPE        VARCHAR2(3 BYTE),
+  MOB             VARCHAR2(13 BYTE),
+  REPAIR_FLAG     VARCHAR2(1 BYTE),
+  COMMAND         VARCHAR2(1 BYTE),
+  SUB_COMMAND     VARCHAR2(1 BYTE),
+  ICAO            VARCHAR2(4 BYTE),
+  CALENDAR_NAME   VARCHAR2(40 BYTE),
+  TACTICAL        VARCHAR2(1 BYTE)              DEFAULT 'Y',
+  ACTION_CODE     VARCHAR2(1 BYTE)              DEFAULT 'A',
+  LAST_UPDATE_DT  DATE                          DEFAULT SYSDATE,
+  PRIORITY        NUMBER,
+  SPO_LOCATION    VARCHAR2(20 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_AK01 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(LOC_ID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_AK2 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(ICAO)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK01 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(SUBSTR("LOC_ID",3,4))
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE BITMAP INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK03 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(LOC_TYPE)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE BITMAP INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK04 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(MOB)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK05 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(LOC_SID, LOC_ID, MOB, LOC_TYPE)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE BITMAP INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK06 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(SUBSTR("LOC_ID",1,2))
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE BITMAP INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK07 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(ACTION_CODE)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK08 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(SPO_LOCATION)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK09 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(ACTION_CODE, SPO_LOCATION, LOC_SID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK10 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(ACTION_CODE, LOC_ID, LOC_SID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_NK11 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(ACTION_CODE, LOC_ID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NETWORKS_PK2 ON AMD_OWNER.AMD_SPARE_NETWORKS
+(LOC_ID, LOC_TYPE)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_SPARE_NET_PK ON AMD_OWNER.AMD_SPARE_NETWORKS
+(LOC_SID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE OR REPLACE TRIGGER AMD_OWNER.amd_spare_networks_bef_ins_upd
+BEFORE INSERT OR UPDATE
+ON AMD_OWNER.AMD_SPARE_NETWORKS REFERENCING NEW AS New OLD AS Old
+FOR EACH ROW
+DECLARE
+/******************************************************************************
+      $Author:   zf297a  $
+    $Revision:   1.3  $
+	    $Date:   May 23 2006 10:10:26  $
+    $Workfile:   AMD_SPARE_NETWORKS_BEF_INS_UPD.trg  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Triggers\AMD_SPARE_NETWORKS_BEF_INS_UPD.trg.-arc  $
+/*   
+/*      Rev 1.3   May 23 2006 10:10:26   zf297a
+/*   Make sure last_update_dt gets filled in
+/*   
+/*      Rev 1.2   May 16 2006 09:49:16   zf297a
+/*   Added trim for all varchar2 fields to prevent erroneous leading spaces and to remove unnecessary trailing spaces.
+/*   
+/*   
+/*   
+/*      Rev 1.1   Apr 10 2006 08:33:46   zf297a
+/*   Trigger automatically removes blanks from all spo_location fields.  So, if the field contains one or more blanks, then the field gets a null value
+/*   
+/*      Rev 1.0   Apr 07 2006 12:42:22   zf297a
+/*   Initial revision.
+   PURPOSE: Make sure the spo_location is never a blank and gets rid of leading or trailing spaces   
+   			      
+******************************************************************************/
+BEGIN
+	 :new.location_name := trim(:new.location_name) ;
+     :new.loc_id := trim(:new.loc_id) ;
+  	 :new.loc_type := trim(:new.loc_type) ;
+  	 :new.mob := trim(:new.mob) ;
+  	 :new.repair_flag := trim(:new.repair_flag) ;
+  	 :new.command := trim(:new.command) ;
+  	 :new.sub_command := trim(:new.sub_command) ;
+  	 :new.icao := trim(:new.icao) ;
+  	 :new.calendar_name := trim(:new.calendar_name) ;
+	 :new.spo_location := trim(:new.spo_location) ;
+	 :new.last_update_dt := sysdate ;
+END amd_spare_networks_bef_ins_upd;
+/
+
+
+CREATE OR REPLACE TRIGGER AMD_OWNER.amd_spare_networks_trig1
+	BEFORE INSERT ON AMD_OWNER.AMD_SPARE_NETWORKS 	FOR EACH ROW
+DECLARE
+BEGIN
+	if (:new.loc_sid is null) then
+		SELECT amd_spare_networks_seq.NEXTVAL INTO :new.loc_sid FROM DUAL;
+	end if;
+END;
+/
+
+
+CREATE OR REPLACE TRIGGER AMD_OWNER."AMD_SPARE_NETWORKS_TRIG2"
+    BEFORE
+UPDATE OF "LOC_SID" ON "AMD_OWNER"."AMD_SPARE_NETWORKS" FOR EACH ROW
+DECLARE
+BEGIN
+ IF :old.loc_sid <> :new.loc_sid THEN
+  RAISE_APPLICATION_ERROR(-20600, 'Can not change loc_sid');
+ END IF;
+END;
+/
+
+
+DROP PUBLIC SYNONYM AMD_SPARE_NETWORKS;
+
+CREATE OR REPLACE PUBLIC SYNONYM AMD_SPARE_NETWORKS FOR AMD_OWNER.AMD_SPARE_NETWORKS;
+
+
+ALTER TABLE AMD_OWNER.AMD_SPARE_NETWORKS ADD (
+  CHECK ("LOCATION_NAME" IS NOT NULL)  DISABLE,
+  CHECK ("LOC_ID" IS NOT NULL)  DISABLE,
+  CHECK ("LOC_TYPE" IS NOT NULL)  DISABLE,
+  CHECK ("TACTICAL" IS NOT NULL)  DISABLE,
+  CHECK ("ACTION_CODE" IS NOT NULL)  DISABLE,
+  CHECK ("LAST_UPDATE_DT" IS NOT NULL)  DISABLE,
+  CONSTRAINT AMD_SPARE_NET_PK
+  PRIMARY KEY
+  (LOC_SID)
+  USING INDEX AMD_OWNER.AMD_SPARE_NET_PK,
+  CONSTRAINT AMD_SPARE_NETWORKS_AK2
+  UNIQUE (ICAO)
+  USING INDEX AMD_OWNER.AMD_SPARE_NETWORKS_AK2,
+  CONSTRAINT AMD_SPARE_NETWORKS_PK2
+  UNIQUE (LOC_ID, LOC_TYPE)
+  USING INDEX AMD_OWNER.AMD_SPARE_NETWORKS_PK2);
+
+ALTER TABLE AMD_OWNER.AMD_SPARE_NETWORKS ADD (
+  CONSTRAINT AMD_SPARE_NETWORKS_FK01 
+  FOREIGN KEY (CALENDAR_NAME) 
+  REFERENCES AMD_OWNER.AMD_CALENDARS (CALENDAR_NAME));
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_ASSET_MGT_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_DATALOAD;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_GLMS_IF_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_READER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_SDSP_IF_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_USER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.AMD_SPARE_NETWORKS TO AMD_WRITER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO ASIS_ADMIN_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO ASIS_DATALOAD_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO ASIS_OWNER WITH GRANT OPTION;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO ASIS_READER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO ASIS_USER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO IF_USER;
+
+GRANT SELECT ON AMD_OWNER.AMD_SPARE_NETWORKS TO WIR_AMD_IF_ROLE;
+

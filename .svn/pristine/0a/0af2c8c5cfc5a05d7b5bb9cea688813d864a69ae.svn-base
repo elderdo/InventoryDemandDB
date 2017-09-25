@@ -1,0 +1,50 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:46  $
+     $Workfile:   temp_amd_part_next_assemblies.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\temp_amd_part_next_assemblies.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:46   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TEMP_AMD_PART_NEXT_ASSEMBLIES
+(
+  NEXT_ASSEMBLY_PART_NO    VARCHAR2(20 BYTE),
+  NEXT_ASSEMBLY_CAGE_CODE  VARCHAR2(5 BYTE),
+  REWORK_PART_NO           VARCHAR2(20 BYTE),
+  REWORK_CAGE_CODE         VARCHAR2(5 BYTE),
+  SCRAP_FLAG               VARCHAR2(1 BYTE),
+  COMPONENT_PART_NO        VARCHAR2(20 BYTE),
+  COMPONENT_MFGR           VARCHAR2(13 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TEMP_AMD_PART_NEXT_ASSEMBLIES FOR TEMP_AMD_PART_NEXT_ASSEMBLIES;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TEMP_AMD_PART_NEXT_ASSEMBLIES TO AMD_DATALOAD;
+
+GRANT SELECT ON  TEMP_AMD_PART_NEXT_ASSEMBLIES TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TEMP_AMD_PART_NEXT_ASSEMBLIES TO AMD_WRITER_ROLE;
+
+

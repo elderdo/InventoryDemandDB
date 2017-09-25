@@ -1,0 +1,323 @@
+--06-18T15:37  zf297a     create version "amd_spare_parts_pkg.pkb@@\main\125" (SDS-AMD-QA)
+  "use tmp1.to_loc_id and req1.select_from_loc_id"
+--02-20T10:04  zf297a     create version "amd_spare_parts_pkg.pkb@@\main\124"
+  "added new value for last_update_dt and updated_by when amd_bssm_rvt needs 
+   to be updated to be in sync on nsn's with amd_national_stock_items"
+--02-19T17:14  zf297a     create version "amd_spare_parts_pkg.pkb@@\main\123"
+  "added exception handlers to doUpdate and deleteAnyRblPairs"
+--02-19T15:53  zf297a     create version "amd_spare_parts_pkg.pkb@@\main\122"
+  "merged in patch 1.118.1  of UpdateRow's doupdate procedure and address 
+   the amd_bssm_rvt.amd_bssm_rvt_fk01 2292 constraint error that was
+   occuring when the nsn was being changed for amd_national_stock_items. 
+   The data that was causing the error was captured, deleted, and then
+   restored with the new nsn to amd_bssm_rvt using a local declare .. begin / end block of code."
+2013-11-07     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\121"
+  "add exception handler when inserting amd_nsi_groups"
+2013-08-03     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\120"
+  "resequenced pError_location numeric values"
+2013-08-03     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\119"
+  "removed a2a dependencies"
+2013-07-25     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\118"
+  "use consumables_pkg instead of a2a_consumables_pkg"
+2010-01-27     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\117" (AMD_4.0, SDS-AMD-PROD, AMD_3.9.5)
+  "Removed boolean variable was_part_sent since it is not being used and it references a2a code."
+2009-08-07     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\116"
+  "Use the common sleep procedure"
+2009-07-15     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\115"
+  "removed a2a code"
+2009-05-02     c394547    import file element "amd_spare_parts_pkg.pkb@@"
+2009-03-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\114"
+  "Updated pError_locaton sequences and added debug code"
+2009-02-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\113"
+  "Removed a2a code"
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\112"
+  "Made updateNsiPrimePartData, insertAmdNsn, updateAmdNsn,  prepareDataForUpdate, updateAmdSparePartRow, updatePrimeInd, insertNewNsn,  and checkNsnAndPrimeInd into procedures that throw exceptions when there are errors to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\111"
+  "Made updatePrimePartNo into a procedure that throws exceptions for errors to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\110"
+  "Made unassignPrimePart into a procedure that throws exceptions for errors to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\109"
+  "Made makeNsnSameFoeAllParts into a procedure that throw exceptions for errors to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\108"
+  "made doPhysicalInsert into a procedure that throws exceptions when there are errors to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\107"
+  "Made doLogincalInsert into a procedure that throws exceptions for errors."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\106"
+  "made updateNatStkItem a procedure which throws exception when there is an error to simplify coding."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\105"
+  "Make insertSparePart and updatePrimePartData into procedures that through exceptions when there is an error.  This simplifies the code.
+   "
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\104"
+  "Made createNationalStockItem, makePrimeAnEquivalentPart, and prepareDataForInsert into  procedures to simplity code.  Rely on exception to exit routines when there are errors."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\103"
+  "Made insertNsiParts into a procedure.  The exception will stop any routine that invokes it."
+2008-10-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\102"
+  "Implemented interfaces setDebug and getDebugYorN.  Replaced  writeMsg's that depend on mDebug with debugMsg.
+   Changed debugMsg's 2nd param to pError_location so it can be resquenced with the awk resequence utility."
+2008-10-23     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\101"
+  "Added variable is_spo_part to deleteRow."
+2008-10-23     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\100"
+  "Added autonomous transaction pragma to ErrorMsg and debugMsg.
+   
+   Added an out parameter to updateFlags so that invoking routines can determine if the part is a spo part.
+   
+   After updating the flags and the part is no longer a spo part, but it had been one then execute a2a_pkg.deletePartInfo.
+   
+   Don't execute A2A code if the part is not a spo part.
+   
+   "
+2008-10-23     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\99"
+  "For updateRow check is_spo_part before invoking a2a routines."
+2008-10-13     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\98"
+  "do updateFlags before any A2A processing is done since the package now uses the flags."
+2008-09-22     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\97" (AMD.3.2)
+  "update flags is_repairable, is_consumable, and is_spo_part."
+2008-07-09     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\96" (AMD.3.1)
+  "started using amd_defaults.CONSUMABLE_PLANNER_CODE and amd_defaults.REPAIRABLE_PLANNER_CODE."
+2008-06-27     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\95" (AMD.3.0)
+  "Added some debug code."
+2008-06-06     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\94"
+  "Make sure that the part was sent to the spo via the amd_sent_to_a2a table before invoking the a2a_pkg.deletePartPricing function."
+2008-05-16     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\93"
+  "Fixed setting of debug flag for the a2a_pkg and added getVersion function"
+2008-03-27     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\92" (AMD.2.8)
+  "Made constant unable_to_get_prime_part unique for Oracle 10g"
+2007-11-20     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\91" (AMD.2.1)
+  "Fixed typo - partNoTab"
+2007-11-20     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\90"
+  "Use bulk update for function makeNsnSameForAllParts and use bulk collect and bulk update for loadCurrentBackOrder."
+2007-11-14     c402417    create version "amd_spare_parts_pkg.pkb@@\main\89"
+  "Added procedures insert, update, and delete for repair to table tmp_a2a_part_lead_time."
+2007-09-11     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\88" (AMD.2.0)
+  "Added wesm_indicator and removed commits from for/loop's."
+2007-05-24     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\87"
+  "Used the simplified a2a_pkg.insertPartInfo procedure to create the A2A PartInfo data."
+2007-04-05     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\86" (AMD.1.8.06.6)
+  "Added isDiff routines to replace complex conditions.  Added lineNumber to updateRow to help in debugging."
+2007-03-05     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\85"
+  "For updateRow update amd_spare_parts.order_lead_time_defaulted."
+2007-02-14     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\84"
+  "Implemented new version of insertRow and updateRow using amcDemand and amcDemandCleaned."
+2006-10-06     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\83" (AMD.1.8.06)
+  "When insert of amd_spare_parts gets a dup_val_on_index change it to an update."
+2006-10-05     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\82"
+  "return SUCCESS when there is the part_already_exists exception for the insertRow function."
+2006-10-05     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\81"
+  "ignore duplicates for insertRow"
+2006-10-03     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\80" (AMD.1.8.05.1)
+  "Fixed query for getQtyDue of loadCurrentBackOrder.  Added dbms_output to version."
+2006-09-14     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\79"
+  "Added procedure deleteAnyRblPairs which is used when the nsn gets updated in amd_national_stock_items - this will delete any dependent child from amd_rbl_pairs if necessary."
+2006-06-21     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\78" (AMD.1.8.04.1, AMD.1.8.05)
+  "Fixed loadCurrentBackOrder - needed to trim the part_no in the where clause of the update statements, otherwise the update did not find any matches per the criteria and it does not generate an exception."
+2006-06-09     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\77"
+  "implemented version"
+2006-03-23     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\76" (AMD.1.8.04)
+  "Changed code to use amd_defaults.nsn_planner_code or nsl_planner_code where either the cleaned planner code or the original planner_code do not exist in amd_planners."
+2006-03-08     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\75"
+  "Added mtbdr_computed"
+2005-10-10     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\74" (AMD.1.8.03, AMD.1.8.02, AMD.1.8.01, AMD.1.8)
+  "added price to insertPartInfo and updatePartInfo parameter list"
+2005-09-27     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\73"
+  "Fixed updatePartLeadtime and updatePartPricing by adding a parts.part_no to both where clauses.  Aslo, added comprehensive checks of the data changing from null to not null or not null to null."
+2005-08-17     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\72"
+  "Enhanced loadCurrentBackOrder with periodic commits and display of update counters."
+2005-08-16     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\8" (AMD.1.7.1)
+  "Fixed cursor curTmp1QtyDue to include these lines of code:
+   	and upper(substr(to_sc,1,3)) = 'C17'
+   	and upper(substr(to_sc,8,3)) not in ('MRC','SUP','TST') 
+   "
+2005-08-16     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\71"
+  "made same change as made to version 1.39.1.7"
+2005-08-10     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\70"
+  "converted cleaned order_lead_time and order_lead_time to calandar days for a2a transactions."
+2005-08-09     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\7"
+  "Make sure that when a prime_part_no becomes unassigned that its associated national_stock_item gets logically deleted (set the last_update_dt too).  Whenever a new prime_part_no gets assigned to an exisiting national_stock_item update the action_code (U) and the last_update_dt. (same patch as 1.67 and 1.66)
+   "
+2005-08-09     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\6"
+  "Applied fix to getQtyDue and cursor curDue"
+2005-08-09     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\69"
+  "Applied the same update for getQtyDue and cursor curDue - same patch will be applied to current prod (1.7.1)"
+2005-07-29     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\68"
+  "Allow Nsn to change on the Prime or the Equivalent part."
+2005-07-28     zf297a     create version "amd_spare_parts_pkg.pkb@@\main\67"
+  "Make sure that when a prime_part_no becomes unassigned that its associated national_stock_item gets logically deleted (set the last_update_dt too).  Whenever a new prime_part_no gets assigned to an exisiting national_stock_item update the action_code (U) and the last_update_dt."
+2005-06-27     c970183    create version "amd_spare_parts_pkg.pkb@@\main\66"
+  "Moved a2a code for part_lead_time and part_pricing to be after partInfo"
+2005-06-27     c970183    create version "amd_spare_parts_pkg.pkb@@\main\65"
+  "Added the display of pPart_no and pNsn for the errorMsg when doing updatePartLeadTime"
+2005-06-24     c970183    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\5"
+  "Set current_backorder to null of all nsn's before reloading data from gold."
+2005-06-17     c970183    create version "amd_spare_parts_pkg.pkb@@\main\64"
+  "Removed exception handler for insertLoadDetail, added raise_application for dup keys, and updated deleteRow's exception handler."
+2005-06-16     c970183    create version "amd_spare_parts_pkg.pkb@@\main\63"
+  "Changed errorMsg to be the same as the errorMsg in the a2a_pkg: this uses a unique pError_location number to pinpoint the block of code that has the exception.  Also, added some user defined exception instead of return codes."
+2005-06-03     c970183    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\4"
+  "Added procedure loadCurrentBackOrder for amd_national_stock_items.current_backorder"
+2005-06-03     c970183    create version "amd_spare_parts_pkg.pkb@@\main\62"
+  "Added the procedure loadCurrentBackOrder for amd_national_stock_items.current_backorder"
+2005-05-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\61"
+  "Started using a2a_pkg.getIndenture."
+2005-05-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\60"
+  "Modified how mArgs is used.  Added function name for args list and prefixed package name."
+2005-05-16     c970183    create version "amd_spare_parts_pkg.pkb@@\main\59"
+  "Moved time_to_repair_off_base and cost_to_repair_off_base from amd_part_locs to amd_national_stock_items.  Created "changed indicators" for both of these fields."
+2005-05-13     c970183    create version "amd_spare_parts_pkg.pkb@@\main\58"
+  "Started using a2a_pkg.THIRD_PARTY_FLAG and a2a_pkg.INDENTURE constants"
+2005-05-06     c970183    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\3"
+  "changed dla_warehouse_stock, dla_warehouse_stock_cleaned, and GetDlaWarehouseStock to current_backorder, current_backorder_cleaned, and GetCurrentBackorder"
+2005-05-06     c970183    create version "amd_spare_parts_pkg.pkb@@\main\57"
+  "changed dla_warehouse_stock, dla_warehouse_stock_cleaned, and getDlaWarehouseStock to current_backorder, current_backorder_cleaned, and getCurrentBackorder."
+2005-05-02     c970183    create version "amd_spare_parts_pkg.pkb@@\main\56"
+  "Added some error handling for deleteRow."
+2005-04-26     c970183    create version "amd_spare_parts_pkg.pkb@@\main\55"
+  "Added a2a_pkg.updatePartPricing and a2a_pkg.deletePartPricing."
+2005-04-26     c970183    create version "amd_spare_parts_pkg.pkb@@\main\54"
+  "Fixed return value of getCriticalityChangedInd, getNrtsAvgChangedInd, getRtsAvgChangedInd, and getCondemiAvgChanged."
+2005-04-26     c970183    create version "amd_spare_parts_pkg.pkb@@\main\53"
+  "Added criticality_changed, nrts_avg_changed, rts_avg_changed, and condemn_avg_changed indicators to amd_national_stock_items."
+2005-04-25     c970183    create version "amd_spare_parts_pkg.pkb@@\main\52"
+  "Fixed the update of amd_spare_parts by adding in mfgr.  Enhanced debugging by adding a global mArgs string that contains all the data that was used to invoke insertRow, updateRow, or deleteRow."
+2005-04-25     c970183    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\2"
+  "Fixed the update of amd_spare_parts by adding mfgr as one of the fields that get updated."
+2005-04-22     c970183    create version "amd_spare_parts_pkg.pkb@@\main\51"
+  "Fixed InsertRow so that it only invokes a2a_pkg.insertPartInfo when it does a physical insert to amd_national_stock_items, otherwise it will do an update function."
+2005-04-22     c970183    create version "amd_spare_parts_pkg.pkb@@\main\50"
+  "added additional debug code"
+2005-04-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\49"
+  "Added new parameters to insertRow and updateRow.  Leveraged the old routines by just defining the new parameters as global member variables and invoking the old insertRow and updateRow methods.   Change the insert and update of amd_national_stock_items to use the new global member variables."
+2005-03-24     c970183    create version "amd_spare_parts_pkg.pkb@@\main\48"
+  "added ver 1.40 - 1.45 changes.  Plus fixed a2a trans"
+2005-03-24     c970183    create version "amd_spare_parts_pkg.pkb@@\main\47"
+  "Added qpei_weighted, order_lead_time_cleaned, unit_cost_cleaned, planner_code_cleaned, smr_code_cleaned, cost_to_repair_off_base_cleand to InsertRow and UpdateRow"
+2005-01-06     c970183    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\1" (AMD.1.6.1)
+  "Added mmac and unit_of_issue
+   
+   Copied the following changes from the SCCS version:
+         Rev 1.6   13 Jun 2003 09:52:24   c970408
+      Modified updateAmdSparePartRow() to use it's own nsn and removed call to updateNsnFromPrimeRec(). Modifed nsnChanged() to look at an.nsn instead of asp.nsn. Added call to makeNsnSameForAllParts() to checkNsnAndPrimeInd().
+   
+         Rev 1.5   18 Mar 2003 11:07:44   c970408
+      Modified the code to correctly move a part from one nsn to another if both nsns exist concurrently in CAT1.
+   
+         Rev 1.4   05 Mar 2003 13:23:42   c970408
+      fixed the movement of temp nsns to cat1 and the unassociation that results.
+   
+         Rev 1.3   26 Nov 2002 17:04:22   c970408
+      Added getFedcCost().
+   
+         Rev 1.2   04 Nov 2002 16:20:06   c970408
+      Mod'ed updating of the ansi.action_code = 'D' query in UpdateRow method to be more efficient.
+   
+         Rev 1.1   14 Oct 2002 16:03:44   c970408
+      Added query at end of UpdateRow to update ansi.action_code = 'D' if no active amd_nsi_parts recs are linked to and ansi.nsi_sid.
+   
+         Rev 1.0   07 Oct 2002 06:26:18   c372701
+      Initial revision.
+   
+   
+   "
+2004-09-03     c970183    create version "amd_spare_parts_pkg.pkb@@\main\46"
+  "added stronger typing for Source and Table_name + add substr's to make certain that the key_1 to key_5 never exceed 50 characters"
+2004-09-03     c970183    create version "amd_spare_parts_pkg.pkb@@\main\45"
+  "Use substr's on all error logging routines to make sure that the data does not exceed the column size that it gets inserted into.  Error logging should never cause an error."
+2004-08-31     c970183    create version "amd_spare_parts_pkg.pkb@@\main\44"
+  "added mtbdr and qpei_weighted"
+2004-08-27     c970183    create version "amd_spare_parts_pkg.pkb@@\main\43"
+  "Added a2a trans for order_lead_time and pricing."
+2004-07-19     c970183    create version "amd_spare_parts_pkg.pkb@@\main\42"
+  "Added invocation of a2a transaction interfaces."
+2002-12-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\41"
+  "Added UPDT_NSNFROM_PRIME_ERR to updateNsnFromPrimeRec"
+2002-10-02     c970408    create version "amd_spare_parts_pkg.pkb@@\main\1.39.1\0"
+2002-10-02     c970408    create branch "amd_spare_parts_pkg.pkb@@\main\1.39.1"
+  "Added updateNsnFromPrimeRec() to resolve issue with amd_spare_parts.nsn not updating correctly on non-primes. Removed the nsi_sid qualification in UnassignPrimePart() to resolve issue when a part moves from one nsi_sid to another AND changes from a prime to a non-prime."
+2002-10-02     c970408    create version "amd_spare_parts_pkg.pkb@@\main\40"
+  "Added updateNsnFromPrimeRec() to resolve issue with amd_spare_parts.nsn not updating correctly on non-primes. Removed the nsi_sid qualification in UnassignPrimePart() to resolve issue when a part moves from one nsi_sid to another AND changes from a prime to a non-prime."
+2002-08-30     c970183    create version "amd_spare_parts_pkg.pkb@@\main\39"
+  "Fixed updating of the prime_part_no.   When a prime_part_no and its equivalent parts got deleted and reinserted,  the logic caused the amd_national_stock_items.prime_part_no column to get set to a null value.  To accomodate this condition code has been added to the equivalent part section that checks for an existing amd_nsi_parts.part_no with its prime_ind set to 'Y'.  If found it makes sure that the same part_no appears in amd_national_stock_items.prime_part_no."
+2002-08-28     c970183    create version "amd_spare_parts_pkg.pkb@@\main\38"
+  "Added the latest_config column for amd_national_stock_items with a value of 'Y'"
+2002-08-23     c970183    create version "amd_spare_parts_pkg.pkb@@\main\37"
+  "Changed data 8/22/02 to 8/23/02 for the comments in the last revision."
+2002-08-23     c970183    create version "amd_spare_parts_pkg.pkb@@\main\36"
+  "Stripped out ErrorMsg as a nested procedure and made it global to eliminate some redundant code.  Stripped out the updating of amd_national_stock_items to eliminate some redundant code.  Stripped out the routine for making all the equivalent parts have the same nsn as the prime part to eliminate some redundant code. 
+   Added the invocation of the routine to make nsn's same for equivalent parts for a part that was equivalent, but is now prime."
+2002-08-08     c970183    create version "amd_spare_parts_pkg.pkb@@\main\35"
+  "Fixed InsertNewNsn's no_data_found exception: made sure it returned a value."
+2002-08-08     c970183    create version "amd_spare_parts_pkg.pkb@@\main\34"
+  "Made the InsertNatStkItem function global to the package.  Wrap all the code needed to create the amd_national_stock_items and amd_nsns rows in a global procedure called CreateNationalStockItem.  
+   Changed the UpdateRow.InsertNewNsn to accomodate not finding a nsi_sid via the part_no (after having attempted to get it by the Nsn) to create a new Amd_National_Stock_Item/Amd_Nsns pair."
+2002-08-07     c970183    create version "amd_spare_parts_pkg.pkb@@\main\33"
+  "Set unassignment_date to sysdate for deleted parts."
+2002-08-06     c970183    create version "amd_spare_parts_pkg.pkb@@\main\32"
+  "fixed code so that a part that will be used a prime is unassigned no matter what nsn it is currently assigned and regardless of its current prime_ind "
+2002-05-22     c970183    create version "amd_spare_parts_pkg.pkb@@\main\31"
+  "Added routines to create an NsiGroup for new Nsn's and to create NsiEffects for new Nsn's using the amd_default_effectivity_pkg"
+2002-05-16     c970183    create version "amd_spare_parts_pkg.pkb@@\main\30"
+  "Qualifed two updates of amd_nsns with the nsn so that only one will be CURRENT. "
+2002-04-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\29"
+  "Added 2nd SUCCESS return code for the exception handler of insertNsiPart when it recovers without a problem."
+2002-04-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\28"
+  "Added SUCCESS return code to insertNsiParts"
+2002-04-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\27"
+  "Added ONE routine that inserts the amd_nsi_parts row and handles the dup key problem by sleeping one second and then doing the insert again."
+2002-04-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\26"
+  "Added $Log$ keyword"
+2002-04-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\25"
+  "Added a ONE routine to insert the amd_nsi_parts row.  It gaurantees a unique key by going to sleep one second if a duplicate exception occurs."
+2002-04-08     c970183    create version "amd_spare_parts_pkg.pkb@@\main\24"
+  "Added acquisition_advice_code"
+2002-04-05     c970183    create version "amd_spare_parts_pkg.pkb@@\main\23"
+  "Added code to update the nsn_type for a given nsi_sid to
+   the amd_spare_parts_pkg.TEMPORARY_NSN whenever the nsn_type is amd_spare_parts_pkg.CURRENT_NSN"
+2002-04-04     c970183    create version "amd_spare_parts_pkg.pkb@@\main\22"
+  "Added mic_code_lowest to the InsertRow and UpdateRow routines."
+2002-03-28     c970183    create version "amd_spare_parts_pkg.pkb@@\main\21"
+  "made application sleep when a duplicate insert occurs and then retry the insert."
+2002-03-27     c970183    create version "amd_spare_parts_pkg.pkb@@\main\20"
+  "Added PVCS keywords"
+2002-03-27     c970183    create version "amd_spare_parts_pkg.pkb@@\main\19"
+  "Added $Date$ and $Workfile$ keywords"
+2001-11-30     c372701    create version "amd_spare_parts_pkg.pkb@@\main\18"
+  "gw - 11/30/01 - For Doug Elder - Removed mfgr from all SQL WHERE clauses since it is no longer part of the key.  Removed MFGR from all error messages for the previous SQL statements.  Removed mfgr from comments relating to the previous SQL statements.
+   "
+2001-11-30     c372701    create version "amd_spare_parts_pkg.pkb@@\main\17"
+  "gw - 11/29/01 - Updates due to system problems on the Version Manager NT Server. - Done to reflect latest changes - per Doug Elder"
+2001-10-26     c970183    create version "amd_spare_parts_pkg.pkb@@\main\16"
+  "Added missing prime part error message."
+2001-10-25     c970183    create version "amd_spare_parts_pkg.pkb@@\main\15"
+  "Use Action Codes from the amd_defaults package."
+2001-10-25     c970183    create version "amd_spare_parts_pkg.pkb@@\main\14"
+  "Changed Action Codes to A (Add) and C (Change).  Removed smr_code_defaulted and simplified getting the preferred value for smr_code and unit_cost for to routines."
+2001-10-24     c970183    create version "amd_spare_parts_pkg.pkb@@\main\13"
+  "Make UpdateNatStkItem use nsi_sid for retriving data from amd_national_stock_items and amd_nsi_parts.  Check against amd_nsi_parts to make sure the part has an unassignment_data equal to null.  Added exception handling for the PrepareDataForInsert to catch errors that might be generated by other packages: amd_defaults, amd_clean_data, amd_preferred_pkg, ........"
+2001-10-23     c970183    create version "amd_spare_parts_pkg.pkb@@\main\12"
+  "Elimnated a redundant variable InsertRow.nsn.  Added some boolean functions to make the code more readable. Elimanted some functions that were already availabe in ohter packages: amd_utilsGetNsiSid, and amd_preferred_pkg.GetPreferredValue.  Added some more exception handling routines and documented where the ErrorMsg data is currently stored: amd_load_details and amd_load_status."
+2001-10-22     c970183    create version "amd_spare_parts_pkg.pkb@@\main\11"
+  "Changed the way the InsertRow handles NEW Prime Parts when there is an existing one.  Fixed code to handle updating of Equivalent Parts to Prime Parts."
+2001-10-19     c970183    create version "amd_spare_parts_pkg.pkb@@\main\10"
+  "added new code to handle amd_nsi_parts"
+2001-10-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\9"
+  "added update of amd_nsi_parts - algorithm is NOT correct at this time"
+2001-10-18     c970183    create version "amd_spare_parts_pkg.pkb@@\main\8"
+  "Added error codes. Improved error reporting - sent message to amd_load_status and amd_load_details."
+2001-10-17     c970183    create version "amd_spare_parts_pkg.pkb@@\main\7"
+  "Added some error codes.  Added an error message routine.  Added additional begin/exception/end blocks to catch errors."
+2001-10-16     c970183    create version "amd_spare_parts_pkg.pkb@@\main\6"
+  "Added error codes, enhanced code."
+2001-10-11     c970183    create version "amd_spare_parts_pkg.pkb@@\main\5"
+  "changed routine that checks whether bssm is a data source for NSL's with assigned seq # to reference a variable in amd_defaults.use_bssm_to_get_nsls."
+2001-10-10     c970183    create version "amd_spare_parts_pkg.pkb@@\main\4"
+  "Removed exceptions from the package spec and hid them in the package body.  Adjusted routines to use the exceptions, but generate return codes for any client that uses the insert_row, update_row, or delete_row functions."
+2001-10-10     c970183    create version "amd_spare_parts_pkg.pkb@@\main\3"
+  "Added code for the update_row."
+2001-10-08     c970183    create version "amd_spare_parts_pkg.pkb@@\main\2"
+  "added order_quantity and prime_ind to arg list.  added package and procedure qualifiers to variable names."
+2001-10-04     c372701    create version "amd_spare_parts_pkg.pkb@@\main\1"
+  "Initial revision."
+2001-10-04     c372701    create version "amd_spare_parts_pkg.pkb@@\main\0"
+2001-10-04     c372701    create branch "amd_spare_parts_pkg.pkb@@\main"
+2001-10-04     c372701    create file element "amd_spare_parts_pkg.pkb@@"
+  "gw - 10/04/01 - Initial CheckIn
+   "

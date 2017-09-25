@@ -1,0 +1,8 @@
+'   $Author:   c970183  $
+' $Revision:   1.1  $
+'     $Date:   27 Mar 2002 12:52:48  $
+' $Workfile:   WindowAlgo.ini  $
+'
+ConnectionString=jdbc:oracle:thin:@hs1188.lgb.cal.boeing.com:1521:u10damc
+UID=amd_owner
+PWD=sdsproject

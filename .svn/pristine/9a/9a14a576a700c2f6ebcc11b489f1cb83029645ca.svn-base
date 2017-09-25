@@ -1,0 +1,89 @@
+ /*
+      $Author:   zf297a  $
+    $Revision:   1.0  $
+        $Date:   23 Aug 2007 10:41:20  $
+    $Workfile:   active_niins.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Scripts\AMD 2.0 Implementation\active_niins.sql.-arc  $
+/*   
+/*      Rev 1.0   23 Aug 2007 10:41:20   zf297a
+/*   Initial revision.
+*/
+
+set define off
+
+ALTER TABLE AMD_OWNER.ACTIVE_NIINS
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE AMD_OWNER.ACTIVE_NIINS CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_OWNER.ACTIVE_NIINS
+(
+  NIIN  VARCHAR2(9 BYTE)                        NOT NULL
+)
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.ACTIVE_NIINS_PK01 ON AMD_OWNER.ACTIVE_NIINS
+(NIIN)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+DROP PUBLIC SYNONYM ACTIVE_NIINS;
+
+CREATE PUBLIC SYNONYM ACTIVE_NIINS FOR AMD_OWNER.ACTIVE_NIINS;
+
+
+ALTER TABLE AMD_OWNER.ACTIVE_NIINS ADD (
+  CONSTRAINT ACTIVE_NIINS_PK01
+ PRIMARY KEY
+ (NIIN)
+    USING INDEX 
+    TABLESPACE AMD_INDEX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+GRANT SELECT ON AMD_OWNER.ACTIVE_NIINS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.ACTIVE_NIINS TO AMD_WRITER_ROLE;
+
+

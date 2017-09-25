@@ -1,0 +1,75 @@
+
+CREATE TABLE TMP_A2A_ORDER_INFO_LINE
+(
+  ORDER_NO        VARCHAR2(20 BYTE)             NOT NULL,
+  PART_NO         VARCHAR2(50 BYTE)             NOT NULL,
+  LOC_SID         NUMBER                        NOT NULL,
+  SITE_LOCATION   VARCHAR2(13 BYTE)             NOT NULL,
+  CREATED_DATE    DATE                          NOT NULL,
+  STATUS          VARCHAR2(1 BYTE)              NOT NULL,
+  LINE            NUMBER                        NOT NULL,
+  QTY_ORDERED     NUMBER                        NOT NULL,
+  QTY_RECEIVED    NUMBER,
+  ACTION_CODE     VARCHAR2(1 BYTE)              NOT NULL,
+  LAST_UPDATE_DT  DATE                          NOT NULL
+)
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX TMP_A2A_ORDER_INFO_LINE_PK ON TMP_A2A_ORDER_INFO_LINE
+(ORDER_NO)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_A2A_ORDER_INFO_LINE FOR TMP_A2A_ORDER_INFO_LINE;
+
+
+ALTER TABLE TMP_A2A_ORDER_INFO_LINE ADD (
+  CONSTRAINT TMP_A2A_ORDER_INFO_LINE_PK PRIMARY KEY (ORDER_NO)
+    USING INDEX 
+    TABLESPACE AMD_INDEX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_A2A_ORDER_INFO_LINE TO BSRM_LOADER;
+

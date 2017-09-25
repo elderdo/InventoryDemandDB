@@ -1,0 +1,30 @@
+#!/bin/ksh
+#   $Author:   zf297a  $
+# $Revision:   1.8  $
+#     $Date:   27 Apr 2007 09:58:10  $
+# $Workfile:   project1.8.06.6.Unix.txt  $
+#
+
+cd /apps/CRON/AMD/SUBMIT
+
+./moveIt.ksh WindowAlgo.jar
+./moveIt.ksh amd_loader.ksh
+./moveIt.ksh amd_LoadFtpFile.ksh
+./moveIt.ksh sparePartDiff.ksh
+./moveIt.ksh plannersDiff.ksh
+./moveIt.ksh oraCheck.ksh
+
+./moveIt.ksh loadZeroTsls.sql
+./moveIt.ksh batchJob.sql
+./moveIt.ksh ReplicateGold.sql
+./moveIt.ksh updateSpo.sql
+./moveIt.ksh cleanTraceTables.sql
+./moveIt.ksh Planner.sql
+./moveIt.ksh Users.sql
+./moveIt.ksh PlannerLogons.sql
+./moveIt.ksh Capability.sql
+
+./moveIt.ksh -t lib DB_CONNECTION_STRING_FOR_SPO
+./moveIt.ksh -t lib checkforerrors.ksh
+./moveIt.ksh -t lib amdconfig.ksh
+

@@ -1,0 +1,100 @@
+SET DEFINE OFF;
+DROP VIEW AMD_OWNER.SPO_PART_V;
+
+/* Formatted on 2008/08/28 14:59 (Formatter Plus v4.8.8) */
+CREATE OR REPLACE FORCE VIEW amd_owner.spo_part_v (ID,
+                                                   NAME,
+                                                   part_type,
+                                                   description,
+                                                   COST,
+                                                   begin_date,
+                                                   end_date,
+                                                   holding_cost_rate,
+                                                   fixed_order_cost,
+                                                   is_order_policy_roq_based,
+                                                   is_reparable,
+                                                   repair_cost,
+                                                   decay_rate,
+                                                   generate_new_buy,
+                                                   generate_repair,
+                                                   generate_allocation,
+                                                   generate_transshipment,
+                                                   max_qty_allowance,
+                                                   max_total_tsl,
+                                                   TIMESTAMP,
+                                                   is_planned,
+                                                   attribute_1,
+                                                   attribute_2,
+                                                   attribute_3,
+                                                   attribute_4,
+                                                   attribute_5,
+                                                   attribute_6,
+                                                   attribute_7,
+                                                   attribute_8,
+                                                   attribute_9,
+                                                   attribute_10,
+                                                   attribute_11,
+                                                   attribute_12,
+                                                   attribute_13,
+                                                   attribute_14,
+                                                   attribute_15,
+                                                   attribute_16,
+                                                   attribute_17,
+                                                   attribute_18,
+                                                   attribute_19,
+                                                   attribute_20,
+                                                   attribute_21,
+                                                   attribute_22,
+                                                   attribute_23,
+                                                   attribute_24,
+                                                   attribute_25,
+                                                   attribute_26,
+                                                   attribute_27,
+                                                   attribute_28,
+                                                   attribute_29,
+                                                   attribute_30,
+                                                   attribute_31,
+                                                   attribute_32,
+                                                   material_class,
+                                                   weight,
+                                                   volume,
+                                                   is_exempt,
+                                                   ignore_weight_and_volume,
+                                                   is_seasonal,
+                                                   is_cannibalizable,
+                                                   partial_one_way_supersession
+                                                  )
+AS
+   SELECT v_part.ID, v_part.NAME, v_part.part_type, v_part.description,
+          v_part.COST, v_part.begin_date, v_part.end_date,
+          v_part.holding_cost_rate, v_part.fixed_order_cost,
+          v_part.is_order_policy_roq_based, v_part.is_reparable,
+          v_part.repair_cost, v_part.decay_rate, v_part.generate_new_buy,
+          v_part.generate_repair, v_part.generate_allocation,
+          v_part.generate_transshipment, v_part.max_qty_allowance,
+          v_part.max_total_tsl, v_part.TIMESTAMP, v_part.is_planned,
+          v_part.attribute_1, v_part.attribute_2, v_part.attribute_3,
+          v_part.attribute_4, v_part.attribute_5, v_part.attribute_6,
+          v_part.attribute_7, v_part.attribute_8, v_part.attribute_9,
+          v_part.attribute_10, v_part.attribute_11, v_part.attribute_12,
+          v_part.attribute_13, v_part.attribute_14, v_part.attribute_15,
+          v_part.attribute_16, v_part.attribute_17, v_part.attribute_18,
+          v_part.attribute_19, v_part.attribute_20, v_part.attribute_21,
+          v_part.attribute_22, v_part.attribute_23, v_part.attribute_24,
+          v_part.attribute_25, v_part.attribute_26, v_part.attribute_27,
+          v_part.attribute_28, v_part.attribute_29, v_part.attribute_30,
+          v_part.attribute_31, v_part.attribute_32, v_part.material_class,
+          v_part.weight, v_part.volume, v_part.is_exempt,
+          v_part.ignore_weight_and_volume, v_part.is_seasonal,
+          v_part.is_cannibalizable, v_part.partial_one_way_supersession
+     FROM spoc17v2.v_part@stl_escm_link;
+
+
+DROP PUBLIC SYNONYM SPO_PART_V;
+
+CREATE PUBLIC SYNONYM SPO_PART_V FOR AMD_OWNER.SPO_PART_V;
+
+
+GRANT SELECT ON AMD_OWNER.SPO_PART_V TO AMD_READER_ROLE;
+
+

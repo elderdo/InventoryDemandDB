@@ -1,0 +1,27 @@
+#!/bin/ksh
+#   $Author:   zf297a  $
+# $Revision:   1.0  $
+#     $Date:   07 Feb 2007 15:09:06  $
+# $Workfile:   project1.8.06.5.Unix.txt  $
+#
+mv amd_loader.ksh ../bin/.
+chmod 550 ../bin/amd_loader.ksh
+chown amdadmn ../bin/amd_loader.ksh
+chgrp amd ../bin/amd_loader.ksh
+
+mv updateSpo.sql ../src/.
+chmod 440 ../src/updateSpo.sql
+chown amdadmn ../src/updateSpo.sql
+chgrp amd ../src/updateSpo.sql
+
+mv amdconfig.ksh ../lib/.
+chmod 550 ../lib/amdconfig.ksh
+chown amdadmn ../lib/amdconfig.ksh
+chgrp amd ../lib/amdconfig.ksh
+
+mv DB_CONNECTION_STRING_FOR_SPO ../lib/.
+chmod 550 ../lib/DB_CONNECTION_STRING_FOR_SPO.ksh
+chown amdadmn ../lib/DB_CONNECTION_STRING_FOR_SPO.ksh
+chgrp amd ../lib/DB_CONNECTION_STRING_FOR_SPO.ksh
+
+

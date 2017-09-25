@@ -1,0 +1,8 @@
+
+SQL*Loader: Release 8.1.7.0.0 - Production on Fri Jan 18 14:09:37 2002
+
+(c) Copyright 2000 Oracle Corporation.  All rights reserved.
+
+SQL*Loader-704: Internal error: ulconnect: OCIServerAttach [0]
+ORA-12545: Connect failed because target host or object does not exist
+

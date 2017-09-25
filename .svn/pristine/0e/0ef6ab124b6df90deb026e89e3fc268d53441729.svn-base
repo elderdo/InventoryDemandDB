@@ -1,0 +1,9 @@
+#   $Author:   zf297a  $
+# $Revision:   1.5  $
+#     $Date:   16 Jan 2014
+# rev 1.5 removed Spo connection info
+ConnectionString=jdbc:oracle:thin:@ldap://oidlbr.cs.boeing.com:3097/db0093p1,cn=oraclecontext,dc=boeingdb
+
+UID=bsrm_loader
+PWD=Mar33pan
+# encrypted port is used for St Louis

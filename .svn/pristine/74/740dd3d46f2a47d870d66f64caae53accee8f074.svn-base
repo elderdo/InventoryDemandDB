@@ -1,0 +1,92 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:12  $
+     $Workfile:   amd_maint_task_distribs.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_maint_task_distribs.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:12   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_MAINT_TASK_DISTRIBS
+(
+  NSI_SID         NUMBER                        NOT NULL,
+  LOC_SID         NUMBER                        NOT NULL,
+  EFFECTIVE_DATE  DATE                          NOT NULL,
+  ACT_PROJ_IND    VARCHAR2(1 BYTE)              NOT NULL,
+  COND            NUMBER,
+  COND_DEFAULTED  NUMBER,
+  NRTS            NUMBER,
+  NRTS_DEFAULTED  NUMBER,
+  RTS             NUMBER,
+  RTS_DEFAULTED   NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_MAINT_TASK_DISTRIBS_PK ON AMD_MAINT_TASK_DISTRIBS
+(NSI_SID, LOC_SID, EFFECTIVE_DATE, ACT_PROJ_IND)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_MAINT_TASK_DISTRIBS FOR AMD_MAINT_TASK_DISTRIBS;
+
+
+ALTER TABLE AMD_MAINT_TASK_DISTRIBS ADD (
+  CONSTRAINT AMD_MAINT_TASK_DISTRIBS_PK PRIMARY KEY (NSI_SID, LOC_SID, EFFECTIVE_DATE, ACT_PROJ_IND)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_MAINT_TASK_DISTRIBS ADD (
+  CONSTRAINT AMD_MAINT_TASK_DISTRIBS_FK01 FOREIGN KEY (NSI_SID, LOC_SID) 
+    REFERENCES AMD_PART_LOCS (NSI_SID,LOC_SID));
+
+
+GRANT SELECT ON  AMD_MAINT_TASK_DISTRIBS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_MAINT_TASK_DISTRIBS TO AMD_WRITER_ROLE;
+
+

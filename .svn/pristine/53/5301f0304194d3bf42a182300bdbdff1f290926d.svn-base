@@ -1,0 +1,50 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:56  $
+     $Workfile:   tmp_amd_on_base_repair_costs.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\tmp_amd_on_base_repair_costs.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:56   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TMP_AMD_ON_BASE_REPAIR_COSTS
+(
+  PART_NO  VARCHAR2(50 BYTE),
+  AJCN     VARCHAR2(8 BYTE),
+  MHR      NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_AMD_ON_BASE_REPAIR_COSTS FOR TMP_AMD_ON_BASE_REPAIR_COSTS;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_ON_BASE_REPAIR_COSTS TO AMD_DATALOAD;
+
+GRANT SELECT ON  TMP_AMD_ON_BASE_REPAIR_COSTS TO AMD_MAINT;
+
+GRANT SELECT ON  TMP_AMD_ON_BASE_REPAIR_COSTS TO AMD_USER;
+
+GRANT SELECT ON  TMP_AMD_ON_BASE_REPAIR_COSTS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_ON_BASE_REPAIR_COSTS TO AMD_WRITER_ROLE;
+
+

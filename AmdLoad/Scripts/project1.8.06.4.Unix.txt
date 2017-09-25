@@ -1,0 +1,65 @@
+#!/bin/ksh
+#   $Author:   zf297a  $
+# $Revision:   1.5  $
+#     $Date:   30 Jan 2007 11:17:16  $
+# $Workfile:   project1.8.06.4.Unix.txt  $
+#
+mv amd_loader.ksh ../bin/.
+chmod 550 ../bin/amd_loader.ksh
+chown amdadmn ../bin/amd_loader.ksh
+chgrp amd ../bin/amd_loader.ksh
+
+mv notify.ksh ../bin/.
+chmod 550 ../bin/notify.ksh
+chown amdadmn ../bin/notify.ksh
+chgrp amd ../bin/notify.ksh
+
+mv sendPage.ksh ../bin/.
+chmod 550 ../bin/sendPage.ksh
+chown amdadmn ../bin/sendPage.ksh
+chgrp amd ../bin/sendPage.ksh
+
+mv loadZeroTsls.sql ../src/.
+chmod 440 ../src/loadZeroTsls.sql
+chown amdadmn ../src/loadZeroTsls.sql
+chgrp amd ../src/loadZeroTsls.sql
+
+mv amdspoCounts.sql ../src/.
+chmod 440 ../src/amdspoCounts.sql
+chown amdadmn ../src/amdspoCounts.sql
+chgrp amd ../src/amdspoCounts.sql
+
+mv AmdLoad1.sql ../src/.
+chmod 440 ../src/AmdLoad1.sql
+chown amdadmn ../src/AmdLoad1.sql
+chgrp amd ../src/AmdLoad1.sql
+
+mv AmdLoad2.sql ../src/.
+chmod 440 ../src/AmdLoad2.sql
+chown amdadmn ../src/AmdLoad2.sql
+chgrp amd ../src/AmdLoad2.sql
+
+mv AmdLoad3.sql ../src/.
+chmod 440 ../src/AmdLoad3.sql
+chown amdadmn ../src/AmdLoad3.sql
+chgrp amd ../src/AmdLoad3.sql
+
+mv ReplicateGold.sql ../src/.
+chmod 440 ../src/ReplicateGold.sql
+chown amdadmn ../src/ReplicateGold.sql
+chgrp amd ../src/ReplicateGold.sql
+
+mv checkforerrors.ksh ../lib/.
+chmod 550 ../lib/checkforerrors.ksh
+chown amdadmn ../lib/checkforerrors.ksh
+chgrp amd ../lib/checkforerrors.ksh
+
+mv amdconfig.ksh ../lib/.
+chmod 550 ../lib/amdconfig.ksh
+chown amdadmn ../lib/amdconfig.ksh
+chgrp amd ../lib/amdconfig.ksh
+
+mv amd_bssmFlatFiles.ksh ../bin/.
+chmod 550 ../bin/amd_bssmFlatFiles.ksh
+chown amdadmn ../bin/amd_bssmFlatFiles.ksh
+chgrp amd ../bin/amd_bssmFlatFiles.ksh

@@ -1,0 +1,8 @@
+amd_airports
+amd_l67_source
+amd_l67_source_with_csv
+amd_mission_flights
+amd_mission_types
+amd_rmads_source_tmp
+AmdUse1
+tmp_amd_dmnd_frcst_consumables

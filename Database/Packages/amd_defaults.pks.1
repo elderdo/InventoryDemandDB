@@ -1,0 +1,292 @@
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_defaults as
+    /*
+
+     $Author:   zf297a  $
+   $Revision:   1.36 $
+       $Date:   23 Feb 2015
+   $Workfile:   amd_defaults.pks  $
+
+      Rev 1.36 2/23/2015 added start_loc_id
+      
+      Rev 1.35 2/5/2015 added non_stockage_list
+      
+      Rev 1.34 2/4/2015 added icp_ind.  source_of_supply new_nsn,, and source_code
+      
+      Rev 1.33 fixed bom & bom_quantity definitions since the tmp_a2a_bom_detail table was dropped
+          
+      Rev 1.32   09 Jul 2008 14:41:36   zf297a
+   Added interfaces:
+   function getCONSUMABLE_PLANNER_CODE return 	amd_planners.PLANNER_CODE%type ;
+   function getCONSUMABLE_LOGON_ID return 
+   	amd_users.BEMS_ID%type ;
+   function getREPAIRABLE_PLANNER_CODE return 	amd_planners.PLANNER_CODE%type ;
+   function getREPAIRABLE_LOGON_ID return 	amd_users.BEMS_ID%type ;
+   
+      Rev 1.31   22 May 2008 16:47:58   zf297a
+   Added interface for getVersion.
+   
+      Rev 1.30   22 May 2008 11:00:26   zf297a
+   Changed AMD_AUS_SC, AMD_BASC_SC, AMD_CAN_SC, and AMD_UK_SC to variables that wiill either use their default literal or be initialized by data from the amd_param_changes table.  Define a varray to contain all the segment codes used to flag Foreign Military Sales.
+   
+      Rev 1.29   14 Nov 2007 12:08:04   zf297a
+   Added interface for getTIME_TO_REPAIR_OFFBASE
+   
+      Rev 1.28   24 Oct 2007 17:36:16   zf297a
+   Added ROP / ROQ default values and the functions to get them.
+   
+      Rev 1.27   12 Oct 2007 17:23:22   zf297a
+   Added constants: AMD_BASC_LOC_ID, AMD_BASC_SC, AMD_UK_SC, AMD_CAN_LOC_ID, AMD_CAN_SC, AMD_AUS_LOC_ID, AMD_AUS_SC, AMD_WARNER_ROBINS_LOC_ID and related get functions.
+   
+      Rev 1.26   11 Oct 2007 23:33:36   zf297a
+   Added TSL_CONSUMABL_CALENDAR_DAYS and function getTSL_CONSUMABL_CALENDAR_DAYS
+   
+      Rev 1.25   11 Oct 2007 12:42:40   zf297a
+   Added Canada loc_id and added interface getAMD_CAN_LOC_ID
+   
+      Rev 1.24   28 Jun 2007 12:23:32   zf297a
+   Added date_lvl_loaded_modifier and a get function for this number used by the load query for consumable gold.lvls.
+   
+      Rev 1.23   12 Apr 2007 09:31:16   zf297a
+   defined interfaces for PSMS_COMMIT_TRESHOLD, GOLD_COMMIT_TRESHOLD, TEMP_NSNS_COMMIT_THRESHOLD, MAIN_COMMIT_THRESHOLD, and PARTSTUC_COMMIT_THRESHOLD.
+   
+      Rev 1.22   03 Apr 2007 14:32:38   zf297a
+   Define interfaces:
+   getNSN_LOGON_ID
+   getNSL_LOGON_ID
+   getNSN_PLANNER_CODE
+   getNSL_PLANNER_CODE
+   getCLEAN_DATA_DAY
+   checkDefaultPlanners
+   checkDefaultLogonIds
+   
+      Rev 1.21   22 Mar 2007 16:45:58   zf297a
+   added constant AMD_AUS_LOC_ID and its get function interface
+   
+      Rev 1.20   Oct 26 2006 12:10:32   zf297a
+   Added boolean flag STRICT.  This will be used to determine if an exception should be raised for certain errors that in most cases are not critical.
+   
+      Rev 1.19   Jun 09 2006 12:55:24   zf297a
+   added interface version
+   
+      Rev 1.18   Nov 30 2005 10:56:18   zf297a
+   added bom_quantity and bom
+
+      Rev 1.17   Nov 01 2005 12:32:52   zf297a
+   Added some more "getter" functions for other constants.
+
+      Rev 1.16   Nov 01 2005 12:21:34   zf297a
+   Simplified the name of the "getter's" to getCONSTANT where CONSTANT is the identifier for the associated constant.
+
+      Rev 1.15   Nov 01 2005 11:50:32   zf297a
+   Added "getter 's" (get functions) for some of the constant's so they can be used in ordinary SQL instead of only in PL/SQL code.
+
+      Rev 1.14   Sep 13 2005 11:04:02   zf297a
+   Added interfaces for isParamKey and addParamKey.
+
+      Rev 1.13   Jul 08 2005 09:08:38   zf297a
+   added the public function getLogonId
+
+      Rev 1.12   Jul 08 2005 08:58:36   zf297a
+   Added the public function getPlannerCode
+
+      Rev 1.11   Jul 05 2005 13:54:12   zf297a
+   added $Log$ PVCS keyword
+
+     	10/02/01 Douglas Elder	Initial implementation
+	 							Although variables that are CAPITALIZED
+								are usually "constant's", these variables
+								are quasi-constants, since they rarely change,
+								but they are initialized from values stored
+								in an Oracle table.  Some values are returned
+								via functions, since they are dependent on
+								the value of other variables.
+		6/07/05	 KS				Add more constants and defaults
+     */
+    
+    type fmsSegCodeTab is varray(4) of whse.sc%type; -- added 5/22/2008 by dse
+    fmsSegCodes fmsSegCodeTab ; -- added 5/22/2008 by dse
+        
+	STRICT		 				boolean := false ; -- raise errors when true
+    
+    -- added 6/28/2007 by dse
+    DATE_LVL_LOADED_MODIFIER    number := 210 ;
+    function getDATE_LVL_LOADED_MODIFIER return number ;
+	
+    -- added 4/12/2007 by dse
+    PSMS_COMMIT_THRESHOLD       number := 1000 ;
+    function getPSMS_COMMIT_THRESHOLD return number ;
+    
+    -- added 4/12/2007 by dse
+    MAIN_COMMIT_THRESHOLD       number := 1000 ;
+    function getMAIN_COMMIT_THRESHOLD return number ;
+    
+    -- added 4/12/2007 by dse
+    TEMP_NSNS_COMMIT_THRESHOLD       number := 1000 ;
+    function getTEMP_NSNS_COMMIT_THRESHOLD return number ;
+    
+    -- added 4/12/2007 by dse
+    GOLD_COMMIT_THRESHOLD       number := 1000 ;
+    function getGOLD_COMMIT_THRESHOLD return number ;
+    
+    -- added 4/12/2007 by dse
+    PARTSTRUC_COMMIT_THRESHOLD number := 1000 ;
+    function getPARTSTRUC_COMMIT_THRESHOLD return number ;
+    
+	CONDEMN_AVG					amd_national_stock_items.condemn_avg%type := null ;
+	CONSUMABLE					constant amd_national_stock_items.item_type%type := 'C' ;
+	function getCONSUMABLE return varchar2 ;
+	DELETE_ACTION				constant amd_spare_parts.action_code%type := 'D' ;
+	function getDELETE_ACTION return varchar2 ;
+	DISPOSAL_COST				amd_spare_parts.disposal_cost%type := null ;
+	DISTRIB_UOM					amd_national_stock_items.distrib_uom%type := null ;
+	INSERT_ACTION				constant amd_spare_parts.action_code%type := 'A' ;
+	function getINSERT_ACTION return varchar2 ;
+	NOT_PRIME_PART				constant amd_nsi_parts.prime_ind%type  := 'N' ;
+	NRTS_AVG					amd_national_stock_items.nrts_avg%type := null ;
+
+	OFF_BASE_TURN_AROUND		amd_part_locs.time_to_repair%type := null ;
+	function GetOrderLeadTime(pItem_type in amd_national_stock_items.item_type%type) return  amd_spare_parts.order_lead_time_defaulted%type ;
+	ORDER_QUANTITY				amd_national_stock_items.order_quantity%type := null ;
+
+	ORDER_UOM					amd_spare_parts.order_uom%type := null ;
+	PRIME_PART					constant amd_nsi_parts.prime_ind%type  := 'Y' ;
+
+	QPEI_WEIGHTED				amd_national_stock_items.qpei_weighted%type := null ;
+	REPAIRABLE					constant amd_national_stock_items.item_type%type := 'R' ;
+	function getREPAIRABLE return varchar2 ;
+	RTS_AVG						amd_national_stock_items.rts_avg%type := null ;
+	SCRAP_VALUE					amd_spare_parts.scrap_value%type := null ;
+    SHELF_LIFE					amd_spare_parts.shelf_life%type := null ;
+
+
+	TIME_TO_REPAIR_ON_BASE_AVG	amd_national_stock_items.time_to_repair_on_base_avg_df%type := null ;
+	
+	BOM_QUANTITY				number  := 1 ;
+	BOM							varchar2(8) := 'C17' ;
+
+	function GetUnitCost(
+		pNsn in amd_spare_parts.nsn%type,
+		pPart_no in amd_spare_parts.part_no%type,
+		pMfgr in amd_spare_parts.mfgr%type,
+		pSmr_code in amd_national_stock_items.smr_code%type,
+		pPlanner_code in amd_national_stock_items.planner_code%type) return amd_spare_parts.unit_cost_defaulted%type ;
+
+	function getPlannerCode(nsn in varchar2) return varchar2 ;
+
+	function getLogonId(nsn in varchar2) return varchar2 ;
+
+	UNIT_VOLUME					amd_spare_parts.unit_volume%type := null ;
+	UPDATE_ACTION				constant amd_spare_parts.action_code%type := 'C' ;
+	function getUPDATE_ACTION return varchar2 ;
+	USE_BSSM_TO_GET_NSLs		varchar2(1) := null ;
+
+	COST_TO_REPAIR_ONBASE amd_part_locs.cost_to_repair%type := null;
+	TIME_TO_REPAIR_ONBASE amd_part_locs.time_to_repair%type := null;
+	TIME_TO_REPAIR_OFFBASE amd_part_locs.time_to_repair%type := null;
+    function getTIME_TO_REPAIR_OFFBASE return amd_part_locs.time_to_repair%type ;
+	UNIT_COST_FACTOR_OFFBASE number := 0;
+
+		/* ks add 06/07/05
+		-- expose GetParamValue
+		-- constants
+		*/
+	function GetParamValue(key in varchar2) return amd_param_changes.param_value%type ;
+	-- added 9/3/2005 dse
+	procedure setParamValue(key in varchar2, value in varchar2) ;
+	AMD_WAREHOUSE_LOCID CONSTANT amd_spare_networks.loc_id%TYPE := 'CTLATL';
+	function getAMD_WAREHOUSE_LOCID return varchar2 ;
+	BSSM_WAREHOUSE_SRAN CONSTANT bssm_bases.sran%TYPE := 'W';
+	function getBSSM_WAREHOUSE_SRAN return varchar2 ;
+
+	AMD_AUS_LOC_ID 	CONSTANT amd_spare_networks.loc_id%TYPE := 'EY1258' ;
+	function getAMD_AUS_LOC_ID return varchar2 ;
+    
+    AMD_AUS_SC      whse.sc%type := 'C17%CODAUSG' ; -- added 100/11/2007 by dse
+    function getAMD_AUS_SC return varchar2 ; -- added 10/11/2007 by dse
+
+	AMD_CAN_LOC_ID 	CONSTANT amd_spare_networks.loc_id%TYPE := 'EY1414' ; -- added 10/11/2007 by dse
+	function getAMD_CAN_LOC_ID return varchar2 ; -- added 10/11/2007 by dse
+    
+    AMD_CAN_SC      whse.sc%type := 'C17%CODCANG' ; -- added 10/11/2007 by dse
+    function getAMD_CAN_SC return varchar2 ; -- added 10/11/2007 by dse
+
+	AMD_UK_LOC_ID 	CONSTANT amd_spare_networks.loc_id%TYPE := 'EY8780' ;
+	function getAMD_UK_LOC_ID return varchar2 ; 
+    
+    AMD_UK_SC       whse.sc%type := 'C17%CODUKBG' ; -- added 10/11/2007 by dse
+    function getAMD_UK_SC return varchar2 ; -- added 10/11/2007 by dse
+    
+	AMD_BASC_LOC_ID CONSTANT amd_spare_networks.loc_id%TYPE := 'EY1746' ;
+	function getAMD_BASC_LOC_ID return varchar2 ;
+    
+    AMD_BASC_SC     whse.sc%type := 'C17PCAG' ; -- added 10/11/2007 by dse
+    function getAMD_BASC_SC return varchar2 ; -- added 10/11/2007 by dse
+
+	AMD_VUB_LOC_ID	CONSTANT amd_spare_networks.loc_id%TYPE := 'FB4490' ;
+	function getAMD_VUB_LOC_ID return varchar2 ;
+    
+    AMD_WARNER_ROBINS_LOC_ID CONSTANT amd_spare_networks.loc_id%type := 'FB2065' ; -- added 10/11/2007 by dse
+    function getAMD_WARNER_ROBINS_LOC_ID return varchar2 ; -- added 10/11/2007 by dse
+    
+	--AMD_VCD_LOC_ID  CONSTANT amd_spare_networks.loc_id%TYPE :=	'?' ;
+
+	NSN_PLANNER_CODE amd_planners.PLANNER_CODE%type := null ;
+    function getNSN_PLANNER_CODE return amd_planners.PLANNER_CODE%type ;
+	NSN_LOGON_ID amd_planner_logons.LOGON_ID%type := null ;
+    function getNSN_LOGON_ID return amd_users.BEMS_ID%type ;
+	NSL_PLANNER_CODE amd_planners.PLANNER_CODE%type := null ;
+    function getNSL_PLANNER_CODE return amd_planners.PLANNER_CODE%type ;
+	NSL_LOGON_ID amd_planner_logons.LOGON_ID%type := null ;
+    function getNSL_LOGON_ID return amd_users.BEMS_ID%type ;
+
+	CONSUMABLE_PLANNER_CODE amd_planners.PLANNER_CODE%type := null ;
+    function getCONSUMABLE_PLANNER_CODE return amd_planners.PLANNER_CODE%type ;
+	CONSUMABLE_LOGON_ID amd_planner_logons.LOGON_ID%type := null ;
+    function getCONSUMABLE_LOGON_ID return amd_users.BEMS_ID%type ;
+	REPAIRABLE_PLANNER_CODE amd_planners.PLANNER_CODE%type := null ;
+    function getREPAIRABLE_PLANNER_CODE return amd_planners.PLANNER_CODE%type ;
+	REPAIRABLE_LOGON_ID amd_planner_logons.LOGON_ID%type := null ;
+    function getREPAIRABLE_LOGON_ID return amd_users.BEMS_ID%type ;
+
+    
+    CLEAN_DATA_DAY varchar2(10) := null ;
+    function getCLEAN_DATA_DAY return varchar2 ;
+
+    TSL_CONSUMABL_CALENDAR_DAYS number := 210 ;
+    function getTSL_CONSUMABL_CALENDAR_DAYS return number ;
+
+	function isParamKey(key in varchar2) return boolean ;
+	procedure addParamKey(key in varchar2, description in varchar2) ;
+	
+	-- added 6/09/2006 by dse
+	procedure version ;
+    procedure checkDefaultPlanners ;
+    procedure checkDefaultLogonIds ;
+    
+    ROP number := -1 ; -- added 10/18/2007 by dse
+    function getROP return number ;
+    
+    ROQ number := 1 ; -- added 10/18/2007
+    function getROQ return number ;
+    
+    ICP_IND amd_spare_parts.icp_ind%type := 'F77' ; -- added 2/4/2005
+    function getIcpInd return varchar2 ;
+
+    source_code CAT1.SOURCE_CODE%type := 'F77' ; -- added 2/4/2005
+    function getSourceCode return varchar2 ;
+ 
+    
+    source_of_supply varchar2(5) := 'F77' ; -- added 2/4/2005 
+    function getSourceOfSupply return varchar2 ;
+
+    
+    NON_STOCKAGE_LIST amd_spare_parts.nsn%type := 'NSL' ; -- added 2/5/2005
+    function getNonStockageList return varchar2 ;
+
+    START_LOC_ID number := 8 ; -- added 2/23/2005
+    function getStartLocId return number ;
+    
+   function getVersion return varchar2 ; -- added 5/22/2008 by dse
+
+end amd_defaults ;
+/

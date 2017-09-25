@@ -1,0 +1,625 @@
+09:26:48 zf297a@U10DAMC.BOEINGDB> 
+09:26:48 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.addParamKey('consumable_planner_code','This is the default planner code for a consumable part.') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:48 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.setParamValue('consumable_planner_code','UNC') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:48 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.addParamKey('consumable_logon_id','This is the default bems id for a consumable part.') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:48 zf297a@U10DAMC.BOEINGDB> select * from amd_people_all_v where bems_id = 1671850 ;
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+C491731 1671850 17-AUG-00 Shelly             King                           MD  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+MD          M533       1 A N                                  04-JUN-07         
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+1227818    CA018      P 0727182 Triplett                                        
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Franklin           Integrated Defense Systems                                   
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Asset Managers                                 5 / 4J     C078-0514             
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+                               78                                               
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+shelly.m.king@boeing.com                                                        
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+           1227820    562-593-6124             Supply Support-Asset Managemen C 
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+07 0727182 Triplett                       Franklin           2 0727182    GCB4  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Supply Chain Specialist 2                                D    1671850 1671850   
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+                    727182              727182                                  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+                                                                                
+
+Elapsed: 00:00:07.05
+09:26:56 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.setParamValue('consumable_logon_id','1671850') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:56 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.addParamKey('repairable_planner_code','This is the default planner code for a repairable part.') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:56 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.setParamValue('repairable_planner_code','UNR') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:56 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.addParamKey('repairable_logon_id','This is the default bems id for a repairable part.') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:56 zf297a@U10DAMC.BOEINGDB> select * from amd_people_all_v where bems_id = 324366 ;
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+C329911 0324366 20-APR-00 Paul               Moore                          MD  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+MD          M533       1 A N                                  04-JUN-07         
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+1227517    CA018      P 0235106 Vanderslice                                     
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Rosanna            Integrated Defense Systems                                   
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Asset Managers                                 5          C078-0514             
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+8F                             78                                               
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+paul.k.moore2@boeing.com                                                        
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+           1227517    562-593-3159             Depot Repair Of Repairables    C 
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+07 0235106 Vanderslice                    Rosanna            4 0235106    GCB4  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+Supply Chain Specialist 4                                D     324366 0324366   
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+                    235106              235106                                  
+
+EMP_ID  BEMS_ID DOB       FIRST_NAME         LAST_NAME                      CO  
+------- ------- --------- ------------------ ------------------------------ --  
+BU DIV SUB_ DEPTNO     S E C ADMIN_ ADMIN_NAME                LAST_UPDA         
+-- --- ---- ---------- - - - ------ ------------------------- ---------         
+HRDEPTID   LOCATION   F MGR_ID  HR_MGR_LAST_NAME                                
+---------- ---------- - ------- ------------------------------                  
+HR_MGR_FIRST_NAME  ACCTG_BUS_UNIT_NM                                            
+------------------ ------------------------------                               
+ACCT_DEPT_NM                                   FLOOR      MAIL_CODE             
+---------------------------------------------- ---------- ----------            
+ROOM_NMBR                      BLDG                                             
+------------------------------ ----------                                       
+STABLE_EMAIL                                                                    
+--------------------------------------------------------------------------------
+LAST_ORG_L REPORTS_TO WORK_PHONE               DEPT_NMW                       P 
+---------- ---------- ------------------------ ------------------------------ - 
+AC LA_MGR_ LA_MGR_LAST_NAME               LA_MGR_FIRST_NAME  M PS_SUPERVI JOBCOD
+-- ------- ------------------------------ ------------------ - ---------- ------
+JOB_TITLE_NMW                  L LV_EFF_DT UNI UNION_SEN D   BEMS_IDN STANDARD_I
+------------------------------ - --------- --- --------- - ---------- ----------
+   MGR_IDN LA_MGR_ID_BEMSN PS_SUPERVISOR_BEMSN                                  
+---------- --------------- -------------------                                  
+                                                                                
+
+Elapsed: 00:00:03.01
+09:26:59 zf297a@U10DAMC.BOEINGDB> exec amd_defaults.setParamValue('repairable_logon_id','324366') ;
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+09:26:59 zf297a@U10DAMC.BOEINGDB> 
+09:26:59 zf297a@U10DAMC.BOEINGDB> spool off

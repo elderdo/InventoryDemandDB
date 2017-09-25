@@ -1,0 +1,14 @@
+checkThreshold
+execJavaApp SparePart
+execSqlplus loadRblPairs
+execSqlplus updateSpoPrimePart
+sendPartData SpoPart
+sendPartData UserPart
+sendPartData PartPlannedPart
+sendPartData SpoPartLeadTime
+sendPartData PartMtbf
+sendPartData PartCausalType
+sendPartData BomDetail
+sendPartData NetworkPart
+print "not executed sendPartData BomLocationContract"
+return

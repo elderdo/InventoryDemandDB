@@ -1,0 +1,120 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:20  $
+     $Workfile:   amd_part_locs.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_part_locs.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:20   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_PART_LOCS
+(
+  NSI_SID                      NUMBER           NOT NULL,
+  LOC_SID                      NUMBER           NOT NULL,
+  AWT                          NUMBER,
+  AWT_DEFAULTED                NUMBER,
+  COST_TO_REPAIR               NUMBER,
+  COST_TO_REPAIR_DEFAULTED     NUMBER,
+  MIC                          NUMBER,
+  MIC_DEFAULTED                NUMBER,
+  REMOVAL_IND                  VARCHAR2(1 BYTE),
+  REMOVAL_IND_DEFAULTED        VARCHAR2(1 BYTE),
+  REMOVAL_IND_CLEANED          VARCHAR2(1 BYTE),
+  REPAIR_LEVEL_CODE            VARCHAR2(1 BYTE),
+  REPAIR_LEVEL_CODE_DEFAULTED  VARCHAR2(1 BYTE),
+  REPAIR_LEVEL_CODE_CLEANED    VARCHAR2(1 BYTE),
+  TIME_TO_REPAIR               NUMBER,
+  TIME_TO_REPAIR_DEFAULTED     NUMBER,
+  RSP_ON_HAND                  NUMBER,
+  RSP_OBJECTIVE                NUMBER,
+  ORDER_COST                   NUMBER,
+  HOLDING_COST                 NUMBER,
+  BACKORDER_FIXED_COST         NUMBER,
+  BACKORDER_VARIABLE_COST      NUMBER,
+  TACTICAL                     VARCHAR2(1 BYTE),
+  ACTION_CODE                  VARCHAR2(1 BYTE),
+  LAST_UPDATE_DT               DATE
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_PART_LOCS_PK ON AMD_PART_LOCS
+(NSI_SID, LOC_SID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_PART_LOCS FOR AMD_PART_LOCS;
+
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CHECK ("TACTICAL" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CHECK ("ACTION_CODE" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CHECK ("LAST_UPDATE_DT" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CONSTRAINT AMD_PART_LOCS_PK PRIMARY KEY (NSI_SID, LOC_SID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CONSTRAINT AMD_PART_LOCS_FK01 FOREIGN KEY (LOC_SID) 
+    REFERENCES AMD_SPARE_NETWORKS (LOC_SID));
+
+ALTER TABLE AMD_PART_LOCS ADD (
+  CONSTRAINT AMD_PART_LOCS_FK02 FOREIGN KEY (NSI_SID) 
+    REFERENCES AMD_NATIONAL_STOCK_ITEMS (NSI_SID));
+
+
+GRANT SELECT ON  AMD_PART_LOCS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PART_LOCS TO AMD_WRITER_ROLE;
+
+

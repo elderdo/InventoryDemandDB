@@ -1,0 +1,88 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:14  $
+     $Workfile:   amd_nsi_groups.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_nsi_groups.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:14   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_NSI_GROUPS
+(
+  NSI_GROUP_SID    NUMBER                       NOT NULL,
+  FLEET_SIZE_NAME  VARCHAR2(15 BYTE)            NOT NULL,
+  SPLIT_EFFECT     VARCHAR2(1 BYTE)             NOT NULL
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_NSI_GROUPS_PK ON AMD_NSI_GROUPS
+(NSI_GROUP_SID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_NSI_GROUPS FOR AMD_NSI_GROUPS;
+
+
+ALTER TABLE AMD_NSI_GROUPS ADD (
+  CONSTRAINT AMD_NSI_GROUPS_SPLIT_EFFECT_CK CHECK (SPLIT_EFFECT IN ('Y', 'N')));
+
+ALTER TABLE AMD_NSI_GROUPS ADD (
+  CONSTRAINT AMD_NSI_GROUPS_PK PRIMARY KEY (NSI_GROUP_SID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_NSI_GROUPS ADD (
+  CONSTRAINT AMD_NSI_GROUPS_FK01 FOREIGN KEY (FLEET_SIZE_NAME) 
+    REFERENCES AMD_FLEET_SIZES (FLEET_SIZE_NAME));
+
+
+GRANT SELECT ON  AMD_NSI_GROUPS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_NSI_GROUPS TO AMD_WRITER_ROLE;
+
+

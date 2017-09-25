@@ -1,0 +1,34 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 23 2005 12:04:38  $
+     $Workfile:   amd_nsn_seq_no.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\Sequences\amd_nsn_seq_no.sql-arc  $
+/*   
+/*      Rev 1.0   May 23 2005 12:04:38   c970183
+/*   Initial revision.
+*/
+
+DROP SEQUENCE AMD_OWNER.AMD_NSN_SEQ_NO;
+
+CREATE SEQUENCE AMD_OWNER.AMD_NSN_SEQ_NO
+  START WITH 1
+  MAXVALUE 9999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 20
+  NOORDER;
+
+
+DROP PUBLIC SYNONYM AMD_NSN_SEQ_NO;
+
+CREATE PUBLIC SYNONYM AMD_NSN_SEQ_NO FOR AMD_OWNER.AMD_NSN_SEQ_NO;
+
+
+GRANT SELECT ON  AMD_OWNER.AMD_NSN_SEQ_NO TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_OWNER.AMD_NSN_SEQ_NO TO AMD_READER_ROLE;
+
+GRANT SELECT ON  AMD_OWNER.AMD_NSN_SEQ_NO TO AMD_WRITER_ROLE;
+
+

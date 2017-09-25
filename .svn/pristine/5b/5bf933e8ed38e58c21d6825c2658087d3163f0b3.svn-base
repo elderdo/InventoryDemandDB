@@ -1,0 +1,128 @@
+/apps/CRON/AMD/lib/execRemoteShell.ksh sendPartInfo.ksh starting at  Mon Jul 7 12:49:57 PDT 2008
+
+  2:41pm  up 11:28,  10 users,  load average: 0.15, 0.20, 0.25
+Environment set to  PRD
+                      Setup against Oracle Version 9.2.0 
+ORACLE_SID2=pescm
+PROPDIR=/data/imacs_prd/ai_prd/properties
+SSLPROPFILE2=/data/imacs_prd/ai_prd/properties/Escmv2LBSSL.properties
+MQCHANNEL2=QMP1ESCMC172
+MQMGR2=QMP1HA01
+
+  2:41pm  up 11:28,  10 users,  load average: 0.15, 0.20, 0.25
+Environment set to  PRD
+                      Setup against Oracle Version 9.2.0 
+ORACLE_SID2=pescm
+PROPDIR=/data/imacs_prd/ai_prd/properties
+SSLPROPFILE2=/data/imacs_prd/ai_prd/properties/Escmv2LBSSL.properties
+MQCHANNEL2=QMP1ESCMC172
+MQMGR2=QMP1HA01
+logout
+3 /data/escm_lb/xml/prd/PartInfo_DEL.xml
+2263 /data/escm_lb/xml/prd/PartInfo.xml
+Mon Jul 7 14:42:18 CDT 2008  enqueued successfully 3 for PartInfo_DEL.xml
+***** Clear to Excecute script *****
+
+  2:42pm  up 11:29,  10 users,  load average: 0.31, 0.23, 0.26
+Environment set to  PRD
+                      Setup against Oracle Version 9.2.0 
+ORACLE_SID2=pescm
+PROPDIR=/data/imacs_prd/ai_prd/properties
+SSLPROPFILE2=/data/imacs_prd/ai_prd/properties/Escmv2LBSSL.properties
+MQCHANNEL2=QMP1ESCMC172
+MQMGR2=QMP1HA01
+MQ_JAVA_INSTALL_PATH=/opt/mqm/java
+MQPORT=1414
+MQHOST=hamq01
+MQMGR=QMP1HA01
+MQCHANNEL=QMP1ESCMC172
+MQSERVER=QMP1UC/TCP/hamq01(1414)
+starting adapter /data/escm_lb/log/prd/2008070714_41_41_runAdapter_LBC17V2_output.txt
+logout
+Mon Jul 7 14:42:28 CDT 2008  runAdapter completed for PartInfo_DEL.xml
+
+SQL*Plus: Release 9.2.0.3.0 - Production on Mon Jul 7 14:42:30 2008
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL> SQL> SQL> Connected.
+SQL> SQL> SQL> 14:42:31 SQL> 14:42:31 SQL> 14:42:31 SQL> 14:42:31 SQL> 14:42:31 SQL> exec spoc17v2.pr_imp()
+14:42:31 SQL> 
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:10.67
+14:42:42 SQL> 
+Commit complete.
+
+Elapsed: 00:00:00.00
+14:42:42 SQL> 14:42:42 SQL> 14:42:42 SQL> 14:42:42   2  
+0 rows deleted.
+
+Elapsed: 00:00:00.07
+14:42:42 SQL> 
+Commit complete.
+
+Elapsed: 00:00:00.00
+14:42:42 SQL> 14:42:42 SQL> Disconnected from Oracle Database 10g Enterprise Edition Release 10.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP and Data Mining options
+Mon Jul 7 14:42:42 CDT 2008  updateSpo completed for PartInfo_DEL.xml
+Mon Jul 7 14:43:07 CDT 2008  enqueued successfully 2263 for PartInfo.xml
+***** Clear to Excecute script *****
+
+  2:43pm  up 11:29,  11 users,  load average: 0.52, 0.29, 0.28
+Environment set to  PRD
+                      Setup against Oracle Version 9.2.0 
+ORACLE_SID2=pescm
+PROPDIR=/data/imacs_prd/ai_prd/properties
+SSLPROPFILE2=/data/imacs_prd/ai_prd/properties/Escmv2LBSSL.properties
+MQCHANNEL2=QMP1ESCMC172
+MQMGR2=QMP1HA01
+MQ_JAVA_INSTALL_PATH=/opt/mqm/java
+MQPORT=1414
+MQHOST=hamq01
+MQMGR=QMP1HA01
+MQCHANNEL=QMP1ESCMC172
+MQSERVER=QMP1UC/TCP/hamq01(1414)
+starting adapter /data/escm_lb/log/prd/2008070714_41_41_runAdapter_LBC17V2_output.txt
+logout
+Mon Jul 7 14:45:40 CDT 2008  runAdapter completed for PartInfo.xml
+
+SQL*Plus: Release 9.2.0.3.0 - Production on Mon Jul 7 14:45:40 2008
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL> SQL> SQL> Connected.
+SQL> SQL> SQL> 14:45:40 SQL> 14:45:40 SQL> 14:45:40 SQL> 14:45:40 SQL> 14:45:40 SQL> exec spoc17v2.pr_imp()
+14:45:40 SQL> 
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:01:31.31
+14:47:11 SQL> 
+Commit complete.
+
+Elapsed: 00:00:00.00
+14:47:11 SQL> 14:47:11 SQL> 14:47:11 SQL> 14:47:11   2  
+0 rows deleted.
+
+Elapsed: 00:00:00.01
+14:47:11 SQL> 
+Commit complete.
+
+Elapsed: 00:00:00.00
+14:47:11 SQL> 14:47:11 SQL> Disconnected from Oracle Database 10g Enterprise Edition Release 10.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP and Data Mining options
+Mon Jul 7 14:47:11 CDT 2008  updateSpo completed for PartInfo.xml
+nvl(PART_INFO,0) trncn
+Counts are not equal - AMDXML_CNT=2266 AMDQUEUE_CNT=0 and TRANS_PROCESSED=2266 @ prd on svappl61
+
+  2:47pm  up 11:34,  11 users,  load average: 0.62, 0.45, 0.35
+Environment set to  PRD
+                      Setup against Oracle Version 9.2.0 
+ORACLE_SID2=pescm
+PROPDIR=/data/imacs_prd/ai_prd/properties
+SSLPROPFILE2=/data/imacs_prd/ai_prd/properties/Escmv2LBSSL.properties
+MQCHANNEL2=QMP1ESCMC172
+MQMGR2=QMP1HA01
+logout
+logout
+/apps/CRON/AMD/lib/execRemoteShell.ksh sendPartInfo.ksh ending at  Mon Jul 7 12:55:53 PDT 2008

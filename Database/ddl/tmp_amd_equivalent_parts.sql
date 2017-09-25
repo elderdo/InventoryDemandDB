@@ -1,0 +1,56 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:54  $
+     $Workfile:   tmp_amd_equivalent_parts.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\tmp_amd_equivalent_parts.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:54   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TMP_AMD_EQUIVALENT_PARTS
+(
+  MFGR                  VARCHAR2(13 BYTE),
+  PART_NO               VARCHAR2(20 BYTE),
+  EQUIV_PART_NO         VARCHAR2(20 BYTE),
+  EQUIV_MFGR            VARCHAR2(13 BYTE),
+  NOMENCLATURE          VARCHAR2(25 BYTE),
+  ORDER_LEAD_TIME       NUMBER,
+  OFF_BASE_TURN_AROUND  NUMBER,
+  OFF_BASE_REPAIR_COST  NUMBER,
+  UNIT_COST             NUMBER,
+  ORDER_UOM             VARCHAR2(2 BYTE),
+  EQUIV_GOLD_MFGR_CAGE  VARCHAR2(13 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_AMD_EQUIVALENT_PARTS FOR TMP_AMD_EQUIVALENT_PARTS;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_EQUIVALENT_PARTS TO AMD_DATALOAD;
+
+GRANT SELECT ON  TMP_AMD_EQUIVALENT_PARTS TO AMD_USER;
+
+GRANT SELECT ON  TMP_AMD_EQUIVALENT_PARTS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_EQUIVALENT_PARTS TO AMD_WRITER_ROLE;
+
+

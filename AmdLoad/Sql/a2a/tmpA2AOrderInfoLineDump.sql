@@ -1,0 +1,42 @@
+set echo off
+set feedback off
+set heading off
+set pagesize 0
+set linesize 150
+spool &1/tmpA2AOrderInfoLine.csv
+Select
+'CAGE_CODE'
+||','||'ORDER_NO'
+||','||'PART_NO'
+||','||'LOC_SID'
+||','||'SITE_LOCATION'
+||','||'CREATED_DATE'
+||','||'STATUS'
+||','||'LINE'
+||','||'QTY_ORDERED'
+||','||'QTY_RECEIVED'
+||','||'ACTION_CODE'
+||','||'LAST_UPDATE_DT'
+||','||'DUE_DATE'
+from dual
+/
+Select
+CAGE_CODE
+||','||ORDER_NO
+||','||PART_NO
+||','||LOC_SID
+||','||SITE_LOCATION
+||','||to_char(CREATED_DATE,'MM-DD-YYYY HH24:MI:SS')
+||','||STATUS
+||','||LINE
+||','||QTY_ORDERED
+||','||QTY_RECEIVED
+||','||ACTION_CODE
+||','||to_char(LAST_UPDATE_DT,'MM-DD-YYYY HH24:MI:SS')
+||','||to_char(DUE_DATE,'MM-DD-YYYY HH24:MI:SS')
+from amd_owner.tmp_a2a_order_info_line
+/
+spool off
+set feedback on
+set heading on
+set pagesize 20

@@ -1,0 +1,76 @@
+SET DEFINE OFF;
+DROP PUBLIC SYNONYM NSN1;
+
+CREATE PUBLIC SYNONYM NSN1 FOR AMD_OWNER.NSN1;
+
+
+DROP MATERIALIZED VIEW AMD_OWNER.NSN1;
+CREATE MATERIALIZED VIEW AMD_OWNER.NSN1 
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOCACHE
+LOGGING
+NOCOMPRESS
+NOPARALLEL
+BUILD IMMEDIATE
+USING INDEX
+            TABLESPACE AMD_INDEX
+            PCTFREE    10
+            INITRANS   2
+            MAXTRANS   255
+            STORAGE    (
+                        INITIAL          64K
+                        MINEXTENTS       1
+                        MAXEXTENTS       UNLIMITED
+                        PCTINCREASE      0
+                        FREELISTS        1
+                        FREELIST GROUPS  1
+                        BUFFER_POOL      DEFAULT
+                       )
+REFRESH COMPLETE
+START WITH TO_DATE('20-Apr-2009 16:04:44','dd-mon-yyyy hh24:mi:ss')
+NEXT SYSDATE + 1/48    
+WITH ROWID
+AS 
+/* Formatted on 2009/04/20 15:41 (Formatter Plus v4.8.8) */
+select TRIM (nsn) nsn, TRIM (nsn_smic) nsn_smic
+  from nsn1@dgoldlb;
+
+COMMENT ON MATERIALIZED VIEW AMD_OWNER.NSN1 IS 'snapshot table for snapshot AMD_OWNER.NSN1';
+
+CREATE UNIQUE INDEX AMD_OWNER.NSN1P1 ON AMD_OWNER.NSN1
+(NSN)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          4328K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.NSN1 TO AMD_DATALOAD;
+
+GRANT SELECT ON AMD_OWNER.NSN1 TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.NSN1 TO AMD_WRITER_ROLE;
+

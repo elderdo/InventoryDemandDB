@@ -1,0 +1,86 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:24  $
+     $Workfile:   amd_product_models.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_product_models.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:24   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_PRODUCT_MODELS
+(
+  MODEL_ID  VARCHAR2(5 BYTE)                    NOT NULL
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_PRODUCT_MODELS_PK ON AMD_PRODUCT_MODELS
+(MODEL_ID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_PRODUCT_MODELS FOR AMD_PRODUCT_MODELS;
+
+
+ALTER TABLE AMD_PRODUCT_MODELS ADD (
+  CONSTRAINT AMD_PRODUCT_MODELS_PK PRIMARY KEY (MODEL_ID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_PRODUCT_MODELS TO ASIS_DATALOAD_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PRODUCT_MODELS TO AMD_DATALOAD;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PRODUCT_MODELS TO AMD_MAINT;
+
+GRANT SELECT ON  AMD_PRODUCT_MODELS TO AMD_USER;
+
+GRANT SELECT ON  AMD_PRODUCT_MODELS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PRODUCT_MODELS TO AMD_WRITER_ROLE;
+
+

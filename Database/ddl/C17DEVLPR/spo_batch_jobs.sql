@@ -1,0 +1,81 @@
+/*
+	$Author:   zf297a  $
+      $Revision:   1.0  $
+          $Date:   06 Nov 2007 10:24:40  $
+      $Workfile:   spo_batch_jobs.sql  $
+	   $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\ddl\C17DEVLPR\spo_batch_jobs.sql.-arc  $
+/*   
+/*      Rev 1.0   06 Nov 2007 10:24:40   zf297a
+/*   Initial revision.
+*/
+
+ALTER TABLE C17DEVLPR.SPO_BATCH_JOBS
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE C17DEVLPR.SPO_BATCH_JOBS CASCADE CONSTRAINTS;
+
+CREATE TABLE C17DEVLPR.SPO_BATCH_JOBS
+(
+  BATCH_JOB_NUMBER  NUMBER                      NOT NULL,
+  SYSTEM_ID         VARCHAR2(30 BYTE)           NOT NULL,
+  DESCRIPTION       VARCHAR2(200 BYTE),
+  START_TIME        DATE                        NOT NULL,
+  END_TIME          DATE,
+  JOB_ABORTED       VARCHAR2(1 BYTE)
+)
+TABLESPACE USERS
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          16K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+CREATE UNIQUE INDEX C17DEVLPR.SPO_BATCH_JOBS_PK ON C17DEVLPR.SPO_BATCH_JOBS
+(BATCH_JOB_NUMBER, SYSTEM_ID)
+LOGGING
+TABLESPACE USERS
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          16K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE C17DEVLPR.SPO_BATCH_JOBS ADD (
+  CONSTRAINT SPO_BATCH_JOBS_PK
+ PRIMARY KEY
+ (BATCH_JOB_NUMBER, SYSTEM_ID)
+    USING INDEX 
+    TABLESPACE USERS
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          16K
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON C17DEVLPR.SPO_BATCH_JOBS TO C17V2_DEVELOPER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON C17DEVLPR.SPO_BATCH_JOBS TO SPOC17V2_DEVELOPER;
+
+

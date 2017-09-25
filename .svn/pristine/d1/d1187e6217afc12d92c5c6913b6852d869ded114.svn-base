@@ -1,0 +1,151 @@
+SET DEFINE OFF;
+DROP PUBLIC SYNONYM AMD_USE1;
+
+CREATE PUBLIC SYNONYM AMD_USE1 FOR AMD_OWNER.AMD_USE1;
+
+
+DROP MATERIALIZED VIEW AMD_OWNER.AMD_USE1;
+CREATE MATERIALIZED VIEW AMD_OWNER.AMD_USE1 
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOCACHE
+LOGGING
+NOCOMPRESS
+NOPARALLEL
+BUILD IMMEDIATE
+USING INDEX
+            TABLESPACE AMD_INDEX
+            PCTFREE    10
+            INITRANS   2
+            MAXTRANS   255
+            STORAGE    (
+                        INITIAL          64K
+                        MINEXTENTS       1
+                        MAXEXTENTS       UNLIMITED
+                        PCTINCREASE      0
+                        FREELISTS        1
+                        FREELIST GROUPS  1
+                        BUFFER_POOL      DEFAULT
+                       )
+REFRESH COMPLETE
+START WITH TO_DATE('20-Apr-2009 15:47:03','dd-mon-yyyy hh24:mi:ss')
+NEXT SYSDATE + 1/48    
+WITH ROWID
+AS 
+/* Formatted on 2009/04/20 15:30 (Formatter Plus v4.8.8) */
+select TRIM (userid) userid, TRIM (user_name) user_name,
+       TRIM (employee_no) employee_no, employee_status, TRIM (phone) phone,
+       TRIM (ims_designator_code) ims_designator_code
+  from use1$merged@dgoldlb
+ where employee_no is not null;
+
+COMMENT ON MATERIALIZED VIEW AMD_OWNER.AMD_USE1 IS 'snapshot table for snapshot AMD_OWNER.AMD_USE1';
+
+CREATE INDEX AMD_OWNER.AMD_USE1_NK01 ON AMD_OWNER.AMD_USE1
+(IMS_DESIGNATOR_CODE, USERID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+CREATE INDEX AMD_OWNER.AMD_USE1_NK02 ON AMD_OWNER.AMD_USE1
+(EMPLOYEE_STATUS)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_USE1_PK ON AMD_OWNER.AMD_USE1
+(USERID)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_USE1_UK01 ON AMD_OWNER.AMD_USE1
+(EMPLOYEE_NO)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+CREATE INDEX AMD_OWNER.AMD_USER1_NK03 ON AMD_OWNER.AMD_USE1
+(LENGTH("IMS_DESIGNATOR_CODE"))
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+GRANT SELECT ON AMD_OWNER.AMD_USE1 TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, UPDATE ON AMD_OWNER.AMD_USE1 TO AMD_WRITER_ROLE;
+
+GRANT SELECT ON AMD_OWNER.AMD_USE1 TO WIR_AMD_IF_ROLE;
+

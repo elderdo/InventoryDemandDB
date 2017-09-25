@@ -1,0 +1,12 @@
+#   $Author:   zf297a  $
+# $Revision:   1.4  $
+#     $Date:   30 Jul 2013
+# $Workfile:   DBConnection.properties  $
+#
+ConnectionString=jdbc:oracle:thin:@ussedv77.cs.boeing.com:14540:db0093d1
+UID=bsrm_loader
+PWD=Mar33pan
+debug=true
+ConnectionString_SPO=jdbc:oracle:thin:@ussedv20.stl.mo.boeing.com:1523:descm
+UID_SPO=c17pgm
+PWD_SPO=C1e3dc1c

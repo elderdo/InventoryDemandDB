@@ -1,0 +1,49 @@
+/*
+	$Author:   zf297a  $
+      $Revision:   1.0  $
+          $Date:   06 Nov 2007 10:24:42  $
+      $Workfile:   tmp_amd_lp_override.sql  $
+	   $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\ddl\C17DEVLPR\tmp_amd_lp_override.sql.-arc  $
+/*   
+/*      Rev 1.0   06 Nov 2007 10:24:42   zf297a
+/*   Initial revision.
+*/
+
+DROP TABLE C17DEVLPR.TMP_AMD_LP_OVERRIDE CASCADE CONSTRAINTS;
+
+CREATE TABLE C17DEVLPR.TMP_AMD_LP_OVERRIDE
+(
+  PART             VARCHAR2(64 BYTE),
+  LOCATION         VARCHAR2(4000 BYTE),
+  OVERRIDE_TYPE    VARCHAR2(32 BYTE),
+  QUANTITY         NUMBER,
+  OVERRIDE_REASON  VARCHAR2(64 BYTE),
+  OVERRIDE_USER    VARCHAR2(4000 BYTE),
+  BEGIN_DATE       DATE,
+  END_DATE         DATE,
+  TIMESTAMP        DATE                         DEFAULT SYSDATE
+)
+TABLESPACE USERS
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          16K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON C17DEVLPR.TMP_AMD_LP_OVERRIDE TO C17V2_DEVELOPER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON C17DEVLPR.TMP_AMD_LP_OVERRIDE TO SPOC17V2_DEVELOPER;
+
+

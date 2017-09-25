@@ -1,0 +1,26 @@
+DROP VIEW AMD_OWNER.PGOLD_UIMS_V;
+
+/* Formatted on 7/9/2012 4:25:28 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.PGOLD_UIMS_V
+(
+   USERID,
+   DESIGNATOR_CODE,
+   ALT_IMS_DES_CODE_B,
+   ALT_ES_DES_CODE_B,
+   ALT_SUP_DES_CODE_B
+)
+AS
+   SELECT TRIM (userid),
+          designator_code,
+          alt_ims_des_code_b,
+          alt_es_des_code_b,
+          alt_sup_des_code_b
+     FROM uims@amd_pgoldlb_link;
+
+
+DROP PUBLIC SYNONYM PGOLD_UIMS_V;
+
+CREATE OR REPLACE PUBLIC SYNONYM PGOLD_UIMS_V FOR AMD_OWNER.PGOLD_UIMS_V;
+
+
+GRANT SELECT ON AMD_OWNER.PGOLD_UIMS_V TO AMD_READER_ROLE;

@@ -1,0 +1,69 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:56  $
+     $Workfile:   tmp_amd_part_cost_scheds.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\tmp_amd_part_cost_scheds.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:56   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TMP_AMD_PART_COST_SCHEDS
+(
+  ORDER_QUANTITY  NUMBER,
+  UNIT_COST       NUMBER,
+  ORDER_COST      NUMBER,
+  PART_NO         VARCHAR2(20 BYTE),
+  MFGR            VARCHAR2(13 BYTE),
+  EFFECTIVE_DATE  DATE,
+  BACKORDER_COST  NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX TMPAMD_PART_COST_SCHED_PART_I ON TMP_AMD_PART_COST_SCHEDS
+(PART_NO, MFGR)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_AMD_PART_COST_SCHEDS FOR TMP_AMD_PART_COST_SCHEDS;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_PART_COST_SCHEDS TO AMD_DATALOAD;
+
+GRANT SELECT ON  TMP_AMD_PART_COST_SCHEDS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_PART_COST_SCHEDS TO AMD_WRITER_ROLE;
+
+

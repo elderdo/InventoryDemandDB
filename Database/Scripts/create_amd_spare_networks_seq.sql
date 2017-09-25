@@ -1,0 +1,4 @@
+CREATE SEQUENCE amd_spare_networks_seq
+ START WITH     1100
+ INCREMENT BY   1
+ NOCACHE;

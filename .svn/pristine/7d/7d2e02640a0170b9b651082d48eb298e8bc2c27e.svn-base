@@ -1,0 +1,88 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:20  $
+     $Workfile:   amd_part_locations.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_part_locations.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:20   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_PART_LOCATIONS
+(
+  NSN      VARCHAR2(13 BYTE)                    NOT NULL,
+  LOC_SID  NUMBER                               NOT NULL
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    0
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_PART_LOCATIONS_PK ON AMD_PART_LOCATIONS
+(NSN, LOC_SID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_PART_LOCATIONS FOR AMD_PART_LOCATIONS;
+
+
+ALTER TABLE AMD_PART_LOCATIONS ADD (
+  CONSTRAINT AMD_PART_LOCATIONS_PK PRIMARY KEY (NSN, LOC_SID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_PART_LOCATIONS ADD (
+  CONSTRAINT AMD_PART_LOCATIONS_FK02 FOREIGN KEY (LOC_SID) 
+    REFERENCES AMD_SPARE_NETWORKS (LOC_SID));
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PART_LOCATIONS TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_PART_LOCATIONS TO AMD_USER;
+
+GRANT SELECT ON  AMD_PART_LOCATIONS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_PART_LOCATIONS TO AMD_WRITER_ROLE;
+
+

@@ -1,0 +1,6 @@
+header start_job replicateGold processL67 processGDSS
+truncateAmd loadRmads preProcess plannersDiff
+sparePartDiff postProcess invDiff partFactorsDiff
+partLocForecastsDiff locPartLeadtimeDiff postDiffProcess
+locPartOverrideDiff amd2spo end_job bssmFlatFiles footer exit
+

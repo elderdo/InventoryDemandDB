@@ -1,0 +1,16 @@
+#   $Author:   zf297a  $
+# $Revision:   1.0  $
+#     $Date:   Dec 01 2005 11:58:54  $
+# $Workfile:   XmlAmdI.ini  $
+
+ConnectionString=jdbc:oracle:thin:@lbora03i.lgb.cal.boeing.com:1923:u10iamc
+UID=bsrm_loader
+PWD=fromnewyork
+
+# To activate encryption uncomment both oracle.net.encryption_client
+# &  oracle.net.encryption_types_client
+
+#oracle.net.encryption_client=REQUIRED
+oracle..net.encryption_types_client=( DES40 )
+#oracle.net.encryption_types_client=REQUESTED
+oracle.net.crypto_checksum_types_client=( MD5 )

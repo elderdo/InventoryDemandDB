@@ -1,0 +1,5 @@
+prompt creating table tmp_a2a_org_flight_acty_frecst
+@create_tmp_a2a_org_flight_acty_frecst_tab.sql
+
+prompt running ins_base_forecast.sql
+@ins_base_forecast.sql

@@ -1,0 +1,8 @@
+Thu Jun 11 09:02:06 PDT 2009: For SPO_ENV=prod /apps/CRON/AMD/lib/trimTactics.ksh -f none -o skip -t run -s default -c ATRS -r no_restart
+tactics started at Thu Jun 11 09:02:06 PDT 2009
+Thu Jun 11 09:02:06 PDT 2009: Lock file /tmp/trimTactics.lock created (-rw-r-----   1 amduser    amd              0 Jun 11 09:02 /tmp/trimTactics.lock)
+/apps/CRON/AMD/lib/trimTactics.ksh  started at Thu Jun 11 09:02:06 PDT 2009
+Thu Jun 11 09:02:06 PDT 2009: On server svappl50.stl.mo.boeing.com, executing command: sudo -u escm /data/escm/sh/site_control/site_control.sh prod none n y x ATRS n
+Thu Jun 11 09:40:05 PDT 2009: remsh processing completed for sudo -u escm /data/escm/sh/site_control/site_control.sh prod none n y x ATRS n.  The lock file /tmp/trimTactics.lock has been removed
+Thu Jun 11 09:40:06 PDT 2009: capture log file from the remote server using these commands:
+Thu Jun 11 09:40:06 PDT 2009: find /data/escm/log/spo_processing -mtime 0 -name c17_prod_none_x_tactics.log_old | xargs cat

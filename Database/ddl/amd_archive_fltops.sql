@@ -1,0 +1,90 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:52:54  $
+     $Workfile:   amd_archive_fltops.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_archive_fltops.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:52:54   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_ARCHIVE_FLTOPS
+(
+  ARCHIVE_DATE       DATE                       NOT NULL,
+  FORECAST_NAME      VARCHAR2(40 BYTE)          NOT NULL,
+  LOC_ID             VARCHAR2(13 BYTE)          NOT NULL,
+  UOM_CODE           VARCHAR2(2 BYTE)           NOT NULL,
+  TIME_PERIOD_START  DATE                       NOT NULL,
+  TIME_PERIOD_END    DATE,
+  USAGE              NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_ARCHIVE_FLTOPS_PK ON AMD_ARCHIVE_FLTOPS
+(ARCHIVE_DATE, FORECAST_NAME, LOC_ID, UOM_CODE, TIME_PERIOD_START)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_ARCHIVE_FLTOPS FOR AMD_ARCHIVE_FLTOPS;
+
+
+ALTER TABLE AMD_ARCHIVE_FLTOPS ADD (
+  CHECK ("TIME_PERIOD_END" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_ARCHIVE_FLTOPS ADD (
+  CHECK ("USAGE" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_ARCHIVE_FLTOPS ADD (
+  CONSTRAINT AMD_ARCHIVE_FLTOPS_PK PRIMARY KEY (ARCHIVE_DATE, FORECAST_NAME, LOC_ID, UOM_CODE, TIME_PERIOD_START)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_ARCHIVE_FLTOPS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_ARCHIVE_FLTOPS TO AMD_WRITER_ROLE;
+
+

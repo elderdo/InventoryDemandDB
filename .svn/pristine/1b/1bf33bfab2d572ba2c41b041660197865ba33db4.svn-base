@@ -1,0 +1,115 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:14  $
+     $Workfile:   amd_nsi_parts.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_nsi_parts.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:14   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_NSI_PARTS
+(
+  NSI_SID            NUMBER                     NOT NULL,
+  ASSIGNMENT_DATE    DATE                       NOT NULL,
+  UNASSIGNMENT_DATE  DATE,
+  PART_NO            VARCHAR2(50 BYTE)          NOT NULL,
+  PRIME_IND          VARCHAR2(1 BYTE),
+  PRIME_IND_CLEANED  VARCHAR2(1 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX AMD_NSI_PARTS_NK01 ON AMD_NSI_PARTS
+(PART_NO)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_NSI_PARTS_PK ON AMD_NSI_PARTS
+(NSI_SID, ASSIGNMENT_DATE, PART_NO)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_NSI_PARTS FOR AMD_NSI_PARTS;
+
+
+ALTER TABLE AMD_NSI_PARTS ADD (
+  CHECK ("PRIME_IND" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_NSI_PARTS ADD (
+  CONSTRAINT AMD_NSI_PARTS_PK PRIMARY KEY (NSI_SID, ASSIGNMENT_DATE, PART_NO)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_NSI_PARTS ADD (
+  CONSTRAINT AMD_NSI_PARTS_FK01 FOREIGN KEY (NSI_SID) 
+    REFERENCES AMD_NATIONAL_STOCK_ITEMS (NSI_SID)
+    ON DELETE CASCADE);
+
+ALTER TABLE AMD_NSI_PARTS ADD (
+  CONSTRAINT AMD_NSI_PARTS_FK02 FOREIGN KEY (PART_NO) 
+    REFERENCES AMD_SPARE_PARTS (PART_NO));
+
+
+GRANT SELECT ON  AMD_NSI_PARTS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_NSI_PARTS TO AMD_WRITER_ROLE;
+
+

@@ -1,0 +1,14 @@
+@amd_defaults.sql
+@amd_utils.sql
+@a2a_consumables_pkg.sql
+@a2a_pkg.sql
+@tmp_a2a_part_info_trg1.sql
+@amd_lp_override_consumabl_pkg.sql
+@amd_demand.sql
+@amd_location_part_override_pkg.sql
+@amd_location_part_leadtime_pkg.sql
+@amd_part_factors_pkg.sql
+@amd_part_locs_load_pkg.sql
+@amd_partprime_pkg.sql
+@amd_spare_parts_pkg.sql
+@amd_part_loc_forecasts_pkg.sql

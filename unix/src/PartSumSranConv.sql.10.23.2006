@@ -1,0 +1,73 @@
+--
+-- SCCSID: PartSumSranConv.sql  1.2  Modified:  03/31/06 10:02:26
+--
+
+set underline off
+set newpage none
+set heading off
+set pagesize 0
+set feedback off
+set tab off
+set time on
+
+select 
+	to_char(n.nsn)|| chr(9) ||
+	decode(s.loc_id,
+		'EY8780','EY1746',
+		'EY1213','EY1746',
+		'FB4412','FB4418',
+		'FB4455','FB4418',
+		'FB4491','FB4418',
+		'FB5846','FB4418',
+		'FB5851','FB4418',
+		'FB5873','FB4418',
+		'FB5874','FB4418',
+		'FB5879','FB4418',
+		'FB5880','FB4418',
+		'FB5881','FB4418',
+		'FB5884','FB4418',
+		'FB6181','FB4418',
+		'FB6322','FB4418',
+		'FB6606','FB4418',
+		'FB4454','FB4479',
+		'FB4486','FB4479',
+		'FB4621','FB4479',
+		'FB5878','FB4479',
+		'FB6151','FB4479', s.loc_id)|| chr(9) ||
+	to_char(trunc(d.doc_date,'MONTH'),'mm/"01"/yyyy')|| chr(9) ||
+	sum(d.quantity)
+from
+	amd_demands d,
+	amd_spare_networks s,
+	amd_national_stock_items n
+where
+	d.loc_sid = s.loc_sid and
+	d.nsi_sid = n.nsi_sid and
+	n.action_code in('A','C') and
+   d.doc_date > to_date('12/31/1999','mm/dd/yyyy')
+group by
+	n.nsn,
+	decode(s.loc_id,
+	'EY8780','EY1746',
+	'EY1213','EY1746',
+	'FB4412','FB4418',
+	'FB4455','FB4418',
+	'FB4491','FB4418',
+	'FB5846','FB4418',
+	'FB5851','FB4418',
+	'FB5873','FB4418',
+	'FB5874','FB4418',
+	'FB5879','FB4418',
+	'FB5880','FB4418',
+	'FB5881','FB4418',
+	'FB5884','FB4418',
+	'FB6181','FB4418',
+	'FB6322','FB4418',
+	'FB6606','FB4418',
+	'FB4454','FB4479',
+	'FB4486','FB4479',
+	'FB4621','FB4479',
+	'FB5878','FB4479',
+	'FB6151','FB4479', s.loc_id),
+	to_char(trunc(d.doc_date,'MONTH'),'mm/"01"/yyyy');
+quit

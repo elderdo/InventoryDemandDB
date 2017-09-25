@@ -1,0 +1,90 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:04  $
+     $Workfile:   amd_fleet_sizes.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_fleet_sizes.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:04   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_FLEET_SIZES
+(
+  FLEET_SIZE_NAME  VARCHAR2(15 BYTE)            NOT NULL,
+  FLEET_SIZE_DESC  VARCHAR2(50 BYTE)            NOT NULL,
+  PREDEFINED       VARCHAR2(1 BYTE)             NOT NULL,
+  SUBS_AIRCRAFT    VARCHAR2(1 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_FLEET_SIZES_PK ON AMD_FLEET_SIZES
+(FLEET_SIZE_NAME)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_FLEET_SIZES FOR AMD_FLEET_SIZES;
+
+
+ALTER TABLE AMD_FLEET_SIZES ADD (
+  CONSTRAINT AMD_FLEET_SIZES_PREDEFINED_CK CHECK (
+         PREDEFINED IN ('Y', 'N')));
+
+ALTER TABLE AMD_FLEET_SIZES ADD (
+  CONSTRAINT AMD_FLEET_SIZES_SUBS_AC_CK CHECK (
+			SUBS_AIRCRAFT IN ('Y', 'N') OR SUBS_AIRCRAFT IS NULL
+		));
+
+ALTER TABLE AMD_FLEET_SIZES ADD (
+  CONSTRAINT AMD_FLEET_SIZES_PK PRIMARY KEY (FLEET_SIZE_NAME)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_FLEET_SIZES TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_FLEET_SIZES TO AMD_WRITER_ROLE;
+
+

@@ -1,0 +1,468 @@
+BEGIN HEADER
+   CharacterSet "ENGLISH"
+   ExportingTool "Ascential DataStage Export"
+   ToolVersion "4"
+   ServerName "smrs085a.stl.mo.boeing.com"
+   ToolInstanceID "ESCM_LB"
+   MDISVersion "1.0"
+   Date "2005-09-01"
+   Time "15.48.45"
+END HEADER
+BEGIN DSJOB
+   Identifier "JobSequenceA2A"
+   DateModified "2005-07-12"
+   TimeModified "00.16.19"
+   BEGIN DSRECORD
+      Identifier "ROOT"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJobDefn"
+      Readonly "0"
+      Name "JobSequenceA2A"
+      NextID "3"
+      Container "V0"
+      JobVersion "40.0.0"
+      JobControlCode =+=+=+=
+* Tokens were replaced below as follows:
+* IdV0S5%%Result2%%1 <= PartFactors_ADD.$UserStatus
+* IdV0S5%%Result1%%2 <= PartFactors_ADD.$JobStatus
+* IdV0S5%%Name%%3 <= PartFactors_ADD.$JobName
+* IdV0S37%%Result1%%4 <= NQ_PartFactors.$ReturnValue
+* IdV0S37%%Name%%6 <= NQ_PartFactors.$RoutineName
+*
+*** [Generated at 2005-07-11 20:37:45 - 7.1.0.8]
+   $INCLUDE DSINCLUDE DSJ_XFUNCS.H
+   EQU Time$$ Lit "Oconv(Time(), 'MTS:'):': '"
+****************************************
+* Graphical Sequencer generated code for Job JobSequenceA2A
+****************************************
+   
+   seq$V0S2$count = 0
+   handle$list = ""
+   id$list = ""
+   abort$list = ""
+   b$Abandoning = @False
+   b$AllStarted = @False
+   rpt$all = ""
+   summary$restarting = @False
+*** Sequence start point
+   summary$ = DSMakeMsg("DSTAGE_JSG_M_0048\\Summary of sequence run", "")
+   If summary$restarting Then
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0049\\Sequence restarted after failure", ""))
+   End Else
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0051\\Sequence started", ""))
+   End
+   GoSub L$V0S5$START
+   b$AllStarted = @True
+   GoTo L$WAITFORJOB
+**************************************************
+L$V0S2$START:
+*** Sequencer "failedSequencer": wait until inputs ready
+   seq$V0S2$count += 1
+   If seq$V0S2$count < 2 Then Return
+   GoSub L$V0S3$START
+   Return
+**************************************************
+L$V0S3$START:
+*** Activity "failedNotification": Call routine
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0058\\%1 (ROUTINE %2) started", "failedNotification":@FM:"DSSendMail"))
+   rtn$ok = DSCheckRoutine("DSSendMail")
+   If (Not(rtn$ok)) Then
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0005\\BASIC routine is not cataloged: %1", "DSSendMail")
+   msg$id = "@failedNotification"; GoTo L$ERROR
+   End
+   p$V0S3$0 = "To:":'kenneth.c.shew@boeing.com':"\\nFrom:":'kenneth.c.shew@boeing.com':"\\nSubject:":'a2a datastage failure':"\\nBody:":'failed sequence':"\\n":rpt$all
+   Call 'DSSendMail'(r$V0S3, p$V0S3$0)
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0064\\%1 finished, reply=%2", "failedNotification":@FM:r$V0S3))
+   Return
+**************************************************
+L$V0S37$START:
+*** Activity "NQ_PartFactors": Call routine
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0058\\%1 (ROUTINE %2) started", "NQ_PartFactors":@FM:"DSU.ExecSH"))
+   rtn$ok = DSCheckRoutine("DSU.ExecSH")
+   If (Not(rtn$ok)) Then
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0005\\BASIC routine is not cataloged: %1", "DSU.ExecSH")
+   msg$id = "@NQ_PartFactors"; GoTo L$ERROR
+   End
+   p$V0S37$1 = (ROOT_PATH.$ReturnValue : "/" : ENQUEUE_PROG.$ReturnValue : " " : IO_PATH.$ReturnValue : "/" : PF_XML_FILE)
+   Call 'DSU.ExecSH'(p$V0S37$1, r$V0S37)
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0064\\%1 finished, reply=%2", "NQ_PartFactors":@FM:r$V0S37))
+   IdV0S37%%Result1%%4 = r$V0S37
+   IdV0S37%%Name%%6 = "DSU.ExecSH"
+   b$V0S37else = @True
+   If (r$V0S37 = 0) Then GoSub L$V1S0$START; b$V0S37else = @False
+   If b$V0S37else Then GoSub L$V0S2$START
+   Return
+**************************************************
+L$V0S5$START:
+*** Activity "PartFactors_ADD": Initialize job
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0057\\%1 (JOB %2) started", "PartFactors_ADD":@FM:"PartFactors"))
+   jb$V0S5 = "PartFactors"
+   h$V0S5 = DSAttachJob(jb$V0S5, DSJ.ERRNONE)
+   If (Not(h$V0S5)) Then
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0001\\Error calling DSAttachJob(%1)<L>%2", jb$V0S5:@FM:DSGetLastErrorMsg())
+   msg$id = "@PartFactors_ADD"; GoTo L$ERROR
+   End
+   err$code = DSRunJob(h$V0S5, DSJ.RUNNORMAL)
+   If (err$code <> DSJE.NOERROR) Then
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0003\\Error calling DSRunJob(%1), code=%2[E]", jb$V0S5:@FM:err$code)
+   msg$id = "@PartFactors_ADD"; GoTo L$ERROR
+   End
+   handle$list<-1> = h$V0S5
+   id$list<-1> = "V0S5"
+   Return
+**************************************************
+L$V0S5$FINISHED:
+   job$V0S5$status = DSGetJobInfo(h$V0S5, DSJ.JOBSTATUS)
+   job$V0S5$userstatus = DSGetJobInfo(h$V0S5, DSJ.USERSTATUS)
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0063\\%1 finished, status=%2[E]", "PartFactors_ADD":@FM:job$V0S5$status))
+   IdV0S5%%Result2%%1 = job$V0S5$userstatus
+   IdV0S5%%Result1%%2 = job$V0S5$status
+   IdV0S5%%Name%%3 = "PartFactors"
+   rpt$V0S5 = DSMakeJobReport(h$V0S5, 1, "CRLF")
+   rpt$all := "\\n":rpt$V0S5 ;* accumulate job reports
+   dummy$ = DSDetachJob(h$V0S5)
+   If b$Abandoning Then GoTo L$WAITFORJOB
+   b$V0S5else = @True
+   GoSub L$V0S37$START
+   If b$V0S5else Then GoSub L$V0S2$START
+   GoTo L$WAITFORJOB
+**************************************************
+L$V1S0$START:
+*** Activity "successfulNotification": Call routine
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0058\\%1 (ROUTINE %2) started", "successfulNotification":@FM:"DSSendMail"))
+   rtn$ok = DSCheckRoutine("DSSendMail")
+   If (Not(rtn$ok)) Then
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0005\\BASIC routine is not cataloged: %1", "DSSendMail")
+   msg$id = "@successfulNotification"; GoTo L$ERROR
+   End
+   p$V1S0$0 = "To:":'kenneth.c.shew@boeing.com':"\\nFrom:":'kenneth.c.shew@boeing.com':"\\nSubject:":'a2a datastage success':"\\nBody:":'successful run':"\\n":rpt$all
+   Call 'DSSendMail'(r$V1S0, p$V1S0$0)
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0064\\%1 finished, reply=%2", "successfulNotification":@FM:r$V1S0))
+   Return
+**************************************************
+L$WAITFORJOB:
+   If handle$list = "" Then GoTo L$FINISH
+   handle$ = DSWaitForJob(handle$list)
+   If handle$ = 0 Then handle$ = handle$list<1>
+   Locate handle$ In handle$list Setting index$ Then
+      id$ = id$list<index$>
+      b$Abandoning = abort$list<index$>
+      Del id$list<index$>; Del handle$list<index$>; Del abort$list<index$>
+      Begin Case
+      Case id$ = "V0S5"
+         GoTo L$V0S5$FINISHED
+      End Case
+   End
+* Error if fall though
+   handle$list = ""
+   msg$ = DSMakeMsg("DSTAGE_JSG_M_0008\\Error calling DSWaitForJob(), code=%1[E]", handle$)
+   msg$id = "@Coordinator"; GoTo L$ERROR
+**************************************************
+L$ERROR:
+   Call DSLogWarn(DSMakeMsg("DSTAGE_JSG_M_0009\\Controller problem: %1", msg$), msg$id)
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0052\\Exception raised: %1", msg$id:", ":msg$))
+   abort$list = Ifs(handle$list, Str(1:@FM, DCount(handle$list, @FM)), "")
+   b$Abandoning = @True
+   GoTo L$WAITFORJOB
+L$ABORT:
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0056\\Sequence failed", ""))
+   Call DSLogInfo(summary$, "@Coordinator")
+   Call DSLogFatal(DSMakeMsg("DSTAGE_JSG_M_0013\\Sequence job will abort due to previous unrecoverable errors", ""), "@Coordinator")
+**************************************************
+L$FINISH:
+   If b$Abandoning Then GoTo L$ABORT
+   If Not(b$AllStarted) Then Return
+   summary$<1,-1> = Time$$:Convert(@VM, " ", DSMakeMsg("DSTAGE_JSG_M_0054\\Sequence finished OK", ""))
+   Call DSLogInfo(summary$, "@Coordinator")
+   L$EXIT: Return To L$EXIT
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+=+=+=+=
+      ControlAfterSubr "0"
+      Parameters "CParameters"
+      BEGIN DSSUBRECORD
+         Name "ROOT_PATH"
+         Prompt "root path"
+         Default "/appl/asc/DataStage/Projects/ESCM_LB/Common/io_files"
+         HelpTxt "root path"
+         ParamType "0"
+         ParamLength "0"
+         ParamScale "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ENQUEUE_PROG"
+         Prompt "enqueue prog"
+         Default "nqTest.ksh"
+         ParamType "0"
+         ParamLength "0"
+         ParamScale "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "IO_PATH"
+         Prompt "io path"
+         Default "/appl/asc/DataStage/Projects/ESCM_LB/Common/io_files"
+         HelpTxt "io path"
+         ParamType "0"
+         ParamLength "0"
+         ParamScale "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "PF_XML_FILE"
+         Prompt "part factors"
+         Default "PartFactorsAdd.xml"
+         ParamType "0"
+         ParamLength "0"
+         ParamScale "0"
+      END DSSUBRECORD
+      MetaBag "CMetaProperty"
+      BEGIN DSSUBRECORD
+         Owner "APT"
+         Name "AdvancedRuntimeOptions"
+         Value "#DSProjectARTOptions#"
+      END DSSUBRECORD
+      Dependencies "CJobDepend"
+      BEGIN DSSUBRECORD
+         Name "PartFactors"
+         Type "0"
+      END DSSUBRECORD
+      BEGIN DSSUBRECORD
+         Name "ExecSH"
+         Type "1"
+      END DSSUBRECORD
+      IsTemplate "0"
+      NLSLocale ",,,,"
+      JobType "2"
+      Category "AMD_A2A"
+      CenturyBreakYear "30"
+      NextAliasID "2"
+      ParameterFileDDName "DD00001"
+      ReservedWordCheck "1"
+      Uploadable "0"
+      PgmCustomizationFlag "0"
+      JobReportFlag "0"
+      AllowMultipleInvocations "0"
+      Act2ActOverideDefaults "0"
+      Act2ActEnableRowBuffer "0"
+      Act2ActUseIPC "0"
+      EnableCacheSharing "0"
+      RuntimeColumnPropagation "0"
+      RelStagesInJobStatus "-1"
+      WebServiceEnabled "0"
+      MFProcessMetaDataXMLFileExchangeMethod "0"
+      IMSProgType "0"
+      CopyLibPrefix "ARDT"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CContainerView"
+      Readonly "0"
+      Name "Job"
+      NextID "1"
+      IsTopLevel "0"
+      StageList "V0S2|V0S5|V1S0|V0S37|V0S3"
+      StageXPos "168|168|432|288|168"
+      StageYPos "312|144|144|144|480"
+      StageTypes "CJSSequencer|CJSJobActivity|CJSMailActivity|CJSRoutineActivity|CJSMailActivity"
+      NextStageID "65"
+      SnapToGrid "1"
+      GridLines "0"
+      ZoomValue "100"
+      StageXSize "48|48|48|48|48"
+      StageYSize "48|48|48|48|48"
+      ContainerViewSizing "-257 0061 0704 0761 0000 0000 0138 0000"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S2"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSSequencer"
+      Readonly "0"
+      Name "failedSequencer"
+      NextID "12"
+      InputPins "V0S2P6|V0S2P11"
+      OutputPins "V0S2P10"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S2P10"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityOutput"
+      Readonly "0"
+      Name "emailFailure"
+      Partner "V0S3"
+      ConditionType "0"
+      LeftTextPos "192"
+      TopTextPos "411"
+      SourceID "V0S2"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S2P11"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityInput"
+      Readonly "0"
+      Name "failed_pf_nq"
+      Partner "V0S37"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S2P6"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityInput"
+      Readonly "0"
+      Name "failed_pf"
+      Partner "V0S5"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S3"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSMailActivity"
+      Readonly "0"
+      Name "failedNotification"
+      NextID "2"
+      InputPins "V0S3P1"
+      RecipientAddress "kenneth.c.shew@boeing.com"
+      SendersAddress "kenneth.c.shew@boeing.com"
+      Subject "a2a datastage failure"
+      Body "failed sequence"
+      IncludeJobReports "1"
+      CheckPoint "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S37"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSRoutineActivity"
+      Readonly "0"
+      Name "NQ_PartFactors"
+      NextID "8"
+      InputPins "V0S37P2"
+      OutputPins "V0S37P6|V0S37P7"
+      RoutineType "0"
+      Routinename "ExecSH"
+      ParameterValues "CParamValues"
+      BEGIN DSSUBRECORD
+         Name "InputArg"
+         Description "ROOT_PATH.$ReturnValue : \"/\" : ENQUEUE_PROG.$ReturnValue : \" \" : IO_PATH.$ReturnValue : \"/\" : PF_XML_FILE"
+         ValueType "4"
+         DisplayValue "ROOT_PATH.$ReturnValue : \"/\" : ENQUEUE_PROG.$ReturnValue : \" \" : IO_PATH.$ReturnValue : \"/\" : PF_XML_FILE"
+      END DSSUBRECORD
+      CatalogueName "DSU.ExecSH"
+      CheckPoint "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S37P2"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityInput"
+      Readonly "0"
+      Name "DSLink40"
+      Partner "V0S5"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S37P6"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityOutput"
+      Readonly "0"
+      Name "DSLink48"
+      Partner "V1S0"
+      ConditionType "2"
+      TriggerExpression "\"Executed OK\""
+      LeftTextPos "405"
+      TopTextPos "144"
+      SourceID "V2S0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S37P7"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityOutput"
+      Readonly "0"
+      Name "failed_pf_nq"
+      Partner "V0S2"
+      ConditionType "1"
+      TriggerExpression "N/A"
+      LeftTextPos "258"
+      TopTextPos "252"
+      SourceID "V0S37"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S3P1"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityInput"
+      Readonly "0"
+      Name "emailFailure"
+      Partner "V0S2"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSJobActivity"
+      Readonly "0"
+      Name "PartFactors_ADD"
+      NextID "11"
+      OutputPins "V0S5P3|V0S5P6"
+      ExecutionType "0"
+      Jobname "PartFactors"
+      CheckPoint "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5P3"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityOutput"
+      Readonly "0"
+      Name "failed_pf"
+      Partner "V0S2"
+      ConditionType "1"
+      TriggerExpression "N/A"
+      LeftTextPos "192"
+      TopTextPos "222"
+      SourceID "V0S5"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V0S5P6"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityOutput"
+      Readonly "0"
+      Name "DSLink40"
+      Partner "V0S37"
+      ConditionType "0"
+      LeftTextPos "244"
+      TopTextPos "144"
+      SourceID "V0S5"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V1S0"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSMailActivity"
+      Readonly "0"
+      Name "successfulNotification"
+      NextID "5"
+      InputPins "V1S0P4"
+      RecipientAddress "kenneth.c.shew@boeing.com"
+      SendersAddress "kenneth.c.shew@boeing.com"
+      Subject "a2a datastage success"
+      Body "successful run"
+      IncludeJobReports "1"
+      CheckPoint "0"
+   END DSRECORD
+   BEGIN DSRECORD
+      Identifier "V1S0P4"
+      DateModified "1899-12-30"
+      TimeModified "00.00.01"
+      OLEType "CJSActivityInput"
+      Readonly "0"
+      Name "DSLink48"
+      Partner "V0S37"
+   END DSRECORD
+END DSJOB

@@ -1,0 +1,31 @@
+//needs further tmapi definitions
+select 	',',
+	'?'		as	distributionorderid, ',',
+	'?'		as	distorderlineid, ',',
+	'?'		as	shipmentid, ',',
+	'?'		as	shipunitid, ',',
+	',',
+	'A'		as	syncind, ',',
+	asn.loc_id	as	fromsiteid, ',',
+	toloc.loc_id	as	tositeid, ',',
+	ansi.nsn	as	item, ',',
+	',',	
+	ait.quantity	as	shipmentqty, ',',
+	ait.scheduled_delivery_date	as	scheduleddeliverydate, ',',
+	ait.transport_agent_id		as	transagentid, ',',
+	',',
+	ait.transport_mode_id		as	transportmode, ',',
+	'?'				as	transporttype
+
+from	amd_national_stock_items ansi,
+	amd_in_transits ait,
+	amd_spare_networks asn,
+	(select loc_sid, loc_id 	
+	 from amd_spare_networks, amd_in_transits
+	 where loc_sid = to_loc_sid) toloc
+
+where	ait.nsi_sid = ansi.nsi_sid 	and
+	ait.from_loc_sid = asn.loc_sid 	and
+	ait.to_loc_sid = toloc.loc_sid
+	
+		

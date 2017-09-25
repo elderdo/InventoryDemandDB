@@ -1,0 +1,14 @@
+#   $Author:   zf297a  $
+# $Revision:   1.1  $
+#     $Date:   03 Dec 2008 08:54:30  $
+# $Workfile:   LpDemand.properties  $
+#
+bufSize = 500000
+ageBufSize = 500000
+prefetchSize = 2000
+debug = false
+no_op = false
+useTestBatch = false
+dumpFile = /apps/CRON/AMD/data/LpDemand.csv
+F1Instance = spoc17v2
+showDiffThreshold = 1

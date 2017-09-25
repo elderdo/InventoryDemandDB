@@ -1,0 +1,113 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:52:56  $
+     $Workfile:   amd_award_fees.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_award_fees.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:52:56   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_AWARD_FEES
+(
+  UOM_CODE        VARCHAR2(2 BYTE)              NOT NULL,
+  EFFECTIVE_DATE  DATE                          NOT NULL,
+  AWARD_BASE_AMT  NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX AWARD__FK_I ON AMD_AWARD_FEES
+(UOM_CODE)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_AWARD_FEES_PK ON AMD_AWARD_FEES
+(UOM_CODE, EFFECTIVE_DATE)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_AWARD_FEES FOR AMD_AWARD_FEES;
+
+
+ALTER TABLE AMD_AWARD_FEES ADD (
+  CHECK ("AWARD_BASE_AMT" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_AWARD_FEES ADD (
+  CONSTRAINT AMD_AWARD_FEES_PK PRIMARY KEY (UOM_CODE, EFFECTIVE_DATE)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_AWARD_FEES ADD (
+  CONSTRAINT AWARD__FK FOREIGN KEY (UOM_CODE) 
+    REFERENCES AMD_UOMS (UOM_CODE));
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AWARD_FEES TO AMD_DATALOAD;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AWARD_FEES TO AMD_MAINT;
+
+GRANT SELECT ON  AMD_AWARD_FEES TO AMD_USER;
+
+GRANT SELECT ON  AMD_AWARD_FEES TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AWARD_FEES TO AMD_WRITER_ROLE;
+
+

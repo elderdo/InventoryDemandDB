@@ -1,0 +1,159 @@
+ 1) loadTmpAmdSpareParts
+ 2) spoPartDiff
+ 3) sendPartInfo
+ 4) replicateGoldInventoryTables
+ 5) loadOnHandInvs
+ 6) loadInRepair
+ 7) loadOnOrder
+ 8) loadInTransits
+ 9) loadRsp
+10) loadAmdReqs
+11) invDiff
+12) tacticalPostProcess
+13) exit
+select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? tacticalPostProcess started at Wed Jan 18 11:18:26 PST 2012 exec'ed by zf297a
+Wed Jan 18 11:18:26 PST 2012: For SPO_ENV=prod /apps/CRON/AMD/lib/trimTactics.ksh -f none -o skip -t run -s default -c ATR -r no_restart
+tactics started at Wed Jan 18 11:18:32 PST 2012
+Wed Jan 18 11:18:32 PST 2012: Lock file /tmp/trimTactics.lock created (-rw-r-----   1 amduser    amd              0 Jan 18 11:18 /tmp/trimTactics.lock)
+/apps/CRON/AMD/lib/trimTactics.ksh  started at Wed Jan 18 11:18:32 PST 2012
+Wed Jan 18 11:18:32 PST 2012: executing: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com
+return code from ssh is 0
+Wed Jan 18 12:00:38 PST 2012: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com - processing completed.   The lock file /tmp/trimTactics.lock has been removed
+Wed Jan 18 12:00:39 PST 2012: capture log file from the remote server using these commands:
+ssh -l amduser gpstl103.stl.mo.boeing.com uname -s > /tmp/OS.txt 2>> /tmp/bannerMessages.txt
+Wed Jan 18 12:00:40 PST 2012 ssh -l amduser gpstl103.stl.mo.boeing.com find /data01/websites/control/log/spo_processing -mtime -1  -name "c17_prod_none_x_tactics.log_old" > /tmp/tacticsLogFile.txt
+Wed Jan 18 12:00:41 PST 2012 ssh -l amduser gpstl103.stl.mo.boeing.com cat /data01/websites/control/log/spo_processing/c17_prod_none_x_tactics.log_old > /apps/CRON/AMD/log/2012011811_18_26_12_c17_prod_none_x_tactics.log
+end of tactics_metrics.sql   Wed Jan 18 14:00:37 CST 2012
+Wed Jan 18 12:00:42 PST 2012: For SPO_ENV=prod using /apps/CRON/AMD/data/trimTacticsSedFilter.txt to filter out erroneous errors from /apps/CRON/AMD/log/2012011811_18_26_12_c17_prod_none_x_tactics.log
+tactics ended at Wed Jan 18 12:00:43 PST 2012
+prePPHolds started at Wed Jan 18 12:00:43 PST 2012
+prePPHolds ended at Wed Jan 18 12:00:46 PST 2012
+postPPAlerts started at Wed Jan 18 12:00:46 PST 2012
+postPPAlerts ended at Wed Jan 18 12:00:50 PST 2012
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Wed Jan 18 12:00:51 2012
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+tacticalPostProcess ended at Wed Jan 18 12:00:52 PST 2012 exec'ed by zf297a
+main started at Thu Jul  5 14:39:36 PDT 2012
+checkIfSendingParts started at Thu Jul  5 14:39:36 PDT 2012 exec'ed by zf297a
+checkIfSendingParts ended at Thu Jul  5 14:39:36 PDT 2012 exec'ed by zf297a
+replicateGoldInventoryTables started at Thu Jul  5 14:39:36 PDT 2012 exec'ed by zf297a
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh started at  Thu Jul 5 14:39:36 PDT 2012
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh ending at  Thu Jul 5 14:39:37 PDT 2012
+replicateGoldInventoryTables ended at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+loadGoldInventory started at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+loadGoldInventory ended at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+loadAmdReqs started at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+loadAmdReqs ended at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+invDiff started at Thu Jul  5 14:39:37 PDT 2012 exec'ed by zf297a
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/src/Jul.sql does not exist.
+/apps/CRON/AMD/lib/invDiff.ksh starting at  Thu Jul 5 14:39:37 PDT 2012
+main started at Thu Jul  5 14:39:37 PDT 2012
+execJavaDiffApp OnOrder started at Thu Jul  5 14:39:37 PDT 2012
+Warning: Unable to load file OnOrder.properties via the classpath.
+start time: 7/05/12 02:39:41 PM
+Aging buffer size is greater than the initialCapacity of  200
+Aging buffer size is greater than the initialCapacity of  200
+amd_on_order_in=5520
+tmp_amd_on_order_in=4944
+rows inserted=344
+rows updated=0
+rows deleted=920
+end time: 7/05/12 02:40:01 PM
+execJavaDiffApp OnOrder ended at Thu Jul  5 14:40:02 PDT 2012
+execJavaDiffApp OnHandInvs started at Thu Jul  5 14:40:02 PDT 2012
+Warning: Unable to load file OnHandInvs.properties via the classpath.
+start time: 7/05/12 02:40:05 PM
+amd_on_hand_invs_in=112946
+tmp_amd_on_hand_invs=112946
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 7/05/12 02:40:29 PM
+execJavaDiffApp OnHandInvs ended at Thu Jul  5 14:40:29 PDT 2012
+execJavaDiffApp OnHandInvsSum started at Thu Jul  5 14:40:29 PDT 2012
+Warning: Unable to load file OnHandInvsSum.properties via the classpath.
+start time: 7/05/12 02:40:33 PM
+amd_on_hand_invs_in=99653
+tmp_amd_on_hand_invs=99653
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 7/05/12 02:41:01 PM
+execJavaDiffApp OnHandInvsSum ended at Thu Jul  5 14:41:01 PDT 2012
+truncateInterfaceBatch started at Thu Jul  5 14:41:01 PDT 2012
+truncateInterfaceBatch ended at Thu Jul  5 14:41:07 PDT 2012
+queueSpoDataForImporting LpOnHand started at Thu Jul  5 14:41:07 PDT 2012
+/apps/CRON/AMD/lib/sendToSpo.ksh: j#!/usr/bin/ksh:  not found
+start time: 7/05/12 02:41:17 PM
+flatfile: /apps/CRON/AMD/data/LpOnHand.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:5seconds
+v_lp_on_hand=100326
+x_lp_on_hand_v=100322
+rows inserted=4
+rows updated=18
+rows deleted=8
+end time: 7/05/12 02:41:52 PM
+LRM-00112: multiple values not allowed for parameter 'log'
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Thu Jul 5 14:41:53 2012
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+chmod: can't access 2012_05_LpOnHand.log
+2012_05_LpOnHand.log: No such file or directory
+Thu Jul  5 14:41:53 PDT 2012: sqlldr failed for LpOnHand
+sendToSpo: loadImportTable failed for LpOnHand
+sendToSpo: loadImportTable failed for LpOnHand
+queueSpoDataForImporting failed for sendToSpo.ksh LpOnHand
+chmod: can't access 2012_05_invDiff.log
+/apps/CRON/AMD/lib/invDiff.ksh ending at  Thu Jul 5 14:41:54 PDT 2012
+invDiff ended at Thu Jul  5 14:41:54 PDT 2012 exec'ed by zf297a
+notify ./loadInventory.ksh started at Thu Jul  5 14:41:54 PDT 2012 exec'ed by zf297a
+notify ./loadInventory.ksh ended at Thu Jul  5 14:41:54 PDT 2012 exec'ed by zf297a
+tacticalPostProcess started at Thu Jul  5 14:41:54 PDT 2012 exec'ed by zf297a
+Thu Jul  5 14:41:55 PDT 2012: For SPO_ENV=prod /apps/CRON/AMD/lib/trimTactics.ksh -f none -o skip -t run -s default -c ATR -r no_restart
+prePPHolds started at Thu Jul  5 14:42:00 PDT 2012
+prePPHolds ended at Thu Jul  5 14:42:03 PDT 2012
+tactics started at Thu Jul  5 14:42:03 PDT 2012
+Thu Jul  5 14:42:03 PDT 2012: Lock file /tmp/trimTactics.lock created (-rw-r-----   1 amduser    amd              0 Jul  5 14:41 /tmp/trimTactics.lock)
+/apps/CRON/AMD/lib/trimTactics.ksh  started at Thu Jul  5 14:42:03 PDT 2012
+Thu Jul  5 14:42:03 PDT 2012: executing: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com
+return code from ssh is 0
+Thu Jul  5 15:25:38 PDT 2012: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com - processing completed.   The lock file /tmp/trimTactics.lock has been removed
+Thu Jul  5 15:25:40 PDT 2012: capture log file from the remote server using these commands:
+ssh -l amduser gpstl103.stl.mo.boeing.com uname -s > /tmp/OS.txt 2>> /tmp/bannerMessages.txt
+Thu Jul  5 15:25:41 PDT 2012 ssh -l amduser gpstl103.stl.mo.boeing.com find /data01/websites/control/log/spo_processing -mtime -1  -name "c17_prod_none_x_tactics.log_old" > /tmp/tacticsLogFile.txt
+Thu Jul  5 15:25:42 PDT 2012 ssh -l amduser gpstl103.stl.mo.boeing.com cat /data01/websites/control/log/spo_processing/c17_prod_none_x_tactics.log_old > /apps/CRON/AMD/log/2012070514_41_54_07_c17_prod_none_x_tactics.log
+end of allert scanner   Thu Jul 5 17:25:38 CDT 2012
+Thu Jul  5 15:25:43 PDT 2012: For SPO_ENV=prod using /apps/CRON/AMD/data/trimTacticsSedFilter.txt to filter out erroneous errors from /apps/CRON/AMD/log/2012070514_41_54_07_c17_prod_none_x_tactics.log
+tactics ended at Thu Jul  5 15:25:44 PDT 2012
+postPPHolds started at Thu Jul  5 15:25:44 PDT 2012
+postPPHolds ended at Thu Jul  5 15:25:47 PDT 2012
+postPPAlerts started at Thu Jul  5 15:25:47 PDT 2012
+postPPAlerts ended at Thu Jul  5 15:25:52 PDT 2012
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Thu Jul 5 15:25:52 2012
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+Commit point reached - logical record count 107
+tacticalPostProcess ended at Thu Jul  5 15:25:55 PDT 2012 exec'ed by zf297a
+main ended at Thu Jul  5 15:25:55 PDT 2012

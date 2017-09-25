@@ -1,0 +1,4 @@
+execSqlplus loadAmdBssmSourceTmpAmdDemands
+execSqlplus loadFmsDemands
+execSqlplus loadBascUkDemands
+execSqlplus loadAmdDemandsTable

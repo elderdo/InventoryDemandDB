@@ -1,0 +1,194 @@
+ /*
+      $Author:   zf297a  $
+    $Revision:   1.0  $
+        $Date:   23 Aug 2007 10:41:24  $
+    $Workfile:   l11.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Scripts\AMD 2.0 Implementation\l11.sql.-arc  $
+/*   
+/*      Rev 1.0   23 Aug 2007 10:41:24   zf297a
+/*   Initial revision.
+*/
+
+set define off
+
+DROP TABLE AMD_OWNER.L11 CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_OWNER.L11
+(
+  L11_ID                          NUMBER        NOT NULL,
+  DIC                             VARCHAR2(3 BYTE),
+  SOURCE_OF_SUPPLY                VARCHAR2(3 BYTE),
+  SRAN                            VARCHAR2(4 BYTE) NOT NULL,
+  FSC                             VARCHAR2(4 BYTE),
+  NIIN                            VARCHAR2(9 BYTE) NOT NULL,
+  DASHED_NIIN                     VARCHAR2(15 BYTE),
+  PART                            VARCHAR2(50 BYTE),
+  NOUN                            VARCHAR2(75 BYTE),
+  AUTOPROCESSFLAG                 VARCHAR2(1 BYTE),
+  SUPPLIER                        NUMBER,
+  MMC                             VARCHAR2(2 BYTE),
+  SYSTEM_DESIGNATOR               VARCHAR2(2 BYTE),
+  IMS_DESIGNATOR_CODE             VARCHAR2(10 BYTE),
+  ACTIVE_STATUS                   VARCHAR2(5 BYTE),
+  ERRCD                           VARCHAR2(3 BYTE),
+  UNIT_OF_ISSUE                   VARCHAR2(2 BYTE),
+  DEMAND_LEVEL                    NUMBER,
+  BOEING_MAX_LEVEL_LOADED         VARCHAR2(3 BYTE),
+  RBL_LEVEL                       NUMBER,
+  ASL_LEVEL                       NUMBER,
+  ON_HAND_BALANCE                 NUMBER,
+  BOEING_BASE_MIN_LEVEL           NUMBER,
+  BOEING_BASE_MAX_LEVEL           NUMBER,
+  BOEING_AUTOPROCESS_LEVEL        NUMBER,
+  MSK_AUTHORIZED                  NUMBER,
+  MSK_ON_HAND                     NUMBER,
+  MSK_DEPLOYED                    NUMBER,
+  ISSUED_DIFM                     NUMBER,
+  AWP_DIFM                        NUMBER,
+  DIFM_BACK_ORDERED               NUMBER,
+  CREDIT_DIFM                     NUMBER,
+  GFPPRICE                        NUMBER(9,2),
+  DIFM                            NUMBER,
+  IRSP_AUTHORIZED                 NUMBER,
+  IRSP_ON_HAND                    NUMBER,
+  MRSP_AUTHORIZED                 NUMBER,
+  MRSP_ON_HAND                    NUMBER,
+  MRSP_DEPLOYED                   NUMBER,
+  HPMSK_AUTHORIZED                NUMBER,
+  HPMSK_ON_HAND                   NUMBER,
+  HPMSK_DEPLOYED                  NUMBER,
+  DUE_OUT                         NUMBER,
+  DUE_IN                          NUMBER,
+  BOEING_PUSH_DUE_IN              NUMBER,
+  DATE_OF_FIRST_DEMAND            VARCHAR2(7 BYTE),
+  DATE_OF_LAST_DEMAND             VARCHAR2(7 BYTE),
+  CUMULATIVE_DEMANDS              NUMBER,
+  DEMANDS_CURRENT_6_MONTHS        NUMBER,
+  DEMANDS_1ST_PAST_6_MONTHS       NUMBER,
+  DEMANDS_2ND_PAST_6_MONTHS       NUMBER,
+  PERCENT_BASE_REPAIR             NUMBER,
+  REPAIRED_CURRENT_QUARTER        NUMBER,
+  REPAIRED_1ST_PAST_QUARTER       NUMBER,
+  REPAIRED_2ND_PAST_QUARTER       NUMBER,
+  REPAIRED_3RD_PAST_QUARTER       NUMBER,
+  REPAIRED_4TH_PAST_QUARTER       NUMBER,
+  NOT_REPAIRED_CURRENT_QUARTER    NUMBER,
+  NOT_REPAIRED_1ST_PAST_QUARTER   NUMBER,
+  NOT_REPAIRED_2ND_PAST_QUARTER   NUMBER,
+  NOT_REPAIRED_3RD_PAST_QUARTER   NUMBER,
+  NOT_REPAIRED_4TH_PAST_QUARTER   NUMBER,
+  CONDEMNED_CURRENT_QUARTER       NUMBER,
+  CONDEMNED_1ST_PAST_QUARTER      NUMBER,
+  CONDEMNED_2ND_PAST_QUARTER      NUMBER,
+  CONDEMNED_3RD_PAST_QUARTER      NUMBER,
+  CONDEMNED_4TH_PAST_QUARTER      NUMBER,
+  BENCH_STOCK_AUTH_QTY            NUMBER,
+  BENCH_STOCK_CUM_RECURR_DEMANDS  NUMBER,
+  BENCH_STOCK_DUE_OUTS            NUMBER,
+  REPORT_DATE                     VARCHAR2(7 BYTE),
+  LOCAL_BASE_ISG_NUMBER           VARCHAR2(4 BYTE),
+  LOCAL_BASE_ISG_CODE             VARCHAR2(50 BYTE),
+  UPDATED_DATE_TIME               DATE,
+  LAST_PUSH_DATE_TIME             DATE,
+  LAST_PUSH_QTY                   NUMBER,
+  LAST_UPDATED_USERID             VARCHAR2(20 BYTE),
+  TEMP_PUSHEDQTY                  NUMBER,
+  TEMP_UPDATEDUSERID              VARCHAR2(20 BYTE),
+  TEMP_PUSHDATETIME               DATE,
+  TRANSMIT_FLAG                   VARCHAR2(1 BYTE),
+  IMS_DESIGNATOR_NAME             VARCHAR2(40 BYTE),
+  FSS                             VARCHAR2(1 BYTE),
+  PROD_TEST_FLAG                  VARCHAR2(1 BYTE),
+  LAST_PUSH_REQUEST_ID            VARCHAR2(20 BYTE),
+  NEW_WESM_ITEM_B                 VARCHAR2(1 BYTE),
+  AUTOPROCESSINGFLAG2             VARCHAR2(1 BYTE),
+  NSN                             VARCHAR2(15 BYTE)
+)
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+CREATE INDEX AMD_OWNER.L11_NK01 ON AMD_OWNER.L11
+(NSN)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.L11_NK02 ON AMD_OWNER.L11
+(NIIN)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_OWNER.L11_NK03 ON AMD_OWNER.L11
+(SOURCE_OF_SUPPLY)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+DROP PUBLIC SYNONYM L11;
+
+CREATE PUBLIC SYNONYM L11 FOR AMD_OWNER.L11;
+
+
+GRANT SELECT ON AMD_OWNER.L11 TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.L11 TO AMD_WRITER_ROLE;
+
+

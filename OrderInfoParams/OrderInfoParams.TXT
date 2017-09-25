@@ -1,0 +1,5 @@
+The cab file for your application has been built as 'C:\Documents and Settings\c970183\My Documents\My D Drive\VBProjects\OrderInfoParams\Package\OrderInfoParams.CAB'.
+
+There is also a batch file in the support directory (C:\Documents and Settings\c970183\My Documents\My D Drive\VBProjects\OrderInfoParams\Package\Support\OrderInfoParams.BAT) that will allow you to recreate the cab file in case you make changes to some of the files.
+
+You have included mdac_typ.exe in your installation package.  If you will be installing this package on a Windows 95/98 system, it will require DCOM98 to install properly.

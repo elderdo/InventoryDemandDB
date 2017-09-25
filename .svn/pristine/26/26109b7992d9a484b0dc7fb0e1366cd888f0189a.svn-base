@@ -1,0 +1,25 @@
+DROP VIEW AMD_OWNER.PGOLD_CGVT_V;
+
+/* Formatted on 7/9/2012 4:24:19 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.PGOLD_CGVT_V
+(
+   SERVICE_CODE,
+   STOCK_NUMBER,
+   ISG_MASTER_STOCK_NUMBER,
+   ISG_OOU_CODE
+)
+AS
+   SELECT service_code,
+          stock_number,
+          isg_master_stock_number,
+          isg_oou_code
+     FROM cgvt@amd_pgoldlb_link
+    WHERE stock_number IS NOT NULL AND isg_master_stock_number IS NOT NULL;
+
+
+DROP PUBLIC SYNONYM PGOLD_CGVT_V;
+
+CREATE OR REPLACE PUBLIC SYNONYM PGOLD_CGVT_V FOR AMD_OWNER.PGOLD_CGVT_V;
+
+
+GRANT SELECT ON AMD_OWNER.PGOLD_CGVT_V TO AMD_READER_ROLE;

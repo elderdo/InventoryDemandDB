@@ -1,0 +1,97 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:00  $
+     $Workfile:   amd_cur_nsi_loc_distribs.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_cur_nsi_loc_distribs.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:00   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_CUR_NSI_LOC_DISTRIBS
+(
+  NSI_SID         NUMBER                        NOT NULL,
+  LOC_SID         NUMBER                        NOT NULL,
+  QUANTITY        NUMBER                        NOT NULL,
+  USER_DEFINED    VARCHAR2(1 BYTE)              NOT NULL,
+  LAST_UPDATE_DT  DATE                          NOT NULL,
+  LAST_UPDATE_ID  VARCHAR2(8 BYTE)              NOT NULL,
+  DERIVED         VARCHAR2(1 BYTE)              DEFAULT 'N'                   NOT NULL
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_CUR_NSI_LOC_DISTRIBS_PK ON AMD_CUR_NSI_LOC_DISTRIBS
+(NSI_SID, LOC_SID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_CUR_NSI_LOC_DISTRIBS FOR AMD_CUR_NSI_LOC_DISTRIBS;
+
+
+ALTER TABLE AMD_CUR_NSI_LOC_DISTRIBS ADD (
+  CONSTRAINT AMD_CUR_NSI_LOC_DISTR_DERIV_CK CHECK (
+            DERIVED IN ('Y', 'N')));
+
+ALTER TABLE AMD_CUR_NSI_LOC_DISTRIBS ADD (
+  CONSTRAINT AMD_CUR_NSI_LOC_DISTRIBS_PK PRIMARY KEY (NSI_SID, LOC_SID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_CUR_NSI_LOC_DISTRIBS ADD (
+  CONSTRAINT AMD_CUR_NSI_LOC_DISTRIBS_FK01 FOREIGN KEY (NSI_SID) 
+    REFERENCES AMD_NATIONAL_STOCK_ITEMS (NSI_SID));
+
+ALTER TABLE AMD_CUR_NSI_LOC_DISTRIBS ADD (
+  CONSTRAINT AMD_CUR_NSI_LOC_DISTRIBS_FK02 FOREIGN KEY (LOC_SID) 
+    REFERENCES AMD_SPARE_NETWORKS (LOC_SID));
+
+
+GRANT SELECT ON  AMD_CUR_NSI_LOC_DISTRIBS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_CUR_NSI_LOC_DISTRIBS TO AMD_WRITER_ROLE;
+
+

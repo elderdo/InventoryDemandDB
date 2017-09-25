@@ -1,0 +1,6 @@
+for temporary tablespace reasons,
+query broken up into 4 pieces
+item_loc_criticality_matrix1.sql
+item_loc_criticality_matrix2.sql
+item_loc_criticality_matrix3.sql
+item_loc_criticality_matrix4.sql

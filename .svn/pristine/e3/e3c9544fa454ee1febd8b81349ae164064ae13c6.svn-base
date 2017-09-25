@@ -1,0 +1,14 @@
+prompt dropping table tmp_a2a_org_deployment
+@drop_tmp_a2a_org_deployment.sql
+
+prompt creating table tmp_a2a_org_deployment
+@create_tmp_a2a_org_deployment_tab.sql
+
+prompt running amd_org_deployment_pkg.pks
+@amd_org_deployment_pkg.pks
+
+prompt running amd_org_deployment_pkg.pkb
+@amd_org_deployment_pkg.pkb
+
+prompt running grant_execute_amd_org_deployment_pkg.sql
+@grant_execute_amd_org_deployment_pkg.sql

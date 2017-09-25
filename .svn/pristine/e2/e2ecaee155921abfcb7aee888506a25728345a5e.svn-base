@@ -1,0 +1,88 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:52:54  $
+     $Workfile:   amd_airports.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_airports.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:52:54   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_AIRPORTS
+(
+  ICAO          VARCHAR2(4 BYTE)                NOT NULL,
+  AIRPORT_NAME  VARCHAR2(25 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_AIRPORTS_PK ON AMD_AIRPORTS
+(ICAO)
+LOGGING
+TABLESPACE AMD_DATA
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_AIRPORTS FOR AMD_AIRPORTS;
+
+
+ALTER TABLE AMD_AIRPORTS ADD (
+  CHECK ("AIRPORT_NAME" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_AIRPORTS ADD (
+  CONSTRAINT AMD_AIRPORTS_PK PRIMARY KEY (ICAO)
+    USING INDEX 
+    TABLESPACE AMD_DATA
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AIRPORTS TO AMD_COSMIC_SUPERUSER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AIRPORTS TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_AIRPORTS TO AMD_USER;
+
+GRANT SELECT ON  AMD_AIRPORTS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_AIRPORTS TO AMD_WRITER_ROLE;
+
+

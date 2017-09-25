@@ -1,0 +1,95 @@
+set define off
+
+/*
+      $Author:   zf297a  $
+    $Revision:   1.1  $
+        $Date:   24 Oct 2007 18:32:14  $
+    $Workfile:   amd_rsp_sum.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\ddl\amd_rsp_sum.sql.-arc  $
+/*   
+/*      Rev 1.1   24 Oct 2007 18:32:14   zf297a
+/*   Added override_type and PVCS keywords
+*/
+
+ALTER TABLE AMD_OWNER.AMD_RSP_SUM
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE AMD_OWNER.AMD_RSP_SUM CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_OWNER.AMD_RSP_SUM
+(
+  PART_NO         VARCHAR2(50 BYTE)             NOT NULL,
+  RSP_LOCATION    VARCHAR2(20 BYTE)             NOT NULL,
+  QTY_ON_HAND     NUMBER,
+  RSP_LEVEL       NUMBER,
+  ACTION_CODE     VARCHAR2(1 BYTE)              NOT NULL,
+  LAST_UPDATE_DT  DATE,
+  OVERRIDE_TYPE   VARCHAR2(32 BYTE)
+)
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+CREATE UNIQUE INDEX AMD_OWNER.AMD_RSP_SUM_PK ON AMD_OWNER.AMD_RSP_SUM
+(PART_NO, RSP_LOCATION, OVERRIDE_TYPE)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+DROP PUBLIC SYNONYM AMD_RSP_SUM;
+
+CREATE PUBLIC SYNONYM AMD_RSP_SUM FOR AMD_OWNER.AMD_RSP_SUM;
+
+
+ALTER TABLE AMD_OWNER.AMD_RSP_SUM ADD (
+  CONSTRAINT AMD_RSP_SUM_PK
+ PRIMARY KEY
+ (PART_NO, RSP_LOCATION, OVERRIDE_TYPE)
+    USING INDEX 
+    TABLESPACE AMD_INDEX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+GRANT SELECT ON AMD_OWNER.AMD_RSP_SUM TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON AMD_OWNER.AMD_RSP_SUM TO AMD_WRITER_ROLE;
+
+show errors

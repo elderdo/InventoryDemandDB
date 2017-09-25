@@ -1,0 +1,245 @@
+/*
+      $Author:   zf297a  $
+    $Revision:   1.3  $
+        $Date:   22 Jun 2007 10:21:34  $
+    $Workfile:   amdspoCounts.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\amdspoCounts.sql.-arc  $
+/*   
+/*      Rev 1.3   22 Jun 2007 10:21:34   zf297a
+/*   Fixed TSL query to use name for the part_no
+/*   
+/*      Rev 1.2   Jan 18 2007 15:06:08   zf297a
+/*   added insert into amd_spo_counts
+/*   
+/*      Rev 1.1   Jan 08 2007 13:27:50   zf297a
+/*   Added quit command at the end of the script.
+/*   
+/*      Rev 1.0   Jan 08 2007 10:07:42   zf297a
+/*   Initial revision.
+*/
+set serveroutput on
+set feedback off
+DECLARE
+	lv_amd_parts_list_cnt						NUMBER := 0;
+	lv_spo_parts_list_cnt						NUMBER := 0;
+	lv_amd_part_prime_cnt						NUMBER := 0;
+	lv_spo_part_prime_cnt						NUMBER := 0;
+	lv_amd_on_hand_good_cnt						NUMBER := 0;
+	lv_spo_on_hand_good_cnt						NUMBER := 0;
+	lv_amd_on_hand_def_cnt						NUMBER := 0;
+	lv_spo_on_hand_def_cnt						NUMBER := 0;
+	lv_amd_in_repair_cnt						NUMBER := 0;
+	lv_spo_in_repair_cnt						NUMBER := 0;
+	lv_amd_on_order_cnt						NUMBER := 0;
+	lv_spo_on_order_cnt						NUMBER := 0;
+	lv_amd_in_transit_good_cnt					NUMBER := 0;
+	lv_spo_in_transit_good_cnt					NUMBER := 0;
+	lv_amd_in_transit_def_cnt					NUMBER := 0;
+	lv_spo_in_transit_def_cnt					NUMBER := 0;
+	lv_amd_demands_cnt						NUMBER := 0;
+	lv_spo_demands_cnt						NUMBER := 0;
+	lv_amd_tsl_cnt							NUMBER := 0;
+	lv_spo_tsl_cnt							NUMBER := 0;
+	lv_hold1							NUMBER := 0;
+	lv_hold2							NUMBER := 0;
+	lv_hold3							NUMBER := 0;
+BEGIN
+dbms_output.put_line ('*************** Parts List ***********************');
+  SELECT count(*)
+    INTO lv_amd_parts_list_cnt
+    FROM amd_owner.amd_sent_to_a2a
+   WHERE action_code != 'D';
+  SELECT count(*)
+    INTO lv_spo_parts_list_cnt
+    FROM amd_owner.spo_part_v
+   WHERE end_date is null;
+dbms_output.put_line ('amd parts list count: '||lv_amd_parts_list_cnt||CHR(9)||CHR(9)||CHR(9)||
+                      'spo parts list count: '||lv_spo_parts_list_cnt);
+dbms_output.put_line ('************* Part and Prime *********************');
+  SELECT count(distinct(spo_prime_part_no))
+    INTO lv_amd_part_prime_cnt
+    FROM amd_owner.amd_sent_to_a2a
+   WHERE action_code != 'D';
+  SELECT count(*)
+    INTO lv_hold1
+    FROM amd_owner.spo_part_v
+   WHERE end_date is null;
+  SELECT count(*)
+    INTO lv_hold2
+    FROM amd_owner.spo_part_planned_part_v
+   WHERE end_date >= sysdate;
+   lv_spo_part_prime_cnt := lv_hold1 - lv_hold2;
+dbms_output.put_line ('amd part and prime relationship count: '||lv_amd_part_prime_cnt||CHR(9)||
+                      'spo part and prime relationship count: '||lv_spo_part_prime_cnt);
+dbms_output.put_line ('*********** Inventory On Hand Good ***************');
+  SELECT count(*)
+    INTO lv_hold1
+    FROM amd_owner.amd_on_hand_invs a
+   WHERE a.action_code != 'D'
+     AND exists (SELECT 'x'
+                   FROM amd_owner.amd_sent_to_a2a b
+	               WHERE a.part_no = b.part_no
+	                 AND b.action_code != 'D');
+  SELECT COUNT(UNIQUE(part_no))
+    INTO lv_hold2
+    FROM amd_owner.amd_rsp
+   WHERE action_code != 'D';	                 
+  lv_amd_on_hand_good_cnt := lv_hold1 + lv_hold2;
+  SELECT count(*)
+    INTO lv_spo_on_hand_good_cnt
+    FROM amd_owner.spo_lp_on_hand_v
+   WHERE on_hand_type = '1001';
+dbms_output.put_line ('amd Inventory On Hand good count: '||lv_amd_on_hand_good_cnt||CHR(9)||CHR(9)||
+                      'spo Inventory On Hand good count: '||lv_spo_on_hand_good_cnt);
+dbms_output.put_line ('******** Inventory On Hand Defective *************');
+  SELECT count(*)
+    INTO lv_amd_on_hand_def_cnt
+    FROM amd_owner.amd_in_repair a
+   WHERE a.action_code != 'D'
+     AND upper(a.order_no) = 'RETAIL'
+     AND exists (SELECT 'x'
+                     FROM amd_owner.amd_sent_to_a2a b
+	               WHERE a.part_no = b.part_no
+	                 AND b.action_code != 'D');
+  SELECT count(*)
+    INTO lv_spo_on_hand_def_cnt
+    FROM amd_owner.spo_lp_on_hand_v
+   WHERE on_hand_type = '1004';
+dbms_output.put_line ('amd Inventory On Hand defective count: '||lv_amd_on_hand_def_cnt||CHR(9)||
+                      'spo Inventory On Hand defective count: '||lv_spo_on_hand_def_cnt);
+dbms_output.put_line ('************* Inventory In Repair ****************');	               
+  SELECT count(*)
+    INTO lv_amd_in_repair_cnt
+    FROM amd_owner.amd_in_repair a
+   WHERE a.action_code != 'D'
+     AND upper(a.order_no) != 'RETAIL'
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.amd_sent_to_a2a b
+                  WHERE a.part_no = b.part_no
+                    AND b.action_code != 'D');
+  SELECT count(*)
+    INTO lv_spo_in_repair_cnt
+    FROM amd_owner.spo_confirmed_request_v a
+   WHERE a.request_type = 1002
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.spo_confirmed_request_line_v b
+                  WHERE a.id = b.confirmed_request); 
+dbms_output.put_line ('amd Inventory In Repair count: '||lv_amd_in_repair_cnt||CHR(9)||CHR(9)||
+                      'spo Inventory In Repair count: '||lv_spo_in_repair_cnt);
+dbms_output.put_line ('************* Inventory On Order *****************');
+/* check with yvonne */
+  SELECT count(*)
+    INTO lv_amd_on_order_cnt
+    FROM amd_owner.amd_on_order a
+   WHERE a.action_code != 'D' 
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.amd_sent_to_a2a b
+                  WHERE a.part_no = b.part_no
+                    AND b.action_code != 'D') ;             
+  SELECT count(*)
+    INTO lv_spo_on_order_cnt
+    FROM amd_owner.spo_confirmed_request_v  a
+   WHERE a.request_type = 1001
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.spo_confirmed_request_line_v b
+                  WHERE a.id = b.confirmed_request); 
+dbms_output.put_line ('amd Inventory On Order count: '||lv_amd_on_order_cnt||CHR(9)||CHR(9)||
+                      'spo Inventory On Order count: '||lv_spo_on_order_cnt);
+dbms_output.put_line ('*********** Inventory In Transit Good ************');
+  SELECT count(*)
+    INTO lv_amd_in_transit_good_cnt
+    FROM amd_owner.amd_in_transits a
+   WHERE a.action_code != 'D'
+     AND a.serviceable_flag = 'Y'
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.amd_sent_to_a2a b
+	               WHERE a.part_no = b.part_no
+	                 AND b.action_code != 'D');
+  SELECT count(*)
+    INTO lv_spo_in_transit_good_cnt
+    FROM amd_owner.spo_lp_in_transit_v
+   WHERE in_transit_type = '1001';
+dbms_output.put_line ('amd Inventory In Transit good count: '||lv_amd_in_transit_good_cnt||CHR(9)||
+                      'spo Inventory In Transit good count: '||lv_spo_in_transit_good_cnt);
+dbms_output.put_line ('******** Inventory In Transit Defective **********');
+  SELECT count(*)
+    INTO lv_amd_in_transit_def_cnt
+    FROM amd_owner.amd_in_transits a
+   WHERE a.action_code != 'D'
+     AND a.serviceable_flag = 'N'
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.amd_sent_to_a2a b
+	               WHERE a.part_no = b.part_no
+	                 AND b.action_code != 'D');
+  SELECT count(*)
+    INTO lv_spo_in_transit_def_cnt
+    FROM amd_owner.spo_lp_in_transit_v
+   WHERE in_transit_type = '1004';
+dbms_output.put_line ('amd Inventory In Transit defective count: '||lv_amd_in_transit_def_cnt||CHR(9)||
+                      'spo Inventory In Transit defective count: '||lv_spo_in_transit_def_cnt);
+dbms_output.put_line ('******************* Demands **********************');
+  SELECT count(*)
+    INTO lv_amd_demands_cnt
+    FROM amd_owner.amd_demands a
+   WHERE action_code != 'D'
+     AND EXISTS (SELECT 'x'
+                   FROM amd_owner.amd_national_stock_items b
+				      WHERE a.nsi_sid = b.nsi_sid
+				        AND EXISTS (SELECT 'x'
+				                      FROM amd_owner.amd_sent_to_a2a c
+							            WHERE b.prime_part_no = c.part_no
+							              AND b.action_code != 'D'));
+  SELECT count(*)
+    INTO lv_spo_demands_cnt
+    FROM amd_owner.spo_lp_demand_v;
+dbms_output.put_line ('amd Demands count: '||lv_amd_demands_cnt||CHR(9)||CHR(9)||CHR(9)||
+                      'spo Demands count: '||lv_spo_demands_cnt);
+dbms_output.put_line ('********************* TSL ************************');
+  SELECT count (distinct spo_prime_part_no)
+    INTO lv_hold1
+    FROM amd_sent_to_A2A
+   WHERE action_code ! = 'D'
+     AND Part_No = SPO_Prime_Part_No;
+  SELECT count(distinct SPO_Location)
+    INTO lv_hold2
+    FROM AMD_Spare_Networks
+   WHERE Action_Code != 'D'
+     AND SPO_Location is not null;
+  SELECT count(distinct MOB)
+    INTO lv_hold3
+    FROM AMD_Spare_Networks
+   WHERE Action_Code != 'D'
+     AND MOB is not null
+     AND SPO_Location is not null;
+  lv_amd_tsl_cnt := lv_hold1 * (lv_hold2 + lv_hold3);
+dbms_output.put_line ('amd distinct spo_prime_part_no count: '||lv_hold1);
+  SELECT count(distinct part)
+    INTO lv_hold1
+    FROM amd_owner.spo_lp_override_v tsl,
+         amd_owner.spo_part_v P
+   WHERE tsl.part = p.name
+     AND p.end_date IS NULL;
+  SELECT count(*)
+    INTO lv_spo_tsl_cnt
+    FROM amd_owner.spo_lp_override_v;
+dbms_output.put_line ('spo distinct spo_prime_part_no count: '||lv_hold1);
+dbms_output.put_line ('AMD TSL count: '||lv_amd_tsl_cnt||CHR(9)||CHR(9)||CHR(9)||CHR(9)||
+                      'spo TSL count: '||lv_spo_tsl_cnt);
+	insert into amd_spo_counts
+	(DAY, AMD_PARTS_LIST_CNT, SPO_PARTS_LIST_CNT, AMD_PART_PRIME_CNT,
+	  SPO_PART_PRIME_CNT, AMD_ON_HAND_GOOD_CNT, SPO_ON_HAND_GOOD_CNT, AMD_ON_HAND_DEF_CNT,
+  	  SPO_ON_HAND_DEF_CNT, AMD_IN_REPAIR_CNT, SPO_IN_REPAIR_CNT, AMD_ON_ORDER_CNT,
+  	  SPO_ON_ORDER_CNT, AMD_IN_TRANSIT_GOOD_CNT, SPO_IN_TRANSIT_GOOD_CNT, AMD_IN_TRANSIT_DEF_CNT,
+  	  SPO_IN_TRANSIT_DEF_CNT, AMD_DEMANDS_CNT, SPO_DEMANDS_CNT, AMD_TSL_CNT, SPO_TSL_CNT, TIMESTAMP) 
+	values (sysdate, lv_amd_parts_list_cnt, lv_spo_parts_list_cnt, lv_amd_part_prime_cnt,
+	lv_spo_part_prime_cnt, lv_amd_on_hand_good_cnt, lv_spo_on_hand_good_cnt, lv_amd_on_hand_def_cnt,
+	lv_spo_on_hand_def_cnt, lv_amd_in_repair_cnt, lv_spo_in_repair_cnt, lv_amd_on_order_cnt,
+	lv_spo_on_order_cnt, lv_amd_in_transit_good_cnt, lv_spo_in_transit_good_cnt, lv_amd_in_transit_def_cnt,
+	lv_spo_in_transit_def_cnt, lv_amd_demands_cnt, lv_spo_demands_cnt, lv_amd_tsl_cnt, lv_spo_tsl_cnt, sysdate) ;
+	commit; 
+END;
+/
+quit
+edit
+
+/

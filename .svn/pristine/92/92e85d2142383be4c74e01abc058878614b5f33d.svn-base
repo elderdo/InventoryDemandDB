@@ -1,0 +1,13 @@
+CREATE OR REPLACE TRIGGER "AMD_OWNER".amd_part_next_assemblies_trig2
+BEFORE UPDATE
+OF PN_NA_SID
+ON AMD_PART_NEXT_ASSEMBLIES
+FOR EACH ROW
+DECLARE
+BEGIN
+ IF :old.pn_na_sid <> :new.pn_na_sid THEN
+  RAISE_APPLICATION_ERROR(-20601, 'Can not change pn_na_sid');
+ END IF;
+END;
+
+/ 

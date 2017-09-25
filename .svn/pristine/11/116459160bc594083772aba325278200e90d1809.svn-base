@@ -1,0 +1,119 @@
+main started at Fri Jan 25 17:07:06 PST 2013
+checkIfSendingParts started at Fri Jan 25 17:07:06 PST 2013 exec'ed by zf297a
+checkIfSendingParts ended at Fri Jan 25 17:07:06 PST 2013 exec'ed by zf297a
+replicateGoldInventoryTables started at Fri Jan 25 17:07:06 PST 2013 exec'ed by zf297a
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh started at  Fri Jan 25 17:07:06 PST 2013
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/lib/replicateGoldInventoryTables.ksh ending at  Fri Jan 25 17:07:07 PST 2013
+replicateGoldInventoryTables ended at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+loadGoldInventory started at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+loadGoldInventory ended at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+loadAmdReqs started at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+loadAmdReqs ended at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+invDiff started at Fri Jan 25 17:07:07 PST 2013 exec'ed by zf297a
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/src/Jan.sql does not exist.
+/apps/CRON/AMD/lib/invDiff.ksh starting at  Fri Jan 25 17:07:07 PST 2013
+main started at Fri Jan 25 17:07:07 PST 2013
+execJavaDiffApp OnOrder started at Fri Jan 25 17:07:07 PST 2013
+Warning: Unable to load file OnOrder.properties via the classpath.
+start time: 1/25/13 05:07:11 PM
+amd_on_order_in=4833
+tmp_amd_on_order_in=4833
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 1/25/13 05:07:16 PM
+execJavaDiffApp OnOrder ended at Fri Jan 25 17:07:17 PST 2013
+execJavaDiffApp OnHandInvs started at Fri Jan 25 17:07:17 PST 2013
+Warning: Unable to load file OnHandInvs.properties via the classpath.
+start time: 1/25/13 05:07:20 PM
+amd_on_hand_invs_in=123120
+tmp_amd_on_hand_invs=123120
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 1/25/13 05:07:43 PM
+execJavaDiffApp OnHandInvs ended at Fri Jan 25 17:07:44 PST 2013
+execJavaDiffApp OnHandInvsSum started at Fri Jan 25 17:07:44 PST 2013
+Warning: Unable to load file OnHandInvsSum.properties via the classpath.
+start time: 1/25/13 05:07:47 PM
+amd_on_hand_invs_in=105496
+tmp_amd_on_hand_invs=105496
+rows inserted=0
+rows updated=0
+rows deleted=0
+end time: 1/25/13 05:08:16 PM
+execJavaDiffApp OnHandInvsSum ended at Fri Jan 25 17:08:17 PST 2013
+truncateInterfaceBatch started at Fri Jan 25 17:08:17 PST 2013
+truncateInterfaceBatch ended at Fri Jan 25 17:08:22 PST 2013
+queueSpoDataForImporting LpOnHand started at Fri Jan 25 17:08:22 PST 2013
+/apps/CRON/AMD/lib/sendToSpo.ksh: j#!/usr/bin/ksh:  not found
+start time: 1/25/13 05:08:32 PM
+flatfile: /apps/CRON/AMD/data/LpOnHand.csv
+time to write flat file:0seconds
+time to read SQL and put in buffer:5seconds
+v_lp_on_hand=105729
+x_lp_on_hand_v=105729
+rows inserted=1
+rows updated=7
+rows deleted=1
+end time: 1/25/13 05:09:08 PM
+LRM-00112: multiple values not allowed for parameter 'log'
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Fri Jan 25 17:09:09 2013
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+SQL*Loader-100: Syntax error on command-line
+chmod: can't access 2013_05_LpOnHand.log
+2013_05_LpOnHand.log: No such file or directory
+Fri Jan 25 17:09:09 PST 2013: sqlldr failed for LpOnHand
+sendToSpo: loadImportTable failed for LpOnHand
+sendToSpo: loadImportTable failed for LpOnHand
+queueSpoDataForImporting failed for sendToSpo.ksh LpOnHand
+chmod: can't access 2013_05_invDiff.log
+/apps/CRON/AMD/lib/invDiff.ksh ending at  Fri Jan 25 17:09:09 PST 2013
+invDiff ended at Fri Jan 25 17:09:09 PST 2013 exec'ed by zf297a
+notify ./loadInventory.ksh started at Fri Jan 25 17:09:09 PST 2013 exec'ed by zf297a
+notify ./loadInventory.ksh ended at Fri Jan 25 17:09:10 PST 2013 exec'ed by zf297a
+tacticalPostProcess started at Fri Jan 25 17:09:10 PST 2013 exec'ed by zf297a
+Fri Jan 25 17:09:10 PST 2013: For SPO_ENV=prod /apps/CRON/AMD/lib/trimTactics.ksh -f none -o skip -t run -s default -c ATR -r no_restart
+prePPHolds started at Fri Jan 25 17:09:17 PST 2013
+prePPHolds ended at Fri Jan 25 17:09:20 PST 2013
+tactics started at Fri Jan 25 17:09:20 PST 2013
+Fri Jan 25 17:09:20 PST 2013: Lock file /tmp/trimTactics.lock created (-rw-r-----   1 amduser    amd              0 Jan 25 17:09 /tmp/trimTactics.lock)
+/apps/CRON/AMD/lib/trimTactics.ksh  started at Fri Jan 25 17:09:20 PST 2013
+Fri Jan 25 17:09:20 PST 2013: executing: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com
+return code from ssh is 0
+Fri Jan 25 18:11:58 PST 2013: ssh -l amduser gpstl103.stl.mo.boeing.com sudo -u escm /data01/websites/control/sh/site_control/site_control.sh prod none n y x ATR n douglas.s.elder@boeing.com - processing completed.   The lock file /tmp/trimTactics.lock has been removed
+Fri Jan 25 18:12:00 PST 2013: capture log file from the remote server using these commands:
+ssh -l amduser gpstl103.stl.mo.boeing.com uname -s > /tmp/OS.txt 2>> /tmp/bannerMessages.txt
+Fri Jan 25 18:12:01 PST 2013 ssh -l amduser gpstl103.stl.mo.boeing.com find /data01/websites/control/log/spo_processing -mtime -1  -name "c17_prod_none_x_tactics.log_old" > /tmp/tacticsLogFile.txt
+Fri Jan 25 18:12:02 PST 2013 ssh -l amduser gpstl103.stl.mo.boeing.com cat /data01/websites/control/log/spo_processing/c17_prod_none_x_tactics.log_old > /apps/CRON/AMD/log/2013012517_09_10_07_c17_prod_none_x_tactics.log
+end of allert scanner   Fri Jan 25 20:11:58 CST 2013
+Fri Jan 25 18:12:03 PST 2013: For SPO_ENV=prod using /apps/CRON/AMD/data/trimTacticsSedFilter.txt to filter out erroneous errors from /apps/CRON/AMD/log/2013012517_09_10_07_c17_prod_none_x_tactics.log
+tactics ended at Fri Jan 25 18:12:03 PST 2013
+postPPHolds started at Fri Jan 25 18:12:03 PST 2013
+postPPHolds ended at Fri Jan 25 18:12:06 PST 2013
+postPPAlerts started at Fri Jan 25 18:12:06 PST 2013
+postPPAlerts ended at Fri Jan 25 18:12:13 PST 2013
+
+SQL*Loader: Release 9.2.0.4.0 - Production on Fri Jan 25 18:12:13 2013
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+Commit point reached - logical record count 107
+tacticalPostProcess ended at Fri Jan 25 18:12:16 PST 2013 exec'ed by zf297a
+main ended at Fri Jan 25 18:12:16 PST 2013

@@ -1,0 +1,96 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:10  $
+     $Workfile:   amd_load_details.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_load_details.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:10   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_LOAD_DETAILS
+(
+  LOAD_NO       NUMBER,
+  DATA_LINE_NO  NUMBER,
+  DATA_LINE     VARCHAR2(2000 BYTE),
+  KEY_1         VARCHAR2(50 BYTE),
+  KEY_2         VARCHAR2(50 BYTE),
+  KEY_3         VARCHAR2(50 BYTE),
+  KEY_4         VARCHAR2(50 BYTE),
+  KEY_5         VARCHAR2(50 BYTE),
+  COMMENTS      VARCHAR2(2000 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX AMD_LOAD_DETAILS_LOAD_NO_I ON AMD_LOAD_DETAILS
+(LOAD_NO)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX AMD_LOAD_DETAILS_KEY_1_I ON AMD_LOAD_DETAILS
+(KEY_1)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_LOAD_DETAILS FOR AMD_LOAD_DETAILS;
+
+
+ALTER TABLE AMD_LOAD_DETAILS ADD (
+  CHECK ("LOAD_NO" IS NOT NULL) DISABLE);
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_LOAD_DETAILS TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_LOAD_DETAILS TO AMD_USER;
+
+GRANT SELECT ON  AMD_LOAD_DETAILS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_LOAD_DETAILS TO AMD_WRITER_ROLE;
+
+

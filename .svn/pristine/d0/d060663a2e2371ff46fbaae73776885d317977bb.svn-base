@@ -1,0 +1,63 @@
+#
+#   $Author:   zf297a  $
+# $Revision:   1.1  $
+#     $Date:   20 Feb 2007 07:35:16  $
+# $Workfile:   log4j.properties  $
+#
+#SCCSID: log4j.properties  1.2  Modified: 08/06/02 13:01:55
+#
+# Date      Who            Purpose
+# --------  -------------  --------------------------------------------------
+# 08/05/02  Douglas Elder  Initial implementation
+# 08/06/02  Fernando F.    Added log directory for WinDiff.log.
+#
+
+# Set root logger level to INFO and its only appender to R
+log4j.rootLogger=INFO, R
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=/apps/CRON/AMD/log/WinDiff.log
+
+log4j.appender.R.MaxFileSize=1000KB
+# Keep one backup file
+log4j.appender.R.MaxBackupIndex=4
+
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%d %5p [%t] (%F:%L) %c - %m%n
+
+log4j.logger.LPOverrideConsumables=INFO
+log4j.logger.LPOverrideConsumablesFactory=INFO
+log4j.logger.OnHandInvs=INFO
+log4j.logger.OnHandInvsSum=INFO
+log4j.logger.RepairInvsSum=INFO
+log4j.logger.InTransit=INFO
+log4j.logger.InTransitSum=INFO
+log4j.logger.AmdReqs=INFO
+log4j.logger.Backorder=INFO
+log4j.logger.BackorderFactory=INFO
+log4j.logger.BackorderSpoSum=INFO
+log4j.logger.SparePart=DEBUG
+log4j.logger.WindowAlgo=INFO
+log4j.logger.TableSnapshot=INFO
+log4j.logger.OnOrder=INFO
+log4j.logger.LpInTransit=INFO
+log4j.logger.LpOnHand=INFO
+log4j.logger.InRepair=INFO
+log4j.logger.Planner=INFO
+log4j.logger.PlannerLogons=INFO
+log4j.logger.Rsp=INFO 
+log4j.logger.RspSum=INFO 
+log4j.logger.SpoPart=INFO
+log4j.logger.PartPlannedPart=INFO
+log4j.logger.Users=DEBUG
+log4j.logger.SpoUser=DEBUG
+log4j.logger.SpoPartLeadTime=DEBUG
+log4j.logger.PartCausalType=DEBUG
+log4j.logger.LpDemandForecast=DEBUG
+log4j.logger.LpDemand=DEBUG
+log4j.logger.ConfirmedRequestLine=DEBUG
+log4j.logger.InsertAgingBuffer=INFO
+log4j.logger.LpAttribute=DEBUG
+log4j.logger.LpLeadTime=DEBUG
+log4j.logger.LpOverride=INFO
+log4j.logger.BomLocationContract=DEBUG

@@ -1,0 +1,87 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:06  $
+     $Workfile:   amd_icao_regions.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_icao_regions.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:06   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_ICAO_REGIONS
+(
+  ICAO_REGION_ID  VARCHAR2(1 BYTE)              NOT NULL,
+  LOC_SID         NUMBER
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_ICAO_REGIONS_PK ON AMD_ICAO_REGIONS
+(ICAO_REGION_ID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_ICAO_REGIONS FOR AMD_ICAO_REGIONS;
+
+
+ALTER TABLE AMD_ICAO_REGIONS ADD (
+  CHECK ("LOC_SID" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_ICAO_REGIONS ADD (
+  CONSTRAINT AMD_ICAO_REGIONS_PK PRIMARY KEY (ICAO_REGION_ID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AMD_ICAO_REGIONS ADD (
+  CONSTRAINT AMD_ICAO_REGIONS_FK01 FOREIGN KEY (LOC_SID) 
+    REFERENCES AMD_SPARE_NETWORKS (LOC_SID));
+
+
+GRANT SELECT ON  AMD_ICAO_REGIONS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_ICAO_REGIONS TO AMD_WRITER_ROLE;
+
+

@@ -1,0 +1,27 @@
+DROP VIEW AMD_OWNER.PGOLD_CHGH_V;
+
+/* Formatted on 7/9/2012 4:24:23 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.PGOLD_CHGH_V
+(
+   CHGH_ID,
+   KEY_VALUE1,
+   "TO",
+   FIELD,
+   "FROM"
+)
+AS
+   SELECT TRIM (chgh_id),
+          key_value1,
+          "TO",
+          field,
+          "FROM"
+     FROM chgh@amd_pgoldlb_link
+    WHERE field = 'NSN';
+
+
+DROP PUBLIC SYNONYM PGOLD_CHGH_V;
+
+CREATE OR REPLACE PUBLIC SYNONYM PGOLD_CHGH_V FOR AMD_OWNER.PGOLD_CHGH_V;
+
+
+GRANT SELECT ON AMD_OWNER.PGOLD_CHGH_V TO AMD_READER_ROLE;

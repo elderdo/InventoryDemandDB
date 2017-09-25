@@ -1,0 +1,235 @@
+--02-17T21:10  zf297a     create version "amd_load.pkb@@\main\95"
+  "rmoved bssm_owner and amd_owner qualifier"
+2013-08-03     zf297a     create version "amd_load.pkb@@\main\94" (SDS-AMD-PROD)
+  "added exception handler for loadMain and changed the select for order_qty to distinct"
+2012-08-15     zf297a     create version "amd_load.pkb@@\main\93" (SDS-AMD-QA)
+2012-07-05     zf297a     create version "amd_load.pkb@@\main\92" (SDS-AMD-DEV)
+  "removed truncation of tmp_a2a tables"
+2012-02-22     zf297a     create version "amd_load.pkb@@\main\cost_to_repair_patch\1"
+2012-02-22     zf297a     create version "amd_load.pkb@@\main\cost_to_repair_patch\0"
+2012-02-22     zf297a     create branch "amd_load.pkb@@\main\cost_to_repair_patch"
+2012-02-22     zf297a     create version "amd_load.pkb@@\main\90" (AMD_4.0)
+  "Changed loadPsms to use better slic views to get the smr code and shelf life data.
+   Reformated the loadGold code to make it neater and easier to read"
+2012-02-21     zf297a     create version "amd_load.pkb@@\main\89"
+  "optimized getSmr and use get off base repair cost function"
+2012-02-09     zf297a     create version "amd_load.pkb@@\main\88"
+  "changed name of pslms views to slic with the _v suffix"
+2011-12-07     zf297a     create version "amd_load.pkb@@\main\87"
+  "Modified query that was using ccn_prefix to make it independent of the prefix length"
+2011-08-03     zf297a     create version "amd_load.pkb@@\main\86"
+  "Add the useBizDays switch so that when GOLD starts using calendar days
+   the convert to business days can be easily turned off for amd_spare_parts.order_lead_time"
+2010-03-19     zf297a     create version "amd_load.pkb@@\main\85" (AMD_3.9.5)
+  "Added check for action_code <> 'D'"
+2010-03-19     zf297a     create version "amd_load.pkb@@\main\getOffBaseTurnAroundPatch\1" (AMD_3.9.4)
+  "Comply with ClearQuest LBPSS00002451"
+2010-03-19     zf297a     create version "amd_load.pkb@@\main\getOffBaseTurnAroundPatch\0"
+2010-03-19     zf297a     create branch "amd_load.pkb@@\main\getOffBaseTurnAroundPatch"
+  "Comply with ClearQuest LBPSS00002451"
+2010-03-18     zf297a     create version "amd_load.pkb@@\main\84"
+  "Made code changes to function getOffBaseTurnAround to comply with ClearQuest LBPSS00002451"
+2010-02-26     zf297a     create version "amd_load.pkb@@\main\83"
+  "Fixed change log"
+2010-02-19     b1013683   create version "amd_load.pkb@@\main\82"
+  "Eliminated the PsmsInstance Function and updated the Procedure GetPsmsData to comply with the conversion of the SLICWave."
+2010-02-11     b1013683   create version "amd_load.pkb@@\main\81"
+  "Made changes in getting smr_code and shelf_life from PSMS to SLICWave and PSMV is going away."
+2010-01-20     zf297a     create version "amd_load.pkb@@\main\80"
+  "Removed constant the_a2a_pkg which is more a2a code not being used."
+2010-01-20     zf297a     create version "amd_load.pkb@@\main\79"
+  "Thuy is making changes to loadPsms and Douglas removed amd_partPrime_pkg.diffPartToPrime"
+2009-10-05     zf297a     create version "amd_load.pkb@@\main\78" (AMD_3.9)
+  "Removed a2a code"
+2009-07-15     zf297a     create version "amd_load.pkb@@\main\77"
+  "removed a2a code"
+2009-07-06     zf297a     create version "amd_load.pkb@@\main\76"
+  "Load amd_rbl_pairs using the ISGP views"
+2009-05-02     c394547    import file element "amd_load.pkb@@"
+2009-02-24     zf297a     create version "amd_load.pkb@@\main\75"
+  "eliminated part factors load of virtual loc's."
+2009-02-14     zf297a     create version "amd_load.pkb@@\main\74"
+  "Removed invocation of any A2A procedure for package amd_location_part_override_pkg since all A2A code has been removed from that package."
+2008-11-26     zf297a     create version "amd_load.pkb@@\main\73" (AMD.3.6)
+  "Use new debugMsg procedure with a pError_location parameter to help locate the debugMsg in the code.  Also, added the autonomous transaction pragma.
+   Inserted lots of debug code for loadGold.
+   
+   "
+2008-09-30     zf297a     create version "amd_load.pkb@@\main\72" (AMD.3.3)
+  "Fixed getBemsId ... was not returning a bemsid when it should have for a C + bems_id."
+2008-07-07     zf297a     create version "amd_load.pkb@@\main\71" (AMD.3.0)
+  "Make the debugThreshold 1/10 of the size of amd_spare_partss when a null value is passed to the setDebugThreshold procedure."
+2008-07-07     zf297a     create version "amd_load.pkb@@\main\70"
+  "Implemented interfaces getDebugThreshold and setDebugThreshold.  Added debug code to time routines."
+2008-07-04     zf297a     create version "amd_load.pkb@@\main\69"
+  "Added bulk insert to loadGold and bulk update to loadMain and loadPsms.  Added timing dbms_output to loadGold."
+2008-06-30     zf297a     create version "amd_load.pkb@@\main\68"
+  "Implemented setDebug, and getDebug.  Changed default for bulkInsertThreshold to 600."
+2008-05-23     zf297a     create version "amd_load.pkb@@\main\67"
+  "Implemented  function getVersion."
+2008-05-23     zf297a     create version "amd_load.pkb@@\main\66"
+  "Make sure that all planner_code exist in amd_planners where amd_planners.action_code <> 'D'"
+2007-11-07     zf297a     create version "amd_load.pkb@@\main\65" (AMD.2.1)
+  "Added bulk collect to most cursors."
+2007-09-24     zf297a     create version "amd_load.pkb@@\main\1.60.1\1" (AMD.1.8.1)
+  "Added hint to sql statement in boolean function onNsn to make sure Oracle uses the index.
+   Removed commits from all loops to speed up processing."
+2007-09-12     zf297a     create version "amd_load.pkb@@\main\64" (AMD.2.0)
+  "Removed commits from for loops."
+2007-08-25     zf297a     create version "amd_load.pkb@@\main\63"
+  "Added hint to sql statement in boolean function onNsl to make sure Oracle uses the correct index in its execution plan."
+2007-08-09     c402417    create version "amd_load.pkb@@\main\62"
+  "Added procedure LoadWecm to support Version 6.p with Consumables."
+2007-07-05     c402417    create version "amd_load.pkb@@\main\1.60.1\0"
+2007-07-05     c402417    create branch "amd_load.pkb@@\main\1.60.1"
+  "Modified the main where clause in LoadRblPairs."
+2007-07-05     c402417    create version "amd_load.pkb@@\main\61"
+  "Modified the main where clause in LoadRblPairs."
+2007-04-24     zf297a     create version "amd_load.pkb@@\main\60" (AMD.1.8.06.6)
+  "Modified algorithm of getCalculatedData:
+   1. try getting cleaned data by nsn
+   2. try getting cleaned data by part_no/nsn
+   3. try getting original data by nsn
+   4. try getting original data by part_no"
+2007-04-23     zf297a     create version "amd_load.pkb@@\main\59"
+  "Fixed getCalculatedData: 1st tried getting the cleaned data via nsn and verifying that either the nsn is currently active or that the part_no for the lock_sid 0 is currently active.
+   If no data is not found try getting the lock sid 0 data and verifying that either the nsn is active or the part_no is active.
+   If no data is found, try getting the  original data via part_no and verifying that either the nsn is active or the part is active."
+2007-04-12     zf297a     create version "amd_load.pkb@@\main\58"
+  "Added commit threshold checks for all load routines.  Converted execute immediate to mta_truncate_table per DBA's recommendation."
+2007-04-10     zf297a     create version "amd_load.pkb@@\main\57"
+  "Added Trim's to updateUsersRow for the Users diff"
+2007-04-10     zf297a     create version "amd_load.pkb@@\main\56"
+  "Made partNo varchar2 for getOffBaseTurnAround and getOffBaseRepairCost"
+2007-04-10     zf297a     create version "amd_load.pkb@@\main\55"
+  "Trimmed amd_users fields"
+2007-04-05     zf297a     create version "amd_load.pkb@@\main\54"
+  "Get rid of recursion error - getByPatNo"
+2007-04-04     zf297a     create version "amd_load.pkb@@\main\53"
+  "Fixed getCalculatedData to try getting mtbdr_computed in the following order:
+   by nsn for cleaned data
+   by nsn for original data
+   by part for cleaned data
+   by part for original data."
+2007-04-03     zf297a     create version "amd_load.pkb@@\main\52"
+  "Fix getOriginalBssmData to try first by using the nsn and then using the part_no."
+2007-04-02     zf297a     create version "amd_load.pkb@@\main\51"
+  "Replaced getOriginalBssmData with the new inferface that does not use the mtbdr_computed argument.
+   
+   Simplified the procedure getOriginalBssmData by only using one "select" and its exception handlers.
+   
+   Replaced procedure getCalulatedData with function getCalculatedData which takes two arguments: nsn and part_no and returns mtbdr_computed.
+   
+   Use the new getOriginalBssmData and getCalculatedData in procedure getBssmData.
+   
+   Implemented function getOrderLeadTime - it takes a trimmed part_no and retrives the order lead time from cat1 if it can find it otherwise it returns a null.
+   
+   Eliminated ave_cap_lead_time from the catCur cursor since that data is being retrieved by the function getOrderLeadTime
+   
+   Implemented functions getORIGINAL_DATA, getCLEANED_DATA, and getCURRENT_NSN to return their assocaited constants."
+2007-03-05     c402417    create version "amd_load.pkb@@\main\50"
+  "Amd_spare_parts.order_lead-time is now getting data from Cat1 instead of tmp_main per Laurie."
+2007-02-14     zf297a     create version "amd_load.pkb@@\main\49"
+  "Added amc_demand to getOrigianlBssmData and added amc_demand_cleaned to getCleanedBssmData. Implemented getCalculatedData to get mtbdr_computed.
+   Added amc_demand and amc_demand_cleaned to getBssmData.  Added invocation of getCalculatedData to getBssmData.  Added amc_demand and amc_demand_cleaned to insert of tmp_amd_spare_parts."
+2007-01-17     c402417    create version "amd_load.pkb@@\main\48" (AMD.1.8.06.4)
+  "Added Procedure LoadRblPairs - This step is to populate the data to table AMD_RBL_PAIRS from the Gold database instead of using data from the FedLog."
+2006-11-21     zf297a     create version "amd_load.pkb@@\main\47" (AMD.1.8.06.2)
+  "Fixed insert of tmp_a2a_site_resp_asset_mgr"
+2006-10-31     zf297a     create version "amd_load.pkb@@\main\46" (AMD.1.8.06)
+  "Implemented validatePartStructure"
+2006-10-13     zf297a     create version "amd_load.pkb@@\main\45"
+  "For the primeCat cursor changed the RTRIM's to TRIM (a part with a leading space got loaded into amd_spare_parts).  For catCur changed the RTRIM to TRIM."
+2006-10-10     zf297a     create version "amd_load.pkb@@\main\44" (AMD.1.8.05.4)
+  "For function getBemsId, errorMsg and writeMsg cannot be used when the function is being used in a query.   Therefore, the error handling routines have been adjusted to check for this error and use the raise_application_error as a last resort for report what may be wrong with the function.  Enhanced the algorithm to try getting the bems_id via the clock number (emp_id) and if that fails try using the employeeNo as the bems_id and verify it against the amd_people_all_v table."
+2006-10-10     zf297a     create version "amd_load.pkb@@\main\43"
+  "Added more error checks for getBemsId.  "
+2006-10-03     zf297a     create version "amd_load.pkb@@\main\42" (AMD.1.8.05.1)
+  "Make sure planner_code_cleaned and smr_code_cleaned are in upper case"
+2006-09-18     zf297a     create version "amd_load.pkb@@\main\41" (AMD.1.8.05)
+  "Removed infoMsg.  Added writeMsg at the start and the end of loadGold, loadPsms, and loadMain.  Changed all execute immediates to use mta_truncate_table.  Changed errorMsg to have default values for all args and changed error_location to pError_Location.   Added dbms_output.put_line to version.  Fixed 2nd select of bssm data to use only the part and verify that it has an nsn_type of C for current."
+2006-09-15     zf297a     create version "amd_load.pkb@@\main\40"
+  "Added data_source to insertSiteRespAssetMgr"
+2006-07-11     zf297a     create version "amd_load.pkb@@\main\39"
+  "Removed quotes from package name"
+2006-06-09     zf297a     create version "amd_load.pkb@@\main\38"
+  "implemented version"
+2006-06-04     zf297a     create version "amd_load.pkb@@\main\37"
+  "Fixed createSiteRespAssetMgrA2Atran to use a cursor."
+2006-03-20     zf297a     create version "amd_load.pkb@@\main\36" (AMD.1.8.04)
+  "Added  "Future use" comments"
+2006-03-19     zf297a     create version "amd_load.pkb@@\main\35"
+  "Used didStepComplete to conditionally execute a batch step only once for a given job."
+2006-03-17     zf297a     create version "amd_load.pkb@@\main\34"
+  "Eliminated rudundant step ending code."
+2006-03-16     zf297a     create version "amd_load.pkb@@\main\33"
+  "Add steps to PrepAmdDatabase"
+2006-03-16     zf297a     create version "amd_load.pkb@@\main\32"
+  "Added step info to preProcess and LoadGoldPsmsMain"
+2006-03-16     zf297a     create version "amd_load.pkb@@\main\31"
+  "Fixed retrieval of bssm data: try to retrieve the data using nsn and if the data is not found, use the part_no.  Write separate procedures for the routinese that gather rmads data and bssm data to enable easy unit testing."
+2006-03-08     zf297a     create version "amd_load.pkb@@\main\30"
+  "Added mtbdr_computed"
+2006-03-05     zf297a     create version "amd_load.pkb@@\main\29"
+  "Implemented  loadGoldPsmsMain, preProcess, postProcess, postDiffProcess, prepAmdDatabase, disableAmdConstraints, truncateAmdTables, and enableAmdConstraints to simplify the amd_loader.ksh script."
+2005-12-15     zf297a     create version "amd_load.pkb@@\main\28" (AMD.1.8.03, AMD.1.8.02, AMD.1.8.01, AMD.1.8)
+  "Added truncate table for tmp_a2a_bom_detail and tmp_a2a_part_effectivity to loadGold"
+2005-12-07     zf297a     create version "amd_load.pkb@@\main\27"
+  "Fixed insertUsersRow by returning SUCCESS after a doUpdate is invoked without an error."
+2005-12-07     zf297a     create version "amd_load.pkb@@\main\26"
+  "fixed insertUsersRow by adding a doUpdate routine for a user that has been"
+2005-12-06     zf297a     create version "amd_load.pkb@@\main\25"
+  "Fixed display of sysdate in errorMsg - changed to MM/DD/YYYY HH:MM:SS"
+2005-11-23     zf297a     create version "amd_load.pkb@@\main\24"
+  "Fixed routine getBssmData, the getOriginalData begin block, added an additional qualification for the subselect getting data from amd_nsns so that only one row of data is returned by this query: added "and nsn_type = 'C', which checks for the "current" nsn being used - there can only be one of these per nsi_sid."
+2005-08-26     zf297a     create version "amd_load.pkb@@\main\23"
+  "updated getOffBaseTurnAroundTime to use an action taken of 'F' (modification/repair) and changed interface for amd_clean_data to use both nsn and part_no "
+2005-08-16     zf297a     create version "amd_load.pkb@@\main\22"
+  "removed loadCurrentBackorder"
+2005-08-09     zf297a     create version "amd_load.pkb@@\main\21"
+  "Added the ability to dynamically use debugMsg via the amd_param_changes table having a param debugAmdLoad with a value of 1."
+2005-08-05     zf297a     create version "amd_load.pkb@@\main\20"
+  "Fixed insertRow for amd_planners to handle changing of a logically deleted planner to an added planner.  Added return SUCCESS to insertUsersRow, updateUsersRow, and deleteUsersRow."
+2005-08-04     zf297a     create version "amd_load.pkb@@\main\19"
+  "Implemented insertUsersRow, updateUsersRow, and deleteUsersRow for the amd_users diff java application."
+2005-07-28     zf297a     create version "amd_load.pkb@@\main\18"
+  "Qualified cursors currentUsers, newUsers, and deleteUsers with action_codes not equal to amd_defaults.DELETE_ACTION."
+2005-07-27     zf297a     create version "amd_load.pkb@@\main\17"
+  "Refined newUsers and deleteUsers cursors for loadUsers"
+2005-07-27     zf297a     create version "amd_load.pkb@@\main\16"
+  "Fixed getBemsId by transforming the employeeNo into a work field before it is used in a query.  Fixed loadUsers by refering to the besm_id via the rec variable for the insert statement and the invocation of the spo routines."
+2005-07-26     zf297a     create version "amd_load.pkb@@\main\15"
+  "Enhanced the loadUsers procedure to use the getBemsId function."
+2005-07-20     zf297a     create version "amd_load.pkb@@\main\14"
+  "using only bems_id for amd_users"
+2005-07-19     zf297a     create version "amd_load.pkb@@\main\13"
+  "added procedure loadUsers - populates the amd_users table and sends inserts, updates, and deletes via the a2a_pgk.spoUser procedure."
+2005-06-10     c970183    create version "amd_load.pkb@@\main\12"
+  "using new version of insertSiteRespAssetMgr with the additional param of action_code"
+2005-06-09     c970183    create version "amd_load.pkb@@\main\11"
+  "Added insert, update, and delete routines for the amd_planners diff and the amd_planner_logons diff."
+2005-05-17     c970183    create version "amd_load.pkb@@\main\10"
+  "Modified getCleaned block to use the amd_clean_data package functions."
+2005-05-17     c970183    create version "amd_load.pkb@@\main\9"
+  "Update InsertErrorMessage to new interface"
+2005-05-16     c970183    create version "amd_load.pkb@@\main\8"
+  "Moved time_to_repair_off_base and cost_to_repair_off_base from amd_part_locs to be part of tmp_amd_spare_parts."
+2005-05-06     c970183    create version "amd_load.pkb@@\main\7"
+  "added truncate of tables tmp_a2a_part_info, tmp_a2a_part_lead_time, and tmp_a2a_part_pricing."
+2005-04-27     c970183    create version "amd_load.pkb@@\main\6"
+  "added infoMsg, which is almost the same as ErrorMsg, but it does not do a Rollback or a commit."
+2005-01-13     c402417    create version "amd_load.pkb@@\main\5" (AMD.1.6.1)
+  "Added mmac and Unit_of_issue"
+2001-12-06     c372701    create version "amd_load.pkb@@\main\4"
+  "gw - 12/06/01 - Checked In for Doug Elder"
+2001-10-22     c970408    create version "amd_load.pkb@@\main\3"
+  "Removed references to venc, venn from LoadGold()."
+2001-10-22     c970408    create version "amd_load.pkb@@\main\2"
+  "removed cage_code from venc, venn"
+2001-10-08     c372701    create version "amd_load.pkb@@\main\1"
+  "Initial revision."
+2001-10-08     c372701    create version "amd_load.pkb@@\main\0"
+2001-10-08     c372701    create branch "amd_load.pkb@@\main"
+2001-10-08     c372701    create file element "amd_load.pkb@@"
+  "gw - 10/08/01 - Initial CheckIn
+   "

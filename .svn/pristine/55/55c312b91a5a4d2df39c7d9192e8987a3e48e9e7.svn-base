@@ -1,0 +1,34 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 23 2005 12:04:40  $
+     $Workfile:   temp_ham_seq.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\Sequences\temp_ham_seq.sql-arc  $
+/*   
+/*      Rev 1.0   May 23 2005 12:04:40   c970183
+/*   Initial revision.
+*/
+
+DROP SEQUENCE AMD_OWNER.TEMP_HAM_SEQ;
+
+CREATE SEQUENCE AMD_OWNER.TEMP_HAM_SEQ
+  START WITH 1
+  MAXVALUE 999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 20
+  ORDER;
+
+
+DROP PUBLIC SYNONYM TEMP_HAM_SEQ;
+
+CREATE PUBLIC SYNONYM TEMP_HAM_SEQ FOR AMD_OWNER.TEMP_HAM_SEQ;
+
+
+GRANT SELECT ON  AMD_OWNER.TEMP_HAM_SEQ TO AMD_COSMIC_SUPERUSER;
+
+GRANT SELECT ON  AMD_OWNER.TEMP_HAM_SEQ TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_OWNER.TEMP_HAM_SEQ TO AMD_USER;
+
+

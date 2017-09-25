@@ -1,0 +1,58 @@
+analyzeTablesIndexes.sql
+autoLoadSpareNetworks.sql
+emailWarnings.sql $SEND_TO
+endStep.sql
+loadActiveNiins.sql
+loadAmdBaseFromBssmRaw.sql
+loadAmdBssmSourceTmpAmdDemands.sql
+loadAmdDemandsTable.sql
+loadAmdDmndFrcstConsumables.sql
+loadAmdPartLocations.sql
+loadAmdReqs.sql
+loadBascUkDemands.sql
+loadCat1.sql $THE_DB_LINK 
+loadCgvt.sql $THE_DB_LINK
+loadChgh.sql $THE_DB_LINK
+loadCurrentBackOrder.sql
+loadFedc.sql $THE_DB_LINK
+loadFmsDemands.sql
+loadGold.sql
+loadGoldInventory.sql
+loadIsgp.sql $THE_DB_LINK
+loadItem.sql $THE_DB_LINK
+loadItemsa.sql amd_goldsa_link
+loadL11.sql
+loadLatestRblRun.sql
+loadLvls .sql$THE_DB_LINK
+loadMain.sql
+loadMils.sql $THE_DB_LIN
+loadMlit.sql $THE_DB_LINK
+loadNsn1.sql $THE_DB_LINK
+loadOrd1.sql $THE_DB_LINK
+loadOrdv.sql $THE_DB_LINK
+loadPoi1.sql $THE_DB_LINK
+loadPrc1.sql $THE_DB_LINK
+loadPsms.sql
+loadRamp.sql $THE_DB_LINK
+loadRblPairs.sql
+loadReq1.sql $THE_DB_LINK
+loadRsv1.sql $THE_DB_LINK
+loadTempNsns.sql
+loadTmp1.sql $THE_DB_LINK
+loadTmpAmdLocPartLeadTime.sql
+loadTmpAmdPartFactors.sql
+loadTmpAmdPartLocForecasts_Add.sql
+loadTrhi.sql $THE_DB_LINK
+loadUims.sql $THE_DB_LINK
+loadUse1.sql $THE_DB_LINK
+loadVenc.sql $THE_DB_LINK
+loadVenn.sql $THE_DB_LINK
+loadWecm.sql
+loadWhse.sql $THE_DB_LINK amd_goldsa_link
+sendWarningMsg.sql
+startStep.sql
+truncRblPairs.sql
+truncateInterfaceBatch.sql
+updateAmdAllBaseCleaned.sql
+updateCostToRepairOffBase.sql
+updateRamp.sql

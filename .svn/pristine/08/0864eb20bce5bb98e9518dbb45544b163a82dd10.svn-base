@@ -1,0 +1,83 @@
+select 	',',
+	asn.loc_id 		as siteid, 	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	'A'			as syncind,	',',
+	REPLACE(asn.location_name, ',', ' ') 	as sitename, 	',',
+	decode(asn.loc_type, 'VEN', 'VENDOR', asn.loc_type) as sitetype, ',',
+	',',
+	',',
+	''			as priority,	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	''			as reviewfence
+	
+	 
+from amd_spare_networks asn
+where asn.loc_type not in ('OBR', 'STR', 'ALL')
+and asn.action_code != 'D'
+
+union
+
+select 	',',
+	asn.loc_id || '_DIFM' 		as siteid, 	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	'A'			as syncind,		',',
+	asn.location_name || '_DIFM' 	as sitename, 	',',
+	asn.loc_type 			as sitetype, 	',', 
+	',',
+	',',
+	''				as priority,		',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	''			as reviewfence
+	 
+from amd_spare_networks asn
+where 	asn.loc_type in ('FSL', 'MOB') 
+and asn.action_code != 'D'
+	

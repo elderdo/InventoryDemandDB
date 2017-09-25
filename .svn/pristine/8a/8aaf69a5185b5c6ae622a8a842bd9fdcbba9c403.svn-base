@@ -1,0 +1,18 @@
+; AMDP.txt
+; Author: Douglas S. Elder
+; Date: 9/12/2014
+; Rev: 2/17/2015 added new ctl and data file
+;
+; Desc: This script is
+; used by runSqlldr.bat
+; and allows it to run
+; Oracle's sqlldr with 
+; these 4 required params:
+; HOST_STRING, ORACLE_HOME,
+; CTL_FILE and DATA_FILE 
+;
+HOST_STRING=db0093p1
+ORACLE_HOME=C:\oracle\11gR202Client64bit
+CTL_FILE=amd_benchstock_csv_format.ctl
+DATA_FILE=benchstock.csv
+APPNAME=benchstock

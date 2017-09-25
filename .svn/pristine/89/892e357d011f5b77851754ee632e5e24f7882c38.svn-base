@@ -1,0 +1,46 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Visual Studio 6.0">
+<META NAME="Revision" Content="$Revision:   1.0  $">
+<META NAME="Author" Content="$Author:   c372701  $">
+<META NAME="Workfile" Content="$Workfile:   browsersettings.htm  $">
+<META NAME="Log" Content="$Log:   \\www-amssc-01\pds\archives\SDS-AMD\Web\Effectivity\browsersettings.htm-arc  $">
+/*   
+/*      Rev 1.0   Apr 22 2002 06:55:10   c372701
+/*   Initial revision.
+<TITLE></TITLE>
+
+<BODY>
+				<p><b>Browser Configuration</b><br>
+				To optimize display and performance of screens, we recommend that 
+				users configure their Web browsers according to the following settings: 
+				<br>
+				<br>
+				<b>Internet Explorer</b> 
+				<ul>
+				<li><font COLOR="#000000">Supported versions: 4.01 or higher</font></li>
+				<li><font COLOR="#000000">Font Size: Medium, Small, or Smallest</font></li>
+				<li><font COLOR="#000000">Temporary Internet Files: Select "Every visit to the page"</font></li>
+				<li><font COLOR="#000000">Browse in a new process - Off (the default setting).</font></li>
+				</ul>
+				<b>Netscape Navigator or Communicator</b> 
+				<ul>
+				<li><font COLOR="#000000">Supported versions: 4.5, 4.61, or higher</font></li>
+				<li><font COLOR="#000000">Font Size: 10 to 12 points</font></li>
+				<li><font COLOR="#000000">Cookies: Warn me before accepting a cookie - Off</font></li>
+				<li><font COLOR="#000000">Enable Java - On</font></li>
+				<li><font COLOR="#000000">Enable JavaScript - On</font></li>
+				<li><font COLOR="#000000">Enable style sheets - On</font></li>
+				<li><font COLOR="#000000">Cache: Document in cache is compared to document on network: Every time.</font></li>
+				</ul>
+				<b>Both Browsers</b> 
+				<ul> 
+				<li><font COLOR="#000000">Cookies: Browser must be set to accept cookies.</font></li>
+				<li><font COLOR="#000000">When you get the security warning that's displayed when you send 
+				data to a Web site (for example, when you log in), click the "never show 
+				this to me again" check box that appears on the warning message.</font></li> 
+				</ul>
+				<a href=default.asp>HOME</a>
+
+</BODY>
+</HTML>

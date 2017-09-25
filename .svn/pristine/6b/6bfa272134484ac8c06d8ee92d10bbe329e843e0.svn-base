@@ -1,0 +1,47 @@
+DROP VIEW AMD_OWNER.AMD_PSLMS_XC;
+
+/* Formatted on 6/10/2011 12:21:20 PM (QP5 v5.163.1008.3004) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.AMD_PSLMS_XC
+(
+   DBKEY,
+   UPDTCNT,
+   BCKP,
+   CAN_INT,
+   UPDTCD,
+   EIACODXA,
+   LSACONXB,
+   ALTLCNXB,
+   LCNTYPXB,
+   UOCSEIXC,
+   PCCNUMXC,
+   ITMDESXC,
+   PLISNOXC,
+   TOCCODXC,
+   QTYASYXC,
+   QTYPEIXC,
+   TRASEIXC,
+   QTY_PER_EI_CALC_OPT_CODE
+)
+AS
+   SELECT DBKEY,
+          UPDTCNT,
+          BCKP,
+          CAN_INT,
+          UPDTCD,
+          EIACODXA,
+          LSACONXB,
+          ALTLCNXB,
+          LCNTYPXB,
+          UOCSEIXC,
+          PCCNUMXC,
+          ITMDESXC,
+          PLISNOXC,
+          TOCCODXC,
+          QTYASYXC,
+          QTYPEIXC,
+          TRASEIXC,
+          QTY_PER_EI_CALC_OPT_CODE
+     FROM pslms_xc@amd_pslms_link.boeingdb;
+
+
+GRANT SELECT ON AMD_OWNER.AMD_PSLMS_XC TO AMD_READER_ROLE;

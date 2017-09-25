@@ -1,0 +1,10 @@
+CREATE OR REPLACE TRIGGER "AMD_OWNER".amd_part_next_assemblies_trig1
+BEFORE INSERT
+ON AMD_PART_NEXT_ASSEMBLIES
+FOR EACH ROW
+DECLARE
+BEGIN
+ SELECT amd_part_next_assemblies_seq.NEXTVAL INTO :new.pn_na_sid FROM DUAL;
+END;
+
+/ 

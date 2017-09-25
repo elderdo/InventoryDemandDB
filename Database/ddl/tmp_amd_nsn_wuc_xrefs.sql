@@ -1,0 +1,71 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:56  $
+     $Workfile:   tmp_amd_nsn_wuc_xrefs.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\tmp_amd_nsn_wuc_xrefs.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:56   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TMP_AMD_NSN_WUC_XREFS
+(
+  NSN  VARCHAR2(13 BYTE),
+  WUC  VARCHAR2(9 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX TMPAMD_NSN_WUC_XREF_I ON TMP_AMD_NSN_WUC_XREFS
+(NSN, WUC)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_AMD_NSN_WUC_XREFS FOR TMP_AMD_NSN_WUC_XREFS;
+
+
+ALTER TABLE TMP_AMD_NSN_WUC_XREFS ADD (
+  CHECK ("NSN" IS NOT NULL) DISABLE);
+
+ALTER TABLE TMP_AMD_NSN_WUC_XREFS ADD (
+  CHECK ("WUC" IS NOT NULL) DISABLE);
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_NSN_WUC_XREFS TO AMD_DATALOAD;
+
+GRANT SELECT ON  TMP_AMD_NSN_WUC_XREFS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_AMD_NSN_WUC_XREFS TO AMD_WRITER_ROLE;
+
+

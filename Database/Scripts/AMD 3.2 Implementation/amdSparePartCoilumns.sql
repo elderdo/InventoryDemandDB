@@ -1,0 +1,12 @@
+ALTER TABLE AMD_OWNER.AMD_SPARE_PARTS
+ ADD (is_Repairable  VARCHAR2(1 BYTE)                DEFAULT 'N');
+
+ALTER TABLE AMD_OWNER.AMD_SPARE_PARTS
+ ADD (is_Consumable  VARCHAR2(1 BYTE)                DEFAULT 'N');
+
+ALTER TABLE AMD_OWNER.AMD_SPARE_PARTS
+ ADD (is_Spo_Part  VARCHAR2(1 BYTE)                   DEFAULT 'N');
+
+ALTER TABLE AMD_OWNER.AMD_SPARE_PARTS
+ ADD (spo_prime_part_no  VARCHAR2(50 BYTE)              );
+

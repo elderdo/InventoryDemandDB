@@ -1,0 +1,91 @@
+/*  
+     $Author:   zf297a  $
+   $Revision:   1.0  $
+       $Date:   Jun 28 2006 11:47:08  $
+   $Workfile:   amd_backorder_spo_sum.sql  $
+	$Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\ddl\amd_backorder_spo_sum.sql.-arc  $
+/*   
+/*      Rev 1.0   Jun 28 2006 11:47:08   zf297a
+/*   Initial revision.
+*/
+
+ALTER TABLE AMD_BACKORDER_SPO_SUM
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE AMD_BACKORDER_SPO_SUM CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_BACKORDER_SPO_SUM
+(
+  SPO_PRIME_PART_NO  VARCHAR2(40 BYTE)          NOT NULL,
+  QTY                NUMBER,
+  ACTION_CODE        VARCHAR2(1 BYTE)           NOT NULL,
+  LAST_UPDATE_DT     DATE                       DEFAULT sysdate               NOT NULL
+)
+TABLESPACE AMD_INDEX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+
+CREATE UNIQUE INDEX AMD_BACKORDER_SPO_SUM_PK ON AMD_BACKORDER_SPO_SUM
+(SPO_PRIME_PART_NO)
+LOGGING
+TABLESPACE AMD_INDEX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+DROP PUBLIC SYNONYM AMD_BACKORDER_SPO_SUM;
+
+CREATE PUBLIC SYNONYM AMD_BACKORDER_SPO_SUM FOR AMD_BACKORDER_SPO_SUM;
+
+
+ALTER TABLE AMD_BACKORDER_SPO_SUM ADD (
+  CONSTRAINT AMD_BACKORDER_SPO_SUM_PK
+ PRIMARY KEY
+ (SPO_PRIME_PART_NO)
+    USING INDEX 
+    TABLESPACE AMD_INDEX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_BACKORDER_SPO_SUM TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_BACKORDER_SPO_SUM TO AMD_WRITER_ROLE;
+
+

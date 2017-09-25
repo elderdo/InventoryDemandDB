@@ -1,0 +1,115 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:54:04  $
+     $Workfile:   tmp_main.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\tmp_main.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:54:04   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TMP_MAIN
+(
+  PART_NO             VARCHAR2(32 BYTE),
+  PO_NO               VARCHAR2(18 BYTE),
+  PO_DATE             VARCHAR2(6 BYTE),
+  ORDER_COST          NUMBER,
+  UNIT_COST           NUMBER,
+  ORDER_QTY           NUMBER,
+  SHELF_LIFE          NUMBER,
+  RELEASE_DAYS        NUMBER,
+  ORDER_PLACE_DAYS    NUMBER,
+  VENDOR_DAYS         NUMBER,
+  TRANSPORT_DAYS      NUMBER,
+  RECEIVING_DAYS      NUMBER,
+  TOTAL_LEAD_TIME     NUMBER,
+  ORDER_UNIT_MEASURE  VARCHAR2(2 BYTE),
+  VENDOR_CODE         VARCHAR2(10 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE INDEX TMP8_PO ON TMP_MAIN
+(PO_NO)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX TM8_PN ON TMP_MAIN
+(PART_NO)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX TMP8_PO_DATE ON TMP_MAIN
+(PO_DATE)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TMP_MAIN FOR TMP_MAIN;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_MAIN TO AMD_DATALOAD;
+
+GRANT SELECT ON  TMP_MAIN TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TMP_MAIN TO AMD_WRITER_ROLE;
+
+

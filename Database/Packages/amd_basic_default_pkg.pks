@@ -1,0 +1,26 @@
+CREATE OR REPLACE PACKAGE amd_basic_default_pkg as
+/*
+      $Author:   zf297a  $
+    $Revision:   1.1  $
+     $Date:   Dec 01 2005 09:27:36  $
+    $Workfile:   amd_basic_default_pkg.pks  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_basic_default_pkg.pks-arc  $
+/*   
+/*      Rev 1.1   Dec 01 2005 09:27:36   zf297a
+/*   added pvcs keywords
+*/
+
+--
+-- SCCSID: amd_basic_default_pkg.sql  1.2  Modified: 08/14/02 14:10:23
+--
+---------------------------------------------------------------
+--  Date			By		History
+--  ----                        --              ------
+--  08/09/02			TP	Initial Implementation
+--
+--------------------------------------------------------------
+	procedure setGroup(pNsiSid number);
+	procedure setAllGroups ;
+
+end amd_basic_default_pkg ;
+/

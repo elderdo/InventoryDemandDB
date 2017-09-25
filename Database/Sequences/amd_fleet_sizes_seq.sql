@@ -1,0 +1,32 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 23 2005 12:04:36  $
+     $Workfile:   amd_fleet_sizes_seq.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\Sequences\amd_fleet_sizes_seq.sql-arc  $
+/*   
+/*      Rev 1.0   May 23 2005 12:04:36   c970183
+/*   Initial revision.
+*/
+
+DROP SEQUENCE AMD_OWNER.AMD_FLEET_SIZES_SEQ;
+
+CREATE SEQUENCE AMD_OWNER.AMD_FLEET_SIZES_SEQ
+  START WITH 1
+  MAXVALUE 999999999999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  CACHE 20
+  NOORDER;
+
+
+DROP PUBLIC SYNONYM AMD_FLEET_SIZES_SEQ;
+
+CREATE PUBLIC SYNONYM AMD_FLEET_SIZES_SEQ FOR AMD_OWNER.AMD_FLEET_SIZES_SEQ;
+
+
+GRANT SELECT ON  AMD_OWNER.AMD_FLEET_SIZES_SEQ TO AMD_READER_ROLE;
+
+GRANT SELECT ON  AMD_OWNER.AMD_FLEET_SIZES_SEQ TO AMD_WRITER_ROLE;
+
+

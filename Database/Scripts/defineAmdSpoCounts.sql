@@ -1,0 +1,121 @@
+/*
+      $Author:   zf297a  $
+    $Revision:   1.1  $
+        $Date:   30 Jan 2007 23:16:04  $
+    $Workfile:   defineAmdSpoCounts.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Scripts\defineAmdSpoCounts.sql.-arc  $
+/*   
+/*      Rev 1.1   30 Jan 2007 23:16:04   zf297a
+/*   fixed amd_on_hand_def_cnt
+/*   
+/*      Rev 1.0   26 Jan 2007 14:29:22   zf297a
+/*   Initial revision.
+*/
+
+set define off
+
+ALTER TABLE AMD_SPO_COUNTS
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE AMD_SPO_COUNTS CASCADE CONSTRAINTS;
+
+CREATE TABLE AMD_SPO_COUNTS
+(
+  DAY                      DATE                 NOT NULL,
+  AMD_PARTS_LIST_CNT       NUMBER,
+  SPO_PARTS_LIST_CNT       NUMBER,
+  AMD_PART_PRIME_CNT       NUMBER,
+  SPO_PART_PRIME_CNT       NUMBER,
+  AMD_ON_HAND_GOOD_CNT     NUMBER,
+  SPO_ON_HAND_GOOD_CNT     NUMBER,
+  AMD_ON_HAND_DEF_CNT      NUMBER,
+  SPO_ON_HAND_DEF_CNT      NUMBER,
+  AMD_IN_REPAIR_CNT        NUMBER,
+  SPO_IN_REPAIR_CNT        NUMBER,
+  AMD_ON_ORDER_CNT         NUMBER,
+  SPO_ON_ORDER_CNT         NUMBER,
+  AMD_IN_TRANSIT_GOOD_CNT  NUMBER,
+  SPO_IN_TRANSIT_GOOD_CNT  NUMBER,
+  AMD_IN_TRANSIT_DEF_CNT   NUMBER,
+  SPO_IN_TRANSIT_DEF_CNT   NUMBER,
+  AMD_DEMANDS_CNT          NUMBER,
+  SPO_DEMANDS_CNT          NUMBER,
+  AMD_TSL_CNT              NUMBER,
+  SPO_TSL_CNT              NUMBER,
+  TIMESTAMP                DATE                 DEFAULT SYSDATE               NOT NULL
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          16K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+NOMONITORING;
+
+show errors
+
+CREATE UNIQUE INDEX AMD_SPO_COUNTS_PK ON AMD_SPO_COUNTS
+(DAY)
+LOGGING
+TABLESPACE AMD_DATA
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          16K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+DROP PUBLIC SYNONYM AMD_SPO_COUNTS;
+
+CREATE PUBLIC SYNONYM AMD_SPO_COUNTS FOR AMD_SPO_COUNTS;
+
+
+ALTER TABLE AMD_SPO_COUNTS ADD (
+  CONSTRAINT AMD_SPO_COUNTS_PK
+ PRIMARY KEY
+ (DAY)
+    USING INDEX 
+    TABLESPACE AMD_DATA
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          16K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+show errors
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_SPO_COUNTS TO AMD_DATALOAD;
+
+GRANT SELECT ON  AMD_SPO_COUNTS TO AMD_READER_ROLE;
+
+GRANT SELECT ON  AMD_SPO_COUNTS TO AMD_USER;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_SPO_COUNTS TO AMD_WRITER_ROLE;
+
+

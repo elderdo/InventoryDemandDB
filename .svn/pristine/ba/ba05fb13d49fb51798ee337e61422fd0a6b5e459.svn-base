@@ -1,0 +1,13 @@
+CREATE OR REPLACE TRIGGER "AMD_OWNER".amd_spare_networks_trig2
+BEFORE UPDATE
+OF LOC_SID
+ON AMD_SPARE_NETWORKS
+FOR EACH ROW
+DECLARE
+BEGIN
+ IF :old.loc_sid <> :new.loc_sid THEN
+  RAISE_APPLICATION_ERROR(-20600, 'Can not change loc_sid');
+ END IF;
+END;
+
+/ 

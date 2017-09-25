@@ -1,0 +1,97 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:08  $
+     $Workfile:   amd_in_transits.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\amd_in_transits.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:08   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE AMD_IN_TRANSITS
+(
+  TO_LOC_SID       NUMBER,
+  QUANTITY         NUMBER,
+  ACTION_CODE      VARCHAR2(1 BYTE),
+  LAST_UPDATE_DT   DATE,
+  DOCUMENT_ID      VARCHAR2(20 BYTE)            NOT NULL,
+  PART_NO          VARCHAR2(50 BYTE)            NOT NULL,
+  FROM_LOCATION    VARCHAR2(6 BYTE),
+  IN_TRANSIT_DATE  DATE
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX AMD_IN_TRANSITS_PK ON AMD_IN_TRANSITS
+(DOCUMENT_ID)
+LOGGING
+TABLESPACE AMD_NDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM AMD_IN_TRANSITS FOR AMD_IN_TRANSITS;
+
+
+ALTER TABLE AMD_IN_TRANSITS ADD (
+  CHECK ("TO_LOC_SID" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_IN_TRANSITS ADD (
+  CHECK ("QUANTITY" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_IN_TRANSITS ADD (
+  CHECK ("ACTION_CODE" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_IN_TRANSITS ADD (
+  CHECK ("LAST_UPDATE_DT" IS NOT NULL) DISABLE);
+
+ALTER TABLE AMD_IN_TRANSITS ADD (
+  CONSTRAINT AMD_IN_TRANSITS_PK PRIMARY KEY (DOCUMENT_ID)
+    USING INDEX 
+    TABLESPACE AMD_NDX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+GRANT SELECT ON  AMD_IN_TRANSITS TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  AMD_IN_TRANSITS TO AMD_WRITER_ROLE;
+
+

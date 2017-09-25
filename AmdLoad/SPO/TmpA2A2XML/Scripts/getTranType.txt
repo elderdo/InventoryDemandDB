@@ -1,0 +1,11 @@
+#   $Author:   zf297a  $
+# $Revision:   1.1  $
+#     $Date:   04 May 2007 11:11:08  $
+# $Workfile:   getTranType.txt  $
+# 
+# This awk script reads the a2a transaction type from an xml file
+
+{ start=index($0,"<TRANTYPE>")+10 
+print substr($0,start,index($0,"</TRANTYPE>") - start)
+exit 0
+}

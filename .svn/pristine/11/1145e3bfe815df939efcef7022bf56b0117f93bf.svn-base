@@ -1,0 +1,5 @@
+bufSize = 500000
+ageBufSize = 500000
+prefetchSize = 5000
+debug = false
+noUpdate = false

@@ -1,0 +1,47 @@
+    /*   				
+       $Author:   c970183  $
+     $Revision:   1.0  $
+         $Date:   May 20 2005 08:53:50  $
+     $Workfile:   temp_amd_wuc_effectivities.sql  $
+	  $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\ddl\temp_amd_wuc_effectivities.sql-arc  $
+/*   
+/*      Rev 1.0   May 20 2005 08:53:50   c970183
+/*   Initial revision.
+*/
+
+CREATE TABLE TEMP_AMD_WUC_EFFECTIVITIES
+(
+  QPEI       VARCHAR2(10 BYTE),
+  WUC        VARCHAR2(9 BYTE),
+  START_FSN  VARCHAR2(10 BYTE),
+  END_FSN    VARCHAR2(10 BYTE)
+)
+TABLESPACE AMD_DATA
+PCTUSED    40
+PCTFREE    5
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCACHE
+NOPARALLEL;
+
+
+CREATE PUBLIC SYNONYM TEMP_AMD_WUC_EFFECTIVITIES FOR TEMP_AMD_WUC_EFFECTIVITIES;
+
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TEMP_AMD_WUC_EFFECTIVITIES TO AMD_DATALOAD;
+
+GRANT SELECT ON  TEMP_AMD_WUC_EFFECTIVITIES TO AMD_READER_ROLE;
+
+GRANT DELETE, INSERT, SELECT, UPDATE ON  TEMP_AMD_WUC_EFFECTIVITIES TO AMD_WRITER_ROLE;
+
+

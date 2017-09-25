@@ -1,0 +1,28 @@
+select	',',
+	transport_agent_id			as 	transagentid, ',',
+	',',
+	REPLACE(transport_mode_id, ',', ' ')	as	transportmode, ',',
+	',',
+	'A'					as 	syncind,
+	REPLACE(transport_mode_desc, ',', ' ') 	as	description, ',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	',',
+	'0'					as	maxloadvolume, ',',
+	',',
+	',',
+	'0'					as	maxloadweight, ',',
+	',',
+	',',
+	',',
+	',',
+	'0'					as 	maxpalletcapacity, ',',
+	',',
+	',',
+	''					as	transporttype
+
+from amd_transport_modes
+where action_code != 'D'

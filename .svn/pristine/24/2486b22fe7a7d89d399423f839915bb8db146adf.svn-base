@@ -1,0 +1,13 @@
+--
+--
+--
+
+set echo on 
+set termout on
+set time on
+
+prompt amd_batch_pkg.start_job;
+exec amd_batch_pkg.start_job('Amd Load starts');
+commit;
+
+quit

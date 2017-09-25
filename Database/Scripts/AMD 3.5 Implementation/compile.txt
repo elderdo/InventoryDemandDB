@@ -1,0 +1,6 @@
+@amd_planner_logons_v.sql
+@amd_site_asset_mgr.sql
+@spo_fx_lp_demand_forecast_v.sql
+@x_confirmed_request_v.sql
+@x_lp_attribute_v.sql
+@x_lp_demand_forecast_v.sql

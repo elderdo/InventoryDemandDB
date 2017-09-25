@@ -1,0 +1,38 @@
+set echo off
+set feedback off
+set heading off
+set pagesize 0
+set linesize 100
+spool &1/tmpA2ADemands.csv
+Select
+'PART_NO'
+||','||'SITE'
+||','||'DOCNO'
+||','||'DEMAND_DATE'
+||','||'QTY'
+||','||'STATUS'
+||','||'DEMAND_LEVEL'
+||','||'DEMAND_TYPE'
+||','||'BUNO'
+||','||'ACTION_CODE'
+||','||'LAST_UPDATE_DT'
+from dual
+/
+Select
+PART_NO
+||','||SITE
+||','||DOCNO
+||','||to_char(DEMAND_DATE,'MM-DD-YYYY HH24:MI:SS')
+||','||QTY
+||','||STATUS
+||','||DEMAND_LEVEL
+||','||DEMAND_TYPE
+||','||BUNO
+||','||ACTION_CODE
+||','||to_char(LAST_UPDATE_DT,'MM/DD/YYYY HH:MI:SS PM')
+from amd_owner.tmp_a2a_demands
+/
+spool off
+set feedback on
+set heading on
+set pagesize 20
