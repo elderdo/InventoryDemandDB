@@ -1,0 +1,40 @@
+DROP VIEW AMD_OWNER.AMD_WARNER_ROBINS_DELNSN_V;
+
+/* Formatted on 10/2/2017 4:56:49 PM (QP5 v5.287) */
+CREATE OR REPLACE FORCE VIEW AMD_OWNER.AMD_WARNER_ROBINS_DELNSN_V
+(
+   EXCEL_ROW,
+   SOURCE_CODE,
+   TRANSACTION_DATE,
+   TRAN_DATE_YYDDD,
+   NSN,
+   DOC_NO,
+   DEMAND_QUANTITY,
+   LAST_UPDATE_DT,
+   FILENAME,
+   BAD_NSN,
+   ACTION_CODE
+)
+   BEQUEATH DEFINER
+AS
+   SELECT excel_row,
+          source_code,
+          transaction_date,
+          TO_CHAR (TRANSACTION_dATE, 'RRDDD') tran_date_yyddd,
+          NSN,
+          DOC_NO,
+          DEMAND_QUANTITY,
+          last_update_dt,
+          filename,
+          bad_nsn,
+          action_code
+     FROM amd_warner_robins_files
+    WHERE action_code = 'D';
+
+
+DROP PUBLIC SYNONYM AMD_WARNER_ROBINS_DELNSN_V;
+
+CREATE PUBLIC SYNONYM AMD_WARNER_ROBINS_DELNSN_V FOR AMD_OWNER.AMD_WARNER_ROBINS_DELNSN_V;
+
+
+GRANT SELECT ON AMD_OWNER.AMD_WARNER_ROBINS_DELNSN_V TO AMD_READER_ROLE;
