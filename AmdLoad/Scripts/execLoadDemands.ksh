@@ -2,10 +2,20 @@
 # vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:
 # execLoadDemands.ksh
 # Author: Douglas S. Elder
-# Date: 7/12/2013
+# Date: 10/03/2017
 # Desc: load the amd demands
 # Rev 1.0 7/12/2013
 # Rev 2.0 8/02/2017
+# Rev 3.0 10/03/2017 fixed loadDemands to do
+#                    loadSanAntonioDemands
+#                    and loadWarnerRobinsDemands
+#                    use -f option as the 2nd argument for
+#                    execSqlplus so that the step will execute
+#                    in the foreground
+#                    Run the truncateDemands step in the foreground
+#                    so it completes before the other steps start
+#                    Run the loadAmdBssmSourceTmpAmdDemands step in the foreground
+#                    so its truncate completes before the other steps run
 
 
 USAGE="Usage: ${0##*/}  [-d -f -m]\n\n
@@ -93,7 +103,7 @@ function checkForErrors {
 
 function execSqlplus {
 
-  if [[ "${FOREGROUND:-N}" == "Y" ]] ; then
+  if [[ "${FOREGROUND:-N}" == "Y" || "$2" == "-f" ]] ; then
     print "$0.ksh $1 started at $(date)"
     $LIB_HOME/execSqlplus.ksh -e $DEMAND_LOG $1
     RC=$?
@@ -121,18 +131,19 @@ function processL67_File
 
 
 function loadDemands {
-  execSqlplus loadAmdBssmSourceTmpAmdDemands
+  execSqlplus loadAmdBssmSourceTmpAmdDemands -f
   execSqlplus loadFmsDemands
   execSqlplus loadSanAntonioDemands
-  execSqlplus loadWarnerRobinsDemands
   execSqlplus loadBascUkDemands
+  execSqlplus loadWarnerRobinsDemands
   wait
+  execSqlplus loadAmdDemandsTable
   echo -e  \
 "\tloadAmdBssmSourceTmpAmdDemands\n
 \tloadFmsDemands\n
 \tloadSanAntonioDemands\n
-\tloadWarnerRobinsDemands\n
 \tloadBascUKDemands\n
+\tloadWarnerRobinsDemands\n
 \tloadAmdDemandsTable all ended at $(date)\n"
 }
 
@@ -197,7 +208,7 @@ function main
 
 
 
-steps[1]="execSqlplus truncateDemands"
+steps[1]="execSqlplus truncateDemands -f"
 steps[2]="processL67_File"
 steps[3]="loadDemands"
 steps[4]="checkForErrors"
