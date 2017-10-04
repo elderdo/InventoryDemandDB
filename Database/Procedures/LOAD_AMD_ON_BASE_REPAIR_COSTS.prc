@@ -31,9 +31,9 @@ BEGIN
       
    v_rows_inserted := SQL%ROWCOUNT;
    
-   RMAD_OWNER.LOAD_BATCH_TBL_COUNTS ('TMP_AMD_ON_BASE_REPAIR_COSTS',
+   LOAD_BATCH_TBL_COUNTS ('TMP_AMD_ON_BASE_REPAIR_COSTS',
                           v_pkg_proc_nm,
-                          v_rows_deleted,
+                          -1,
                           v_rows_inserted,
                           v_rows_updated,
                           SYSDATE);
@@ -49,9 +49,9 @@ BEGIN
       
    v_rows_inserted := SQL%ROWCOUNT;
    
-   RMAD_OWNER.LOAD_BATCH_TBL_COUNTS ('AMD_ON_BASE_REPAIR_COSTS',
+   LOAD_BATCH_TBL_COUNTS ('AMD_ON_BASE_REPAIR_COSTS',
                           v_pkg_proc_nm,
-                          v_rows_deleted,
+                          -1,
                           v_rows_inserted,
                           v_rows_updated,
                           SYSDATE);

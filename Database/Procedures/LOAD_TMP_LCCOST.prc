@@ -88,9 +88,9 @@ BEGIN
 
    COMMIT;
    
-   RMAD_OWNER.LOAD_BATCH_TBL_COUNTS (v_table_nm,
+   LOAD_BATCH_TBL_COUNTS (v_table_nm,
                           v_pkg_proc_nm,
-                          v_rows_deleted,
+                          -1,
                           v_rows_inserted,
                           v_rows_updated,
                           SYSDATE);
