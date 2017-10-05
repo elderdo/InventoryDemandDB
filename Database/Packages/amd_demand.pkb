@@ -40,7 +40,7 @@ AS
 
            Rev 1.53.2 DSE 6/13/14 added amd_utils.formatNsn function when comparing nsn against amd_rbl_pairs.old_nsn
 
-           Rev 1.53.1 DSE 6/12/14 changed L67cur to manage TIN & TRN's , DOC & DUO's and related ISG pairs
+           Rev 1.53.1 DSE 6/12/14 changed L67cur to manage TIN and TRN's , DOC and DUO's and related ISG pairs
 
            Rev 1.53 DSE 2/21/14 changed loadAmdBssmSourceTmpAmdDemands' to use  writeMsg for start/end stats
            added writeMsg to:
