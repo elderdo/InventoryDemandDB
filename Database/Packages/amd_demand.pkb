@@ -1,4 +1,3 @@
-/* Formatted on 8/31/2017 12:11:12 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
@@ -1819,10 +1818,12 @@ AS
                   -- for the output
                   -- use loc_sid for EY1746 i.e. 1001
                   --
+                  /*
                   AND NOT (    SUBSTR (R.request_id, 1, 6) IN
                                   ('FB2065', 'EY1213', 'EY1746')
                            AND TRUNC (r.created_datetime, 'YEAR') >=
                                   TO_DATE ('01/01/2015', 'MM/DD/YYYY'))
+                                  */
                   AND SUBSTR (r.select_from_sc, 1, PROGRAM_ID_LL) = PROGRAM_ID
                   AND (  NVL (r.qty_issued, 0)
                        + NVL (r.qty_due, 0)
