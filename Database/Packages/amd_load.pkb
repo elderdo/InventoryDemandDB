@@ -1,16 +1,20 @@
+/* Formatted on 11/15/2017 9:33:50 AM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.AMD_LOAD
 AS
    /*
+           PVCS Keywords
 
           $Author:   Douglas S. Elder
-        $Revision:   1.94 $
-            $Date:   24 Jan 2017
+        $Revision:   1.94 
+            $Date:   14 Nov 2017
         $Workfile:   amd_load.pkb  $
 
-          Rev 1.94  24 Jan 2017 - added some dbms_output of insert and delete
-                                  counts
-          Rev 1.93  20 Jun 2016 - reformatted code with Toad and added display of number of rows
-          insserted to tmp_amd_spare_parts
+          Rev 1.94  15 Nov 2013 added qualified where clauses by using lock_sid, part_no, and nsn
+                                for bssm_parts since that is the primary key!
+          Rev 1.93  14 Nov 2013 added dbms_output with counts and reformatted code
+                                added exception handler for <<cleaned>> begin end to just
+                                report problem and continue
+                                added cursor to getCleanedDataByPart because was fetching more than one row
 
           Rev 1.92  19 Oct 2015 fix loadRblPairs to ignore duplicate rows, but to report them. Also,
           add order by old_nsn, subgroup_code, part_pref_code so that
@@ -740,6 +744,8 @@ AS
 
    */
 
+
+
    FUNCTION GetSmr (pPart VARCHAR2, pCage VARCHAR2)
       RETURN VARCHAR2
    IS
@@ -1220,6 +1226,7 @@ AS
            FROM bssm_parts bp
           WHERE     bp.lock_sid = ORIGINAL_DATA
                 AND bp.part_no = getCalculatedData.part_no
+                AND bp.nsn = getCalculatedData.nsn
                 AND (   amd_utils.ISNSNACTIVEYORN (bp.nsn) = 'Y'
                      OR amd_utils.ISPARTACTIVEYORN (bp.part_no) = 'Y');
       EXCEPTION
@@ -1235,7 +1242,18 @@ AS
                key1              => 'part=' || getCalculatedData.part_no,
                key2              => 'nsn=' || getCalculatedData.nsn,
                key3              => 'locksid=' || ORIGINAL_DATA);
-            RAISE;
+            DBMS_OUTPUT.put_line (
+                  'getOriginalByPart: part_no='
+               || getCalculatedData.part_no
+               || ' nsn='
+               || getCalculatedData.nsn
+               || ' lock_sid='
+               || ORIGINAL_DATA
+               || ' returning mtbdr_computed = null'
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
       END getOriginalByPart;
 
 
@@ -1246,6 +1264,7 @@ AS
            INTO mtbdr_computed
            FROM bssm_parts p1
           WHERE     nsn = getCalculatedData.nsn
+                AND part_no = getCalculatedData.part_no
                 AND lock_sid = ORIGINAL_DATA
                 AND mtbdr_computed IS NOT NULL
                 AND (   amd_utils.ISNSNACTIVEYORN (nsn) = 'Y'
@@ -1263,25 +1282,62 @@ AS
                key1              => 'part=' || getCalculatedData.part_no,
                key2              => 'nsn=' || getCalculatedData.nsn,
                key3              => 'locksid=' || ORIGINAL_DATA);
-            RAISE;
+            DBMS_OUTPUT.put_line (
+                  'getOriginalDataByNsn: part_no='
+               || getCalculatedData.part_no
+               || ' nsn='
+               || getCalculatedData.nsn
+               || ' lock_sid='
+               || ORIGINAL_DATA
+               || ' returning mtbdr_computed = null'
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
       END getOriginalDataByNsn;
 
       PROCEDURE getCleanedDataByPart
       IS
+         cnt   NUMBER := 0;
+
+         CURSOR bssmPartInfo
+         IS
+            SELECT mtbdr_computed
+              INTO mtbdr_computed
+              FROM bssm_parts bp
+             WHERE     bp.lock_sid = CLEANED_DATA
+                   AND mtbdr_computed IS NOT NULL
+                   AND bp.part_no = getCalculatedData.part_no
+                   AND bp.nsn =
+                          (SELECT nsn
+                             FROM bssm_parts
+                            WHERE     part_no = getCalculatedData.part_no
+                                  AND nsn = getCalculatedData.nsn
+                                  AND lock_sid = ORIGINAL_DATA)
+                   AND (   amd_utils.ISNSNACTIVEYORN (bp.nsn) = 'Y'
+                        OR amd_utils.ISPARTACTIVEYORN (
+                              getCalculatedData.part_no) = 'Y');
       BEGIN
-         SELECT mtbdr_computed
-           INTO mtbdr_computed
-           FROM bssm_parts bp
-          WHERE     bp.lock_sid = CLEANED_DATA
-                AND mtbdr_computed IS NOT NULL
-                AND bp.nsn =
-                       (SELECT nsn
-                          FROM bssm_parts
-                         WHERE     part_no = getCalculatedData.part_no
-                               AND lock_sid = ORIGINAL_DATA)
-                AND (   amd_utils.ISNSNACTIVEYORN (bp.nsn) = 'Y'
-                     OR amd_utils.ISPARTACTIVEYORN (
-                           getCalculatedData.part_no) = 'Y');
+         FOR rec IN bssmPartInfo
+         LOOP
+            cnt := cnt + 1;
+
+            IF cnt = 1
+            THEN
+               mtbdr_computed := rec.mtbdr_computed;
+            END IF;
+         END LOOP;
+
+         IF cnt > 1
+         THEN
+            DBMS_OUTPUT.put_line (
+                  'getCleanedDataByPart: '
+               || cnt
+               || ' rows retrieved for part_no='
+               || getCalculatedData.part_no
+               || ' and lock_sid='
+               || ORIGINAL_DATA);
+         END IF;
       EXCEPTION
          WHEN STANDARD.NO_DATA_FOUND
          THEN
@@ -1295,13 +1351,25 @@ AS
                key1              => 'part=' || getCalculatedData.part_no,
                key2              => 'nsn=' || getCalculatedData.nsn,
                key3              => 'locksid=' || ORIGINAL_DATA);
-            RAISE;
+            DBMS_OUTPUT.put_line (
+                  'getCleanedDataByPart: part_no='
+               || getCalculatedData.part_no
+               || ' nsn='
+               || getCalculatedData.nsn
+               || ' lock_sid='
+               || ORIGINAL_DATA
+               || ' returning mtbdr_computed = null'
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
       END getCleanedDataByPart;
    BEGIN
       SELECT mtbdr_computed
         INTO mtbdr_computed
         FROM bssm_parts p1
        WHERE     nsn = getCalculatedData.nsn
+             AND part_no = getCalculatedData.part_no
              AND lock_sid = CLEANED_DATA
              AND mtbdr_computed IS NOT NULL
              AND (   amd_utils.ISNSNACTIVEYORN (nsn) = 'Y'
@@ -1309,6 +1377,7 @@ AS
                         (SELECT NULL
                            FROM bssm_parts p2
                           WHERE     p1.nsn = p2.nsn
+                                AND p1.part_no = p2.part_no
                                 AND lock_sid = ORIGINAL_DATA
                                 AND amd_utils.isPartActiveYorN (p2.part_no) =
                                        'Y'));
@@ -1327,7 +1396,19 @@ AS
                    key1              => 'part=' || getCalculatedData.part_no,
                    key2              => 'nsn=' || getCalculatedData.nsn,
                    key3              => 'locksid=' || CLEANED_DATA);
-         RAISE;
+         DBMS_OUTPUT.put_line (
+               'getCalculatedData: part_no='
+            || getCalculatedData.part_no
+            || ' nsn='
+            || getCalculatedData.nsn
+            || ' lock_sid='
+            || CLEANED_DATA
+            || ' returning mtbdr_computed = null'
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
+         RETURN mtbdr_computed;
    END getCalculatedData;
 
 
@@ -2131,12 +2212,14 @@ AS
          pKey3             => 'rowsInserted=' || TO_CHAR (rowsInserted),
          pKey4             =>    'elapsedTime='
                               || (DBMS_UTILITY.get_time - loadGoldStartTime));
+      DBMS_OUTPUT.put_line (
+            'loadGold: '
+         || rowsInserted
+         || ' rows inserted to tmp_amd_spare_parts');
 
       DBMS_OUTPUT.put_line (
             'loadGold min:'
          || ( (DBMS_UTILITY.get_time - loadGoldStartTime) / 60));
-      DBMS_OUTPUT.put_line (
-         'rows insert to tmp_amd_spare_parts::' || rowsInserted);
 
       COMMIT;
    EXCEPTION
@@ -2212,7 +2295,7 @@ AS
          DBMS_OUTPUT.put_line ('number of duplicates=' || dup_cnt);
       END IF;
 
-      DBMS_OUTPUT.put_line ('rows inserted=' || ins_cnt);
+      DBMS_OUTPUT.put_line ('LoadRblPairs: rows inserted=' || ins_cnt);
    END LoadRblPairs;
 
 
@@ -2322,6 +2405,8 @@ AS
          END bulkUpdt;
       END IF;
 
+      DBMS_OUTPUT.put_line (
+         'loadPsms: ' || cnt || ' rows loaded to tmp_amd_spare_parts');
       writeMsg (
          pTableName        => 'tmp_amd_spare_parts',
          pError_location   => 270,
@@ -2333,9 +2418,6 @@ AS
                               || (DBMS_UTILITY.get_time - loadPsmsStartTime));
 
       COMMIT;
-
-      DBMS_OUTPUT.put_line ('loadPsms: rows updated=' || cnt);
-
       debugMsg (
          'loadPsms secs:' || (DBMS_UTILITY.get_time - loadPsmsStartTime),
          pError_location   => 350);
@@ -2507,6 +2589,8 @@ AS
              WHERE part_no = part_no_tab (i);
       END IF;
 
+      DBMS_OUTPUT.put_line (
+         'loadMain: ' || cnt || ' rows updated in tmp_amd_spare_parts');
       writeMsg (
          pTableName        => 'tmp_amd_spare_parts',
          pError_location   => 300,
@@ -2514,8 +2598,6 @@ AS
          pKey2             =>    'ended at '
                               || TO_CHAR (SYSDATE, 'MM/DD/YYYY HH:MI:SS AM'),
          pKey3             => 'rowsUpdated=' || TO_CHAR (cnt));
-
-      DBMS_OUTPUT.Put_line ('LoadMain: rows update=' || cnt);
 
       COMMIT;
    END LoadMain;
@@ -2534,10 +2616,12 @@ AS
                          WHERE     w1.niin = w2.niin
                                AND w1.niin = SUBSTR (w3.nsn, 5, 9))
                 AND prime_ind = 'Y';
-      END;
 
-      DBMS_OUTPUT.put_line (
-         'loadWecm: rows updated=' || TO_CHAR (SQL%ROWCOUNT));
+         DBMS_OUTPUT.put_line (
+               'loadWecm: '
+            || SQL%ROWCOUNT
+            || ' rows updated in tmp_amd_spare_parts');
+      END;
    END LoadWecm;
 
    PROCEDURE LoadTempNsns
@@ -2688,6 +2772,8 @@ AS
          END LOOP;
       END IF;
 
+      DBMS_OUTPUT.put_line (
+         'loadTempNsns: ' || cnt || ' rows inserted to amd_nsns');
       writeMsg (
          pTableName        => 'amd_nsns',
          pError_location   => 320,
@@ -2696,7 +2782,6 @@ AS
                               || TO_CHAR (SYSDATE, 'MM/DD/YYYY HH:MI:SS AM'),
          pKey3             => 'cnt=' || TO_CHAR (cnt));
       COMMIT;
-      DBMS_OUTPUT.put_line ('loadTempNsns: rows inserted ' || cnt);
    END loadTempNsns;
 
 
@@ -3055,8 +3140,6 @@ AS
          pKey4             => 'deleted=' || TO_CHAR (deleted));
 
       COMMIT;
-      DBMS_OUTPUT.put_line ('loadUsers: rows inserted ' || inserted);
-      DBMS_OUTPUT.put_line ('loadUsers: rows deleted ' || deleted);
    END loadUsers;
 
 
@@ -3489,7 +3572,23 @@ AS
                   package_name       => THE_AMD_CLEANED_FROM_BSSM_PKG,
                   procedure_name     => 'UpdateAmdAllBaseCleaned')
             THEN
-               amd_cleaned_from_bssm_pkg.UpdateAmdAllBaseCleaned;
+              <<cleaned>>
+               BEGIN
+                  amd_cleaned_from_bssm_pkg.UpdateAmdAllBaseCleaned;
+               EXCEPTION
+                  WHEN OTHERS
+                  THEN
+                     ErrorMsg (sqlFunction       => 'call',
+                               key1              => 'updateAmdAllBaseCleaned',
+                               pError_location   => 5);
+                     DBMS_OUTPUT.put_line (
+                           'loadGold: exception calling amd_cleaned_from_bssm_pkg.UpdateAmdAllBaseCleaned'
+                        || 'sqlcode('
+                        || SQLCODE
+                        || ') sqlerrm('
+                        || SQLERRM
+                        || ')');
+               END cleaned;
             END IF;
          ELSIF step = 14
          THEN
@@ -3765,7 +3864,7 @@ AS
                 pError_location   => 480,
                 pKey1             => 'amd_load',
                 pKey2             => '$Revision:   1.94  $');
-      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.94 $');
+      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.94  $');
    END version;
 
    FUNCTION getVersion

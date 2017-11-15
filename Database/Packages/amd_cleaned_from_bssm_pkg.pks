@@ -1,19 +1,13 @@
-/* Formatted on 1/25/2017 3:52:05 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE AMD_OWNER.AMD_CLEANED_FROM_BSSM_PKG
 IS
    /*
     PVCS Keywords
 
-      $Author:   Douglas S Elder
-    $Revision:   1.11
-        $Date:   25 Jan 2017
+      $Author:   zf297a  $
+    $Revision:   1.9  $
+        $Date:   11 May 2007 12:09:38  $
     $Workfile:   AMD_CLEANED_FROM_BSSM_PKG.pks  $
-
-     Rev 1.11   25 Jan 2017 DSE
-  reformatted code added dbms_ouput to
-
-     Rev 1.10   17 Feb 2015 DSE
-  Renamed bssm_owner qualifier
+      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_cleaned_from_bssm_pkg.pks-arc  $
 
      Rev 1.9   11 May 2007 12:09:38   zf297a
   Renamed gold_mfgr_cage to pbl_flag for BSSM V604
@@ -104,7 +98,7 @@ IS
       nomenclature                 amd_national_stock_items.nomenclature_cleaned%TYPE,
       nrts_avg                     amd_national_stock_items.nrts_avg%TYPE,
       order_lead_time              amd_national_stock_items.order_lead_time_cleaned%TYPE,
-      acquisition_advice_code      bssm_parts.ACQUISITION_ADVICE_CODE%TYPE,
+      acquisition_advice_code      bssm_owner.bssm_parts.ACQUISITION_ADVICE_CODE%TYPE,
       order_uom                    amd_national_stock_items.order_uom_cleaned%TYPE,
       planner_code                 amd_national_stock_items.planner_code%TYPE,
       rts_avg                      amd_national_stock_items.rts_avg%TYPE,
@@ -114,7 +108,7 @@ IS
       time_to_repair_on_base_avg   amd_national_stock_items.time_to_repair_on_base_avg%TYPE,
       unit_cost                    amd_national_stock_items.unit_cost_cleaned%TYPE,
       mfgr                         amd_spare_parts.MFGR%TYPE,
-      pbl_flag                     bssm_parts.PBL_FLAG%TYPE
+      pbl_flag                     bssm_owner.bssm_parts.PBL_FLAG%TYPE
    );
 
    TYPE partBaseFields IS RECORD
@@ -166,13 +160,5 @@ IS
 
    -- added 6/9/2006 by dse
    PROCEDURE version;
-
-   FUNCTION getDebugYorN
-      RETURN VARCHAR2;                               -- added 2/26/2009 by dse
-
-   PROCEDURE setDebug (VALUE IN VARCHAR2);           -- added 2/26/2009 by dse
-
-   FUNCTION getVersion
-      RETURN VARCHAR2;                               -- added 2/27/2009 by dse
 END AMD_CLEANED_FROM_BSSM_PKG;
 /

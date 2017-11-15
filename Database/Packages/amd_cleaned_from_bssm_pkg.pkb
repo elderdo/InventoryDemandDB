@@ -1,32 +1,16 @@
-/* Formatted on 1/25/2017 4:02:10 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.AMD_CLEANED_FROM_BSSM_PKG
 IS
    /*
     PVCS Keywords
 
-      $Author:   Douglas S Elder
-    $Revision:   1.20
-        $Date:   25 Jan 2017
+      $Author:   Douglas S. Elder
+    $Revision:   1.19
+        $Date:   14 Nov 2017
     $Workfile:   amd_cleaned_from_bssm_pkg.pkb  $
+      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_cleaned_from_bssm_pkg.pkb-arc  $
 
-     Rev 1.20   25 Jan 2017 Douglas S Elder
-  Reformatted code and added dbms_output for updates
-
-     Rev 1.19   27 Feb 2009 09:54:46   zf297a
-  Added debug and debug message with an autonomous transaction pragma.
-
-  Added autonomous transaction pragma for errorMsg.  Added debugMsg's to determine flow of control for the procedure UpdateAmdPartByTrigger - it was determined that procedure CheckPartModFlag queries bssm_parts while this table is being changed by an update or insert .. ie it gets the Oracle mutating error message.  So, UpdateAmdPartByTrigger was commented out until a method of updating amd_national_stock_items' cleaned fields can be devised.
-
-  Implemented get/set routines for boolean variable debug and a get routine for version.
-
-  Fixed the variable that contains the error location number to pError_Location for the errorMsg procedure and for the debugMsg procedure so the numbers can easily be resequended by awk procedure pErrorLocationAwk.awk.
-
-  Resequenced error location number using awk procedure pErrorLocationAwk.awk.
-
-
-
-
-
+     rev 1.19   14 Nov 2017 added exception handlers for select's of bssm_parts which one of the select was returning more
+                            than one row
      Rev 1.18   03 Jul 2008 23:34:22   zf297a
   Removed unnecessary dbms_output
 
@@ -78,8 +62,6 @@ IS
    gModflag2Map         tab_modflag;
    gSetflagBaseMap      tab_modflag;
 
-   debug                BOOLEAN := FALSE;
-
    PROCEDURE CheckPartModFlag (
       pModflagMap     IN     tab_modflag,
       pModflagValue   IN     bssm_parts.modflag1%TYPE,
@@ -129,33 +111,9 @@ IS
                           pComments         => pComments);
    END writeMsg;
 
-   PROCEDURE debugMsg (msg               IN AMD_LOAD_DETAILS.DATA_LINE%TYPE,
-                       pError_Location   IN NUMBER)
-   IS
-      PRAGMA AUTONOMOUS_TRANSACTION;
-   BEGIN
-      IF debug
-      THEN
-         Amd_Utils.debugMsg (pMsg        => msg,
-                             pPackage    => 'a2a_pkg',
-                             pLocation   => pError_location);
-         COMMIT;                                -- make sure the trace is kept
-      END IF;
-   EXCEPTION
-      WHEN OTHERS
-      THEN
-         IF SQLCODE = -14551 OR SQLCODE = -14552
-         THEN
-            NULL;    -- cannot do a commit inside a query, so ignore the error
-         ELSE
-            RAISE;
-         END IF;
-   END debugMsg;
-
-
    PROCEDURE errorMsg (sqlFunction         IN VARCHAR2,
                        tableName           IN VARCHAR2,
-                       pError_Location     IN NUMBER,
+                       errorLocation       IN NUMBER,
                        key1                IN VARCHAR2 := '',
                        key2                IN VARCHAR2 := '',
                        key3                IN VARCHAR2 := '',
@@ -163,12 +121,12 @@ IS
                        key5                IN VARCHAR2 := '',
                        keywordvaluepairs   IN VARCHAR2 := '')
    IS
-      PRAGMA AUTONOMOUS_TRANSACTION;
    BEGIN
+      ROLLBACK;
       amd_utils.inserterrormsg (
          pload_no        => amd_utils.getloadno (psourcename   => sqlfunction,
                                                  ptablename    => tablename),
-         pdata_line_no   => pError_Location,
+         pdata_line_no   => errorlocation,
          pdata_line      => 'amd_cleaned_from_bssm_pkg',
          pkey_1          => key1,
          pkey_2          => key2,
@@ -236,8 +194,6 @@ IS
          RETURN result;
       END equal;
    BEGIN
-      debugMsg ('CheckPartModFlag: started', pError_location => 10);
-
       SELECT bp.*
         INTO lockSidOne
         FROM bssm_parts bp
@@ -399,8 +355,6 @@ IS
 
          bitNumber := pModflagMap.NEXT (bitNumber);
       END LOOP;
-
-      debugMsg ('CheckPartModFlag: ended', pError_location => 20);
    END CheckPartModflag;
 
    FUNCTION GetCleanable (pLockSidTwo IN bssm_parts%ROWTYPE)
@@ -408,7 +362,6 @@ IS
    IS
       cleanable   partFields := NULL;
    BEGIN
-      debugMsg ('GetCleanable: started', pError_location => 30);
       CheckPartModFlag (gModflag1Map,
                         pLockSidTwo.modflag1,
                         pLockSidTwo,
@@ -417,7 +370,6 @@ IS
                         pLockSidTwo.modflag2,
                         pLockSidTwo,
                         cleanable);
-      debugMsg ('GetCleanable: ended', pError_location => 40);
       RETURN cleanable;
    END GetCleanable;
 
@@ -425,84 +377,84 @@ IS
    -- not used currently, switched back to other methodology of using bit comparisons
    -- order important when passing to this function, lockSidTwo must be second
      function GetCleanable(pLockSidZero bssm_parts%rowtype, pLockSidTwo bssm_parts%rowtype) return partFields is
-       recPart partFields := null;
+    recPart partFields := null;
    begin
-       if (NotEqual(pLockSidTwo.add_increment, pLockSidZero.add_increment)) then
-           recPart.add_increment := pLockSidTwo.add_increment;
+    if (NotEqual(pLockSidTwo.add_increment, pLockSidZero.add_increment)) then
+     recPart.add_increment := pLockSidTwo.add_increment;
+    end if;
+    if (NotEqual(pLockSidTwo.amc_base_stock,pLockSidZero.amc_base_stock)) then
+     recPart.amc_base_stock := pLockSidTwo.amc_base_stock;
+    end if;
+    if (NotEqual(pLockSidTwo.amc_days_experience, pLockSidZero.amc_days_experience)) then
+     recPart.amc_days_experience := pLockSidTwo.amc_days_experience;
+    end if;
+    if (NotEqual(pLockSidTwo.amc_demand, pLockSidZero.amc_demand)) then
+     recPart.amc_demand := pLockSidTwo.amc_demand;
+    end if;
+    if (NotEqual(pLockSidTwo.capability_requirement,pLockSidZero.capability_requirement)) then
+     recPart.capability_requirement := pLockSidTwo.capability_requirement;
+    end if;
+    if (NotEqual(pLockSidTwo.condemn, pLockSidZero.condemn)) then
+     recPart.condemn_avg := pLockSidTwo.condemn;
+    end if;
+    if (NotEqual(pLockSidTwo.criticality,pLockSidZero.criticality)) then
+     recPart.criticality := amd_from_bssm_pkg.ConvertCriticality(pLockSidTwo.criticality);
+    end if;
+    if (NotEqual(pLockSidTwo.dla_demand,pLockSidZero.dla_demand)) then
+     recPart.dla_demand := pLockSidTwo.dla_demand;
+    end if;
+    if (NotEqual(pLockSidTwo.dla_warehouse_stock, pLockSidZero.dla_warehouse_stock)) then
+     recPart.dla_warehouse_stock := pLockSidTwo.dla_warehouse_stock;
+    end if;
+    if (NotEqual(pLockSidTwo.fedc_cost,pLockSidZero.fedc_cost)) then
+     recPart.fedc_cost := pLockSidTwo.fedc_cost;
+    end if;
+    if (NotEqual(pLockSidTwo.item_type,pLockSidZero.item_type)) then
+     recPart.item_type := amd_from_bssm_pkg.ConvertItemType(pLockSidTwo.item_type);
+    end if;
+    if (NotEqual(pLockSidTwo.mic_code, pLockSidZero.mic_code)) then
+     recPart.mic_code_lowest := pLockSidTwo.mic_code;
+    end if;
+    if (NotEqual(pLockSidTwo.mtbdr,pLockSidZero.mtbdr)) then
+     recPart.mtbdr := pLockSidTwo.mtbdr;
+    end if;
+    if (NotEqual(pLockSidTwo.nomenclature, pLockSidZero.nomenclature)) then
+     recPart.nomenclature := pLockSidTwo.nomenclature;
+    end if;
+    if (NotEqual(pLockSidTwo.nrts, pLockSidZero.nrts)) then
+     recPart.nrts_avg := pLockSidTwo.nrts;
+    end if;
+    if (NotEqual(pLockSidTwo.off_base_repair_cost, pLockSidZero.off_base_repair_cost)) then
+     recPart.cost_to_repair_off_base := pLockSidTwo.off_base_repair_cost;
+    end if;
+    if (NotEqual(pLockSidTwo.off_base_turnaround, pLockSidZero.off_base_turnaround)) then
+     recPart.time_to_repair_off_base := pLockSidTwo.off_base_turnaround;
+    end if;
+    if (NotEqual(pLockSidTwo.on_base_turnaround, pLockSidZero.on_base_turnaround)) then
+     recPart.time_to_repair_on_base_avg := pLockSidTwo.on_base_turnaround;
+    end if;
+    if (NotEqual(pLockSidTwo.order_lead_time, pLockSidZero.order_lead_time)) then
+     recPart.order_lead_time := pLockSidTwo.order_lead_time;
+    end if;
+    if (NotEqual(pLockSidTwo.order_uom, pLockSidZero.order_uom)) then
+     recPart.order_uom := pLockSidTwo.order_uom;
+    end if;
+    if (NotEqual(pLockSidTwo.planner_code, pLockSidZero.planner_code)) then
+     recPart.planner_code := pLockSidTwo.planner_code;
+    end if;
+    if (NotEqual(pLockSidTwo.rts, pLockSidZero.rts)) then
+     recPart.rts_avg := pLockSidTwo.rts;
+    end if;
+    if (NotEqual(pLockSidTwo.ru_ind, pLockSidZero.ru_ind)) then
+     recPart.ru_ind := pLockSidTwo.ru_ind;
+    end if;
+    if (NotEqual(pLockSidTwo.smr_code, pLockSidZero.smr_code)) then
+     recPart.smr_code := pLockSidTwo.smr_code;
+    end if;
+    if (NotEqual(pLockSidTwo.unit_cost, pLockSidZero.unit_cost)) then
+     recPart.unit_cost := pLockSidTwo.unit_cost;
        end if;
-       if (NotEqual(pLockSidTwo.amc_base_stock,pLockSidZero.amc_base_stock)) then
-           recPart.amc_base_stock := pLockSidTwo.amc_base_stock;
-       end if;
-       if (NotEqual(pLockSidTwo.amc_days_experience, pLockSidZero.amc_days_experience)) then
-           recPart.amc_days_experience := pLockSidTwo.amc_days_experience;
-       end if;
-       if (NotEqual(pLockSidTwo.amc_demand, pLockSidZero.amc_demand)) then
-           recPart.amc_demand := pLockSidTwo.amc_demand;
-       end if;
-       if (NotEqual(pLockSidTwo.capability_requirement,pLockSidZero.capability_requirement)) then
-           recPart.capability_requirement := pLockSidTwo.capability_requirement;
-       end if;
-       if (NotEqual(pLockSidTwo.condemn, pLockSidZero.condemn)) then
-           recPart.condemn_avg := pLockSidTwo.condemn;
-       end if;
-       if (NotEqual(pLockSidTwo.criticality,pLockSidZero.criticality)) then
-           recPart.criticality := amd_from_bssm_pkg.ConvertCriticality(pLockSidTwo.criticality);
-       end if;
-       if (NotEqual(pLockSidTwo.dla_demand,pLockSidZero.dla_demand)) then
-           recPart.dla_demand := pLockSidTwo.dla_demand;
-       end if;
-       if (NotEqual(pLockSidTwo.dla_warehouse_stock, pLockSidZero.dla_warehouse_stock)) then
-           recPart.dla_warehouse_stock := pLockSidTwo.dla_warehouse_stock;
-       end if;
-       if (NotEqual(pLockSidTwo.fedc_cost,pLockSidZero.fedc_cost)) then
-           recPart.fedc_cost := pLockSidTwo.fedc_cost;
-       end if;
-       if (NotEqual(pLockSidTwo.item_type,pLockSidZero.item_type)) then
-           recPart.item_type := amd_from_bssm_pkg.ConvertItemType(pLockSidTwo.item_type);
-       end if;
-       if (NotEqual(pLockSidTwo.mic_code, pLockSidZero.mic_code)) then
-           recPart.mic_code_lowest := pLockSidTwo.mic_code;
-       end if;
-       if (NotEqual(pLockSidTwo.mtbdr,pLockSidZero.mtbdr)) then
-           recPart.mtbdr := pLockSidTwo.mtbdr;
-       end if;
-       if (NotEqual(pLockSidTwo.nomenclature, pLockSidZero.nomenclature)) then
-           recPart.nomenclature := pLockSidTwo.nomenclature;
-       end if;
-       if (NotEqual(pLockSidTwo.nrts, pLockSidZero.nrts)) then
-           recPart.nrts_avg := pLockSidTwo.nrts;
-       end if;
-       if (NotEqual(pLockSidTwo.off_base_repair_cost, pLockSidZero.off_base_repair_cost)) then
-           recPart.cost_to_repair_off_base := pLockSidTwo.off_base_repair_cost;
-       end if;
-       if (NotEqual(pLockSidTwo.off_base_turnaround, pLockSidZero.off_base_turnaround)) then
-           recPart.time_to_repair_off_base := pLockSidTwo.off_base_turnaround;
-       end if;
-       if (NotEqual(pLockSidTwo.on_base_turnaround, pLockSidZero.on_base_turnaround)) then
-           recPart.time_to_repair_on_base_avg := pLockSidTwo.on_base_turnaround;
-       end if;
-       if (NotEqual(pLockSidTwo.order_lead_time, pLockSidZero.order_lead_time)) then
-           recPart.order_lead_time := pLockSidTwo.order_lead_time;
-       end if;
-       if (NotEqual(pLockSidTwo.order_uom, pLockSidZero.order_uom)) then
-           recPart.order_uom := pLockSidTwo.order_uom;
-       end if;
-       if (NotEqual(pLockSidTwo.planner_code, pLockSidZero.planner_code)) then
-           recPart.planner_code := pLockSidTwo.planner_code;
-       end if;
-       if (NotEqual(pLockSidTwo.rts, pLockSidZero.rts)) then
-           recPart.rts_avg := pLockSidTwo.rts;
-       end if;
-       if (NotEqual(pLockSidTwo.ru_ind, pLockSidZero.ru_ind)) then
-           recPart.ru_ind := pLockSidTwo.ru_ind;
-       end if;
-       if (NotEqual(pLockSidTwo.smr_code, pLockSidZero.smr_code)) then
-           recPart.smr_code := pLockSidTwo.smr_code;
-       end if;
-       if (NotEqual(pLockSidTwo.unit_cost, pLockSidZero.unit_cost)) then
-           recPart.unit_cost := pLockSidTwo.unit_cost;
-          end if;
-       return recPart;
+    return recPart;
    end GetCleanable;
    */
 
@@ -558,17 +510,17 @@ IS
       recBase := GetBaseCleanable (lockSidTwo);
       /*
        select bbp.*
-               into lockSidZero
-              from bssm_base_parts bbp
-              where
-                        lock_sid = 0            and
-                        sran = pSran               and
-                    bbp.nsn = currentBssmNsn;
+         into lockSidZero
+        from bssm_base_parts bbp
+        where
+               lock_sid = 0      and
+               sran = pSran      and
+           bbp.nsn = currentBssmNsn;
        if (NotEqual(lockSidTwo.replacement_indicator,lockSidZero.replacement_indicator)) then
-          recBase.removal_ind := lockSidTwo.replacement_indicator;
+       recBase.removal_ind := lockSidTwo.replacement_indicator;
        end if;
        if (NotEqual(lockSidTwo.repair_indicator, lockSidZero.repair_indicator)) then
-          recBase.repair_level_code := lockSidTwo.repair_indicator;
+       recBase.repair_level_code := lockSidTwo.repair_indicator;
        end if;
        */
       RETURN recBase;
@@ -633,11 +585,11 @@ IS
       recPart := GetCleanable (lockSidTwo);
       /*
       select bp.*
-             into lockSidZero
-             from bssm_parts bp
-             where
-                      bp.nsn = currentBssmNsn and
-                      lock_sid = 0;
+          into lockSidZero
+          from bssm_parts bp
+          where
+             bp.nsn = currentBssmNsn and
+             lock_sid = 0;
 
       recPart := GetCleanable(lockSidZero, lockSidTwo);
       */
@@ -655,16 +607,160 @@ IS
         <<getViaPart>>
          DECLARE
             nsn   bssm_parts.nsn%TYPE := NULL;
-         BEGIN
-            SELECT nsn
-              INTO getViaPart.nsn
-              FROM bssm_parts
-             WHERE part_no = pPartNo AND lock_sid = '0';
+            cnt   NUMBER := 0;
 
-            SELECT bp.*
-              INTO lockSidTwo
-              FROM bssm_parts bp
-             WHERE bp.nsn = getViaPart.nsn AND lock_sid = '2';
+            CURSOR bssmPartInfoOriginal (partNo VARCHAR2)
+            IS
+               SELECT nsn
+                 INTO getViaPart.nsn
+                 FROM bssm_parts
+                WHERE part_no = pPartNo AND lock_sid = '0';
+         BEGIN
+           <<locksid0>>
+            BEGIN
+               FOR rec IN bssmPartInfoOriginal (pPartNo)
+               LOOP
+                  cnt := cnt + 1;
+
+                  IF cnt = 1
+                  THEN
+                     getViaPart.nsn := rec.nsn;
+                  END IF;
+               END LOOP;
+
+               IF cnt > 1
+               THEN
+                  DBMS_OUTPUT.put_line (
+                        'GetValuesX: part_no='
+                     || pPartNo
+                     || ' lock_sid=0'
+                     || ' returned '
+                     || cnt
+                     || ' rows');
+               END IF;
+            EXCEPTION
+               WHEN OTHERS
+               THEN
+                  errorMsg (sqlFunction     => 'select',
+                            tablename       => 'bssm_parts',
+                            key1            => pPartNo,
+                            key2            => '0',
+                            errorLocation   => 1);
+                  DBMS_OUTPUT.put_line (
+                        'GetValuesX: part_no='
+                     || pPartNo
+                     || ' lock_sid=0'
+                     || ' sqlcode('
+                     || SQLCODE
+                     || ') sqlerrm('
+                     || SQLERRM
+                     || ')');
+                  RETURN recpart;
+            END locksid0;
+
+            DECLARE
+               cnt   NUMBER := 0;
+
+               CURSOR bssmPartInfoCleaned (nsnParam VARCHAR2)
+               IS
+                  SELECT acquisition_advice_code,
+                         add_increment,
+                         amc_base_stock,
+                         amc_days_experience,
+                         amc_demand,
+                         capability_requirement,
+                         condemn,
+                         criticality,
+                         current_backorder,
+                         dla_demand,
+                         fedc_cost,
+                         item_type,
+                         mfgr,
+                         mic_code,
+                         min_purchase_quantity,
+                         mtbdr,
+                         nomenclature,
+                         nrts,
+                         nsn,
+                         order_lead_time,
+                         order_uom,
+                         part_no,
+                         pbl_flag,
+                         planner_code,
+                         rts,
+                         ru_ind,
+                         smr_code,
+                         unit_cost
+                    FROM bssm_parts bp
+                   WHERE bp.nsn = nsnParam AND lock_sid = '2';
+            BEGIN
+               FOR rec IN bssmPartInfoCleaned (getViaPart.nsn)
+               LOOP
+                  IF cnt = 1
+                  THEN
+                     recPart.acquisition_advice_code :=
+                        rec.acquisition_advice_code;
+                     recPart.add_increment := rec.add_increment;
+                     recPart.amc_base_stock := rec.amc_base_stock;
+                     recPart.amc_days_experience := rec.amc_days_experience;
+                     recPart.amc_demand := rec.amc_demand;
+                     recPart.capability_requirement :=
+                        rec.capability_requirement;
+                     recPart.condemn_avg := rec.condemn;
+                     recPart.criticality := rec.criticality;
+                     recPart.current_backorder := rec.current_backorder;
+                     recPart.dla_demand := rec.dla_demand;
+                     recPart.fedc_cost := rec.fedc_cost;
+                     recPart.item_type := rec.item_type;
+                     recPart.mfgr := rec.mfgr;
+                     recPart.mic_code_lowest := rec.mic_code;
+                     recPart.min_purchase_quantity :=
+                        rec.min_purchase_quantity;
+                     recPart.mtbdr := rec.mtbdr;
+                     recPart.nomenclature := rec.nomenclature;
+                     recPart.nrts_avg := rec.nrts;
+                     recPart.nsn := rec.nsn;
+                     recPart.order_lead_time := rec.order_lead_time;
+                     recPart.order_uom := rec.order_uom;
+                     recPart.part_no := rec.part_no;
+                     recPart.pbl_flag := rec.pbl_flag;
+                     recPart.planner_code := rec.planner_code;
+                     recPart.rts_avg := rec.rts;
+                     recPart.ru_ind := rec.ru_ind;
+                     recPart.smr_code := rec.smr_code;
+                     recPart.unit_cost := rec.unit_cost;
+                  END IF;
+               END LOOP;
+
+               IF cnt > 1
+               THEN
+                  DBMS_OUTPUT.put_line (
+                        'GetValuesX: nsn='
+                     || getViaPart.nsn
+                     || ' lock_sid=2'
+                     || ' returned '
+                     || cnt
+                     || ' rows.');
+               END IF;
+            EXCEPTION
+               WHEN OTHERS
+               THEN
+                  errorMsg (sqlFunction     => 'select',
+                            tablename       => 'bssm_parts',
+                            key1            => pPartNo,
+                            key2            => '2',
+                            errorLocation   => 2);
+                  DBMS_OUTPUT.put_line (
+                        'GetValuesX: part_no='
+                     || pPartNo
+                     || ' lock_sid=2'
+                     || ' sqlcode('
+                     || SQLCODE
+                     || ') sqlerrm('
+                     || SQLERRM
+                     || ')');
+                  RETURN recpart;
+            END locksid2;
 
 
             recPart := GetCleanable (lockSidTwo);
@@ -701,11 +797,11 @@ IS
       recPart := GetCleanable (lockSidTwo);
       /*
       select bp.*
-             into lockSidZero
-             from bssm_parts bp
-             where
-                      bp.nsn = currentBssmNsn and
-                      lock_sid = 0;
+          into lockSidZero
+          from bssm_parts bp
+          where
+             bp.nsn = currentBssmNsn and
+             lock_sid = 0;
 
       recPart := GetCleanable(lockSidZero, lockSidTwo);
       */
@@ -869,16 +965,12 @@ IS
                 smr_code_cleaned = NULL,
                 unit_cost_cleaned = NULL,
                 last_update_dt = SYSDATE;
-
-         DBMS_OUTPUT.put_line (
-               'NullAmdAllCleanedFields: amd_national_stock_items rows updated '
-            || SQL%ROWCOUNT);
       EXCEPTION
          WHEN OTHERS
          THEN
-            errorMsg (sqlFunction       => 'update',
-                      tablename         => 'amd_national_stock_items',
-                      pError_location   => 50);
+            errorMsg (sqlFunction     => 'update',
+                      tablename       => 'amd_national_stock_items',
+                      errorLocation   => 10);
             RAISE;
       END updateAmdNationalStockItems;
 
@@ -887,24 +979,20 @@ IS
             SET removal_ind_cleaned = NULL,
                 repair_level_code = NULL,
                 last_update_dt = SYSDATE;
-
-         DBMS_OUTPUT.put_line (
-               'NullAmdAllCleanedFields: amd_part_locs rows updated '
-            || SQL%ROWCOUNT);
       EXCEPTION
          WHEN OTHERS
          THEN
-            errorMsg (sqlFunction       => 'update',
-                      tablename         => 'amd_national_stock_items',
-                      pError_location   => 60);
+            errorMsg (sqlFunction     => 'update',
+                      tablename       => 'amd_national_stock_items',
+                      errorLocation   => 20);
             RAISE;
       END updatePartLocs;
    EXCEPTION
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tablename         => 'amd_national_stock_items/amd_part_locs',
-                   pError_location   => 70);
+         errorMsg (sqlFunction     => 'update',
+                   tablename       => 'amd_national_stock_items/amd_part_locs',
+                   errorLocation   => 30);
          RAISE;
    END NullAmdAllCleanedFields;
 
@@ -917,11 +1005,11 @@ IS
    EXCEPTION
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_part_locs',
-                   pError_location   => 80,
-                   key1              => pNsn,
-                   key2              => pSran);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_part_locs',
+                   errorLocation   => 40,
+                   key1            => pNsn,
+                   key2            => pSran);
          RAISE;
    END NullAmdBaseCleanedFields;
 
@@ -933,10 +1021,10 @@ IS
    EXCEPTION
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_national_stock_items',
-                   pError_location   => 90,
-                   key1              => pNsn);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_national_stock_items',
+                   errorLocation   => 50,
+                   key1            => pNsn);
          RAISE;
    END NullAmdPartCleanedFields;
 
@@ -962,7 +1050,6 @@ IS
           WHERE lock_sid = '0';
 
       cleanableBase   partBaseFields := NULL;
-      cnt             NUMBER := 0;
    BEGIN
       FOR nsnSranBssm IN nsnSranListFromBssm_cur
       LOOP
@@ -971,18 +1058,16 @@ IS
             UpdateAmdBaseCleaned (nsnSranBssm.nsn,
                                   nsnSranBssm.sran,
                                   cleanableBase);
-            cnt := cnt + 1;
          EXCEPTION
             WHEN OTHERS
             THEN
-               errorMsg (sqlFunction       => 'update',
-                         tablename         => 'amd_part_locs',
-                         pError_location   => 100);
+               errorMsg (sqlFunction     => 'update',
+                         tablename       => 'amd_part_locs',
+                         errorLocation   => 60);
                RAISE;
          END;
       END LOOP;
 
-      DBMS_OUTPUT.put_line ('UpdateAmdAllBaseCleaned: rows updated ' || cnt);
       COMMIT;
    END UpdateAmdAllBaseCleaned;
 
@@ -1009,10 +1094,6 @@ IS
                 removal_ind_cleaned = pCleanable.removal_ind,
                 last_update_dt = SYSDATE
           WHERE nsi_sid = nsiSid AND loc_sid = locSid;
-
-         DBMS_OUTPUT.put_line (
-               'UpdateAmdBaseCleaned: amd_part_locs rows updated '
-            || SQL%ROWCOUNT);
       END IF;
    EXCEPTION
       WHEN NO_DATA_FOUND
@@ -1020,9 +1101,9 @@ IS
          NULL;
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tablename         => 'amd_part_locs',
-                   pError_location   => 110);
+         errorMsg (sqlFunction     => 'update',
+                   tablename       => 'amd_part_locs',
+                   errorLocation   => 70);
          RAISE;
    END UpdateAmdBaseCleaned;
 
@@ -1045,13 +1126,29 @@ IS
          BEGIN
             cleanablePart := GetCleanable (lockSidTwo);
             UpdateAmdPartCleaned (lockSidTwo.nsn, cleanablePart);
+         /*
+          begin
+           select *
+              into lockSidZero
+              from bssm_parts
+              where nsn = lockSidTwo.nsn
+              and lock_sid = 0;
+              -- order important for GetCleanable parameters
+           cleanablePart := GetCleanable(lockSidZero, lockSidTwo);
+           UpdateAmdPartCleaned(lockSidTwo.nsn, cleanablePart);
+          exception
+             -- possibilities occur where lock_sid 2 record and no lock_sid 0 record.
+           when no_data_found then
+             null;
+          end;
+         */
          EXCEPTION
             WHEN OTHERS
             THEN
-               errorMsg (sqlFunction       => 'update',
-                         tablename         => 'amd_national_stock_items',
-                         pError_location   => 120,
-                         key1              => lockSidTwo.nsn);
+               errorMsg (sqlFunction     => 'update',
+                         tablename       => 'amd_national_stock_items',
+                         errorLocation   => 80,
+                         key1            => lockSidTwo.nsn);
                RAISE;
          END;
       END LOOP;
@@ -1065,8 +1162,6 @@ IS
       nsiSid       amd_national_stock_items.nsi_sid%TYPE;
       currentNsn   amd_national_stock_items.nsn%TYPE;
    BEGIN
-      debugMsg ('UpdateAmdPartCleaned: started for ' || pNsn,
-                pError_location   => 130);
       nsiSid := amd_utils.GetNsiSid (pNsn => pNsn);
 
       -- some or most maybe null
@@ -1102,12 +1197,6 @@ IS
              unit_cost_cleaned = pCleanable.unit_cost,
              last_update_dt = SYSDATE
        WHERE nsi_sid = nsiSid;
-
-      DBMS_OUTPUT.put_line (
-            'UpdateAmdBaseCleaned: amd_national_stock_items rows updated '
-         || SQL%ROWCOUNT);
-      debugMsg ('UpdateAmdPartCleaned: ended for ' || pNsn,
-                pError_location   => 140);
    EXCEPTION
       WHEN NO_DATA_FOUND
       THEN
@@ -1115,11 +1204,11 @@ IS
          NULL;
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_national_stock_items',
-                   pError_location   => 150,
-                   key1              => pNsn,
-                   key2              => TO_CHAR (nsiSid));
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_national_stock_items',
+                   errorLocation   => 70,
+                   key1            => pNsn,
+                   key2            => TO_CHAR (nsiSid));
          RAISE;
    END UpdateAmdPartCleaned;
 
@@ -1128,20 +1217,16 @@ IS
    IS
       cleanablePart   partFields := NULL;
    BEGIN
-      debugMsg ('UpdateAmdPartByTrigger: started ' || pLockSidTwo.nsn,
-                pError_location   => 160);
-      -- cannot do this it is querying bssm_parts and being exec'ed by a trigger for bssm_parts ie mutating error cleanablePart := GetCleanable(pLockSidTwo);
-      -- UpdateAmdPartCleaned(pLockSidTwo.nsn, cleanablePart);
-      debugMsg ('UpdateAmdPartByTrigger: ended ' || pLockSidTwo.nsn,
-                pError_location   => 170);
+      cleanablePart := GetCleanable (pLockSidTwo);
+      UpdateAmdPartCleaned (pLockSidTwo.nsn, cleanablePart);
    EXCEPTION
       -- part of trigger, don't want to fail
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tablename         => 'amd_national_stock_items',
-                   pError_location   => 180,
-                   key1              => pLockSidTwo.nsn);
+         errorMsg (sqlFunction     => 'update',
+                   tablename       => 'amd_national_stock_items',
+                   errorLocation   => 80,
+                   key1            => pLockSidTwo.nsn);
          RAISE;
    END UpdateAmdPartByTrigger;
 
@@ -1156,11 +1241,11 @@ IS
       -- part of trigger, don't want to fail
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_part_locs',
-                   pError_location   => 190,
-                   key1              => pLockSidTwo.nsn,
-                   key2              => pLockSidTwo.sran);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_part_locs',
+                   errorLocation   => 90,
+                   key1            => pLockSidTwo.nsn,
+                   key2            => pLockSidTwo.sran);
          RAISE;
    END UpdateAmdBaseByTrigger;
 
@@ -1180,17 +1265,17 @@ IS
    EXCEPTION
       WHEN NO_DATA_FOUND
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_national_stock_items',
-                   pError_location   => 200,
-                   key1              => pLockSidTwo.nsn);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_national_stock_items',
+                   errorLocation   => 100,
+                   key1            => pLockSidTwo.nsn);
          RAISE;
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_national_stock_items',
-                   pError_location   => 210,
-                   key1              => pLockSidTwo.nsn);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_national_stock_items',
+                   errorLocation   => 110,
+                   key1            => pLockSidTwo.nsn);
          RAISE;
    END OnPartResetByTrigger;
 
@@ -1209,17 +1294,17 @@ IS
    EXCEPTION
       WHEN NO_DATA_FOUND
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_part_locs',
-                   pError_location   => 220,
-                   key1              => pLockSidTwo.nsn);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_part_locs',
+                   errorLocation   => 120,
+                   key1            => pLockSidTwo.nsn);
          RAISE;
       WHEN OTHERS
       THEN
-         errorMsg (sqlFunction       => 'update',
-                   tableName         => 'amd_part_locs',
-                   pError_location   => 230,
-                   key1              => pLockSidTwo.nsn);
+         errorMsg (sqlFunction     => 'update',
+                   tableName       => 'amd_part_locs',
+                   errorLocation   => 130,
+                   key1            => pLockSidTwo.nsn);
          RAISE;
    END OnBaseResetByTrigger;
 
@@ -1227,70 +1312,41 @@ IS
    IS
    BEGIN
       writeMsg (pTableName        => 'amd_cleaned_from_bssm_pkg',
-                pError_location   => 240,
+                pError_location   => 140,
                 pKey1             => 'amd_cleaned_from_bssm_pkg',
-                pKey2             => '$Revision:   1.20  $');
+                pKey2             => '$Revision:   1.19  $');
    END version;
-
-   FUNCTION getDebugYorN
-      RETURN VARCHAR2
-   IS
-   BEGIN
-      IF debug
-      THEN
-         RETURN 'Y';
-      ELSE
-         RETURN 'N';
-      END IF;
-   END getDebugYorN;
-
-   PROCEDURE setDebug (VALUE IN VARCHAR2)
-   IS
-   BEGIN
-      debug :=
-         (UPPER (VALUE) IN ('Y',
-                            'YES',
-                            'T',
-                            'TRUE'));
-   END setDebug;
-
-   FUNCTION getVersion
-      RETURN VARCHAR2
-   IS
-   BEGIN
-      RETURN '$Revision:   1.20  $';
-   END getVersion;
 BEGIN
-     /*  this is an alternative method than comparing lock_sid 2 with lock_sid 0
-  to determine cleaned data.  marginally more difficult to maintain as not as intuitive
-  as comparing lock_sids - best spares uses this approach of reading modflag1 and modflag2
-  to determine if something has been cleaned.  this is here because a trigger, for
-  example on bssm_parts, cannot requery the table to get the lock_sid 0 value
-  used for comparison - get mutating error.  this and associated functions
-  can go away if triggers not used for update of cleaned data - or everything can be updated
-  to use this and skip the lock_sid 2 vs lock_sid 0 comparison.
+   /*  this is an alternative method than comparing lock_sid 2 with lock_sid 0
+   to determine cleaned data.  marginally more difficult to maintain as not as intuitive
+   as comparing lock_sids - best spares uses this approach of reading modflag1 and modflag2
+   to determine if something has been cleaned.  this is here because a trigger, for
+   example on bssm_parts, cannot requery the table to get the lock_sid 0 value
+   used for comparison - get mutating error.  this and associated functions
+   can go away if triggers not used for update of cleaned data - or everything can be updated
+   to use this and skip the lock_sid 2 vs lock_sid 0 comparison.
 
-       2 fields, modflag1 and modflag2 contain the bits of those fields that
-  have been cleaned. Created 2 pl/sql arrays to relate this.
-  Using characteristic of sparseness in pl/sql array to hold
-  "power" values to their associated field names (probably could've used
-  constants instead).
-  This means the indexvalue of pl/sql array is also the bit value
-  related to the field as defined in best spares application. Little
-  easier to cycle thru list this way.
-  When bitAnd'ed with corresponding modflag1 or modflag2, will note
-  cleaned field. the definitions of the modflag1 and modflag2 come from
-  the SparesCommon.h file.
-  Changed SparesCommon.h definition names to match database field names.
-  Easier to read/maintain than hardcode calculated values by
-  using power function - will match up well with SparesCommon.h if needed
-  updated or added.
-  eg. mtbdr    from sparesCommon.h
-                           #define MOD1_MTBRD (1 << 28)
-               below
-                       gModflag1Map(POWER(2,28)) := MTBDR
+        2 fields, modflag1 and modflag2 contain the bits of those fields that
+   have been cleaned. Created 2 pl/sql arrays to relate this.
+   Using characteristic of sparseness in pl/sql array to hold
+   "power" values to their associated field names (probably could've used
+   constants instead).
+   This means the indexvalue of pl/sql array is also the bit value
+   related to the field as defined in best spares application. Little
+   easier to cycle thru list this way.
+   When bitAnd'ed with corresponding modflag1 or modflag2, will note
+   cleaned field. the definitions of the modflag1 and modflag2 come from
+   the SparesCommon.h file.
+   Changed SparesCommon.h definition names to match database field names.
+   Easier to read/maintain than hardcode calculated values by
+   using power function - will match up well with SparesCommon.h if needed
+   updated or added.
+   eg. mtbdr    from sparesCommon.h
+             #define MOD1_MTBRD (1 << 28)
+       below
+         gModflag1Map(POWER(2,28)) := MTBDR
 
-*/
+ */
 
 
 
@@ -1337,15 +1393,15 @@ BEGIN
    gSetflagBaseMap (POWER (2, 1)) := REMOVAL_IND;
 -- following not passed on to amd at this time, i.e. no cleaned hole in amd
 /*
-    gSetflagBaseMap(POWER(2,2)) := MAXIMUM_STOCK;
-    gSetflagBaseMap(POWER(2,3)) := MINIMUM_STOCK;
-    gSetflagBaseMap(POWER(2,8)) := RSP_ON_HAND;
-    gSetflagBaseMap(POWER(2,9)) := RSP_OBJECTIVE;
+ gSetflagBaseMap(POWER(2,2)) := MAXIMUM_STOCK;
+ gSetflagBaseMap(POWER(2,3)) := MINIMUM_STOCK;
+ gSetflagBaseMap(POWER(2,8)) := RSP_ON_HAND;
+ gSetflagBaseMap(POWER(2,9)) := RSP_OBJECTIVE;
 
-    gSetflagBaseMap(POWER(2,22) := HOLDING_COST;
-    gSetflagBaseMap(POWER(2,23) := BACKORDER_FIXED_COST;
-    gSetflagBaseMap(POWER(2,24) := BACKORDER_VARIABLE_COST;
-    gSetflagBaseMap(POWER(2,25) := ORDER_COST;
+ gSetflagBaseMap(POWER(2,22) := HOLDING_COST;
+ gSetflagBaseMap(POWER(2,23) := BACKORDER_FIXED_COST;
+ gSetflagBaseMap(POWER(2,24) := BACKORDER_VARIABLE_COST;
+ gSetflagBaseMap(POWER(2,25) := ORDER_COST;
 */
 
 
