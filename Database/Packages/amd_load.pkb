@@ -1,16 +1,19 @@
-/* Formatted on 11/15/2017 9:33:50 AM (QP5 v5.287) */
+/* Formatted on 11/15/2017 3:34:34 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.AMD_LOAD
 AS
    /*
            PVCS Keywords
 
           $Author:   Douglas S. Elder
-        $Revision:   1.94 
-            $Date:   14 Nov 2017
+        $Revision:   1.94
+            $Date:   15 Nov 2017
         $Workfile:   amd_load.pkb  $
 
           Rev 1.94  15 Nov 2013 added qualified where clauses by using lock_sid, part_no, and nsn
                                 for bssm_parts since that is the primary key!
+                                Added nsn qualifier for queries of bssm_parts when having part_no and nsn
+                                removed calculation of elapsed time for loadGold since SQL*Plus will
+                                give elapsed time with SET TIMING ON
           Rev 1.93  14 Nov 2013 added dbms_output with counts and reformatted code
                                 added exception handler for <<cleaned>> begin end to just
                                 report problem and continue
@@ -1225,7 +1228,8 @@ AS
            INTO mtbdr_computed
            FROM bssm_parts bp
           WHERE     bp.lock_sid = ORIGINAL_DATA
-                AND bp.part_no = getCalculatedData.part_no
+                AND (   bp.part_no = getCalculatedData.part_no
+                     OR bp.part_no IS NULL)
                 AND bp.nsn = getCalculatedData.nsn
                 AND (   amd_utils.ISNSNACTIVEYORN (bp.nsn) = 'Y'
                      OR amd_utils.ISPARTACTIVEYORN (bp.part_no) = 'Y');
@@ -1264,7 +1268,7 @@ AS
            INTO mtbdr_computed
            FROM bssm_parts p1
           WHERE     nsn = getCalculatedData.nsn
-                AND part_no = getCalculatedData.part_no
+                AND (part_no = getCalculatedData.part_no OR part_no IS NULL)
                 AND lock_sid = ORIGINAL_DATA
                 AND mtbdr_computed IS NOT NULL
                 AND (   amd_utils.ISNSNACTIVEYORN (nsn) = 'Y'
@@ -1307,11 +1311,13 @@ AS
               FROM bssm_parts bp
              WHERE     bp.lock_sid = CLEANED_DATA
                    AND mtbdr_computed IS NOT NULL
-                   AND bp.part_no = getCalculatedData.part_no
+                   AND (   bp.part_no = getCalculatedData.part_no
+                        OR bp.part_no IS NULL)
                    AND bp.nsn =
                           (SELECT nsn
                              FROM bssm_parts
-                            WHERE     part_no = getCalculatedData.part_no
+                            WHERE     (   part_no = getCalculatedData.part_no
+                                       OR part_no IS NULL)
                                   AND nsn = getCalculatedData.nsn
                                   AND lock_sid = ORIGINAL_DATA)
                    AND (   amd_utils.ISNSNACTIVEYORN (bp.nsn) = 'Y'
@@ -1369,7 +1375,7 @@ AS
         INTO mtbdr_computed
         FROM bssm_parts p1
        WHERE     nsn = getCalculatedData.nsn
-             AND part_no = getCalculatedData.part_no
+             AND (part_no = getCalculatedData.part_no OR part_no IS NULL)
              AND lock_sid = CLEANED_DATA
              AND mtbdr_computed IS NOT NULL
              AND (   amd_utils.ISNSNACTIVEYORN (nsn) = 'Y'
@@ -1377,10 +1383,14 @@ AS
                         (SELECT NULL
                            FROM bssm_parts p2
                           WHERE     p1.nsn = p2.nsn
-                                AND p1.part_no = p2.part_no
+                                AND (   p1.part_no = p2.part_no
+                                     OR p2.part_no IS NULL)
+                                AND p2.nsn = getCalculatedData.nsn
                                 AND lock_sid = ORIGINAL_DATA
-                                AND amd_utils.isPartActiveYorN (p2.part_no) =
-                                       'Y'));
+                                AND (   amd_utils.isPartActiveYorN (
+                                           p2.part_no) = 'Y'
+                                     OR amd_utils.IsNsnActiveYorN (p2.nsn) =
+                                           'Y')));
 
       RETURN mtbdr_computed;
    EXCEPTION
@@ -1631,13 +1641,13 @@ AS
 
    PROCEDURE LoadGold
    IS
-      bulk_errors         EXCEPTION;
+      bulk_errors       EXCEPTION;
       PRAGMA EXCEPTION_INIT (bulk_errors, -24381);
 
       TYPE tmpRecs IS TABLE OF tmp_amd_spare_parts%ROWTYPE
          INDEX BY PLS_INTEGER;
 
-      recsOut             tmpRecs;
+      recsOut           tmpRecs;
 
       TYPE catRec IS RECORD
       (
@@ -1658,7 +1668,7 @@ AS
 
       TYPE catTab IS TABLE OF catRec;
 
-      catRecs             catTab;
+      catRecs           catTab;
 
       CURSOR catCur
       IS
@@ -1700,29 +1710,28 @@ AS
 
 
 
-      loadNo              NUMBER;
-      nsn                 VARCHAR2 (50);
-      prevNsn             VARCHAR2 (50) := 'prevNsn';
-      nsnStripped         VARCHAR2 (50);
-      goodPrime           VARCHAR2 (50);
-      primeInd            VARCHAR2 (1);
-      itemType            VARCHAR2 (1);
-      smrCode             VARCHAR2 (6);
-      orderUom            VARCHAR2 (2);
-      orderleadTime       NUMBER;
-      plannerCode         VARCHAR2 (8);
-      nsnType             VARCHAR2 (1);
-      hasPrimeRec         BOOLEAN;
-      sequenced           BOOLEAN;
-      l67Mic              VARCHAR2 (1);
-      unitCost            NUMBER;
-      unitOfIssue         VARCHAR2 (2);
-      mMac                VARCHAR2 (2);
-      rowsInserted        NUMBER := 0;
-      loadGoldStartTime   NUMBER := DBMS_UTILITY.get_time;
-      loopStartTime       NUMBER := 0;
-      cur_line            NUMBER := 0;
-      trigger_problem     BOOLEAN := FALSE;
+      loadNo            NUMBER;
+      nsn               VARCHAR2 (50);
+      prevNsn           VARCHAR2 (50) := 'prevNsn';
+      nsnStripped       VARCHAR2 (50);
+      goodPrime         VARCHAR2 (50);
+      primeInd          VARCHAR2 (1);
+      itemType          VARCHAR2 (1);
+      smrCode           VARCHAR2 (6);
+      orderUom          VARCHAR2 (2);
+      orderleadTime     NUMBER;
+      plannerCode       VARCHAR2 (8);
+      nsnType           VARCHAR2 (1);
+      hasPrimeRec       BOOLEAN;
+      sequenced         BOOLEAN;
+      l67Mic            VARCHAR2 (1);
+      unitCost          NUMBER;
+      unitOfIssue       VARCHAR2 (2);
+      mMac              VARCHAR2 (2);
+      rowsInserted      NUMBER := 0;
+      loopStartTime     NUMBER := 0;
+      cur_line          NUMBER := 0;
+      trigger_problem   BOOLEAN := FALSE;
    BEGIN
       writeMsg (
          pTableName        => 'tmp_amd_spare_parts',
@@ -2209,17 +2218,13 @@ AS
          pKey1             => 'loadGold',
          pKey2             =>    'ended at '
                               || TO_CHAR (SYSDATE, 'MM/DD/YYYY HH:MI:SS AM'),
-         pKey3             => 'rowsInserted=' || TO_CHAR (rowsInserted),
-         pKey4             =>    'elapsedTime='
-                              || (DBMS_UTILITY.get_time - loadGoldStartTime));
+         pKey3             => 'rowsInserted=' || TO_CHAR (rowsInserted));
+
       DBMS_OUTPUT.put_line (
             'loadGold: '
          || rowsInserted
          || ' rows inserted to tmp_amd_spare_parts');
 
-      DBMS_OUTPUT.put_line (
-            'loadGold min:'
-         || ( (DBMS_UTILITY.get_time - loadGoldStartTime) / 60));
 
       COMMIT;
    EXCEPTION
