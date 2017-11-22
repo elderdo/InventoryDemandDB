@@ -1,3 +1,4 @@
+/* Formatted on 11/21/2017 11:56:12 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Inventory
 AS
    /* ------------------------------------------------------------------- */
@@ -11,17 +12,19 @@ AS
    /*
        PVCS Keywords
 
-      $Author:   zf297a  $
-    $Revision:   1.120
-        $Date:   24 Aug 2017
+      $Author:   Douglas S Elder
+    $Revision:   1.121
+        $Date:   21 Nov 2017
     $Workfile:   amd_inventory.pkb  $
 
-         Rev 1.120 24 Aug 2017 per Laurie Compton's email for 8/23/2017 regarding 
+         Rev 1.121 21 Nov 2017 added dbms_output for all raise commands
+
+         Rev 1.120 24 Aug 2017 per Laurie Compton's email for 8/23/2017 regarding
                               TFS 38300 removed rsp_level > 0 for loadRsp's cursor
                               rspInv
-         
+
          Rev 1.119 24 Jan 2017 added dbms_output for inserts
-         
+
          Rev 1.118 17 Jun 2016 reformatted code
 
          Rev 1.117 Per CQ LBPSS00003520 removed amd_order_prefixes
@@ -652,6 +655,11 @@ AS
          ErrorMsg (sqlFunction       => 'loadGoldInventory',
                    tableName         => 'inventory tables',
                    pError_Location   => 20);
+         DBMS_OUTPUT.put_line (
+               'loadGoldInventory: sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END LoadGoldInventory;
 
@@ -1100,7 +1108,7 @@ AS
                 amd_defaults.getINSERT_ACTION action_code,
                 SYSDATE last_update_dt
            FROM rsp_inv_v
-          WHERE rsp_inv > 0 ;
+          WHERE rsp_inv > 0;
 
 
       rspCnt          NUMBER := 0;
@@ -1176,6 +1184,12 @@ AS
                       pError_Location   => 80,
                       pReturn_code      => FAILURE,
                       pKey_1            => 'loc_sid');
+         DBMS_OUTPUT.put_line (
+               'getSiteLocation: loc_sid='
+            || loc_sid
+            || ' sqlcode='
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END getSiteLocation;
 
@@ -1211,6 +1225,17 @@ AS
 
                   IF action_code != Amd_Defaults.DELETE_ACTION
                   THEN
+                     DBMS_OUTPUT.put_line (
+                           'doRepairInvsSumDiff: insertAmdRepairInvsSums getActionCode: action_code='
+                        || action_code
+                        || ' part_no='
+                        || doRepairInvsSumDiff.part_no
+                        || ' site_location='
+                        || doRepairInvsSumDiff.site_location
+                        || ' qty_on_hand='
+                        || qty_on_hand
+                        || ' action_code='
+                        || action_code);
                      RAISE badInsert;
                   END IF;
                EXCEPTION
@@ -1253,6 +1278,19 @@ AS
                          pError_location   => 130,
                          key1              => part_no,
                          key2              => site_location);
+               DBMS_OUTPUT.put_line (
+                     'doRepairInvsSumDiff: insertAmdRepairInvs: part_no='
+                  || part_no
+                  || ' site_location='
+                  || site_location
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END insertAmdRepairInvs;
 
@@ -1282,6 +1320,19 @@ AS
                          pError_location   => 140,
                          key1              => part_no,
                          key2              => site_location);
+               DBMS_OUTPUT.put_line (
+                     'doRepairInvsSumDiff: updateAmdRepairInvs: 1 part_no='
+                  || part_no
+                  || ' site_location='
+                  || site_location
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END updateAmdRepairInvs;
 
@@ -1308,6 +1359,19 @@ AS
                          pError_location   => 150,
                          key1              => part_no,
                          key2              => site_location);
+               DBMS_OUTPUT.put_line (
+                     'updateAmdRepairInvs: 2 part_no='
+                  || part_no
+                  || ' site_location='
+                  || site_location
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END updateAmdRepairInvs;
 
@@ -1330,6 +1394,22 @@ AS
                    68,
                    part_no,
                    site_location);
+         DBMS_OUTPUT.put_line (
+               'doRepairInvsSumDiff: action_code='
+            || action_code
+            || ' part_no='
+            || part_no
+            || ' site_location='
+            || site_location
+            || ' qty_on_hand='
+            || qty_on_hand
+            || ' action_code='
+            || action_code
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
+
          RAISE badActionCode;
          RETURN FAILURE;
       END IF;
@@ -1448,6 +1528,19 @@ AS
 
                IF action_code != Amd_Defaults.DELETE_ACTION
                THEN
+                  DBMS_OUTPUT.put_line (
+                        'insertRow: insertAmdInRepair: getActionCode part_no='
+                     || part_no
+                     || ' loc_sid='
+                     || loc_sid
+                     || ' repair_date='
+                     || TO_CHAR (repair_date, 'MM/DD/YYYY')
+                     || ' order_no='
+                     || order_no
+                     || ' order_need_date='
+                     || TO_CHAR (repair_need_date, 'MM/DD/YYYY')
+                     || ' action_code='
+                     || action_code);
                   RAISE badInsert;
                END IF;
             EXCEPTION
@@ -1503,6 +1596,17 @@ AS
                       key1              => part_no,
                       key2              => loc_sid,
                       key3              => order_no);
+            DBMS_OUTPUT.put_line (
+                  'insertAmdInRepair: part_no='
+               || part_no
+               || ' loc_sid='
+               || loc_sid
+               || ' order_no='
+               || order_no
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END insertAmdInRepair;
 
@@ -1564,6 +1668,23 @@ AS
                       key1              => part_no,
                       key2              => loc_sid,
                       key3              => order_no);
+            DBMS_OUTPUT.put_line (
+                  'updateRow: part_no='
+               || part_no
+               || ' loc_sid='
+               || loc_sid
+               || ' repair_date='
+               || TO_CHAR (repair_date, 'MM/DD/YYYY')
+               || ' repair_qty='
+               || repair_qty
+               || ' order_no='
+               || ' repair_need_date='
+               || TO_CHAR (repair_need_date, 'MM/DD/YYYY')
+               || order_no
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END updateAmdInRepair;
 
@@ -1596,6 +1717,17 @@ AS
                       key1              => part_no,
                       key2              => loc_sid,
                       key3              => order_no);
+            DBMS_OUTPUT.put_line (
+                  'updateAmdInRepair: part_no='
+               || part_no
+               || ' loc_sid='
+               || loc_sid
+               || ' order_no='
+               || order_no
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END updateAmdInRepair;
 
@@ -1616,6 +1748,17 @@ AS
                       key1              => part_no,
                       key2              => loc_sid,
                       key3              => order_no);
+            DBMS_OUTPUT.put_line (
+                  'selectAmdInRepair: part_no='
+               || part_no
+               || ' loc_sid='
+               || loc_sid
+               || ' order_no='
+               || order_no
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END selectAmdInRepair;
 
@@ -1669,6 +1812,17 @@ AS
                    key1              => gold_order_number,
                    key2              => TO_CHAR (order_date, 'MM/DD/YYYY'),
                    key3              => loc_sid);
+         DBMS_OUTPUT.put_line (
+               'getCurrentLine: gold_order_number='
+            || gold_order_number
+            || ' order_date='
+            || TO_CHAR (order_date, 'MM/DD/YYYY')
+            || ' loc_sid='
+            || loc_sid
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END getCurrentLine;
 
@@ -1701,6 +1855,19 @@ AS
 
             IF action_code != Amd_Defaults.DELETE_ACTION
             THEN
+               DBMS_OUTPUT.put_line (
+                     'insertOnOrderRow: 1 part_no='
+                  || part_no
+                  || ' loc_sid='
+                  || loc_sid
+                  || ' order_date='
+                  || TO_CHAR (order_date, 'MM/DD/YYYY')
+                  || ' order_qty='
+                  || order_qty
+                  || ' GOLD_ORDER_NUMBER='
+                  || GOLD_ORDER_NUMBER
+                  || ' SCHED_RECEIPT_DATE='
+                  || TO_CHAR (SCHED_RECEIPT_DATE, 'MM/DD/YYYY'));
                RAISE badInsert;
             END IF;
          EXCEPTION
@@ -1712,6 +1879,23 @@ AS
                   pError_location   => 220,
                   key1              => gold_order_number,
                   key2              => TO_CHAR (order_date, 'MM/DD/YYYY'));
+               DBMS_OUTPUT.put_line (
+                     'insertOnOrderRow: 1 part_no='
+                  || part_no
+                  || ' loc_sid='
+                  || loc_sid
+                  || ' order_date='
+                  || TO_CHAR (order_date, 'MM/DD/YYYY')
+                  || ' order_qty='
+                  || order_qty
+                  || ' GOLD_ORDER_NUMBER='
+                  || GOLD_ORDER_NUMBER
+                  || ' SCHED_RECEIPT_DATE='
+                  || TO_CHAR (SCHED_RECEIPT_DATE, 'MM/DD/YYYY')
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END getActionCode;
 
@@ -1769,7 +1953,15 @@ AS
                key1              => gold_order_number,
                key2              => TO_CHAR (order_date,
                                              'MM/DD/YYYY HH:MM:SS'));
-            --  key3 => to_char(line) ) ;
+            DBMS_OUTPUT.put_line (
+                  'insertAmdOnOrder: gold_order_number='
+               || gold_order_number
+               || ' order_date='
+               || TO_CHAR (order_date, 'MM/DD/YYYY')
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END insertAmdOnOrder;
 
@@ -1881,6 +2073,15 @@ AS
 
                   IF action_code != Amd_Defaults.DELETE_ACTION
                   THEN
+                     DBMS_OUTPUT.put_line (
+                           'doOnHandInvsSumDiff: 1 part_no='
+                        || part_no
+                        || ' spo_location='
+                        || spo_location
+                        || ' qty_on_hand='
+                        || qty_on_hand
+                        || ' action_code='
+                        || action_code);
                      RAISE badInsert;
                   END IF;
                EXCEPTION
@@ -2000,6 +2201,15 @@ AS
                    330,
                    part_no,
                    spo_location);
+         DBMS_OUTPUT.put_line (
+               'doOnHandInvsSumDiff: 2 part_no='
+            || part_no
+            || ' spo_location='
+            || spo_location
+            || ' qty_on_hand='
+            || qty_on_hand
+            || ' action_code='
+            || action_code);
          RAISE badActionCode;
          RETURN FAILURE;
       END IF;
@@ -2030,6 +2240,15 @@ AS
 
                IF action_code != Amd_Defaults.DELETE_ACTION
                THEN
+                  DBMS_OUTPUT.put_line (
+                        'InsertRow: part_no='
+                     || insertRow.part_no
+                     || ' loc_sid='
+                     || insertRow.loc_sid
+                     || ' inv_qty='
+                     || inv_qty
+                     || ' action_code='
+                     || action_code);
                   RAISE badInsert;
                END IF;
             EXCEPTION
@@ -2157,6 +2376,15 @@ AS
 
             IF action_code != Amd_Defaults.DELETE_ACTION
             THEN
+               DBMS_OUTPUT.put_line (
+                     'RspInsertRow: part_no='
+                  || part_no
+                  || ' loc_sid='
+                  || loc_sid
+                  || ' rsp_inv='
+                  || rsp_inv
+                  || 'rsp_level='
+                  || rsp_level);
                RAISE badInsert;
             END IF;
          EXCEPTION
@@ -2167,6 +2395,19 @@ AS
                          pError_location   => 350,
                          key1              => RspInsertRow.part_no,
                          key2              => RspInsertRow.loc_sid);
+               DBMS_OUTPUT.put_line (
+                     'RspInsertRow: 1  part_no='
+                  || part_no
+                  || ' loc_sid='
+                  || ' rsp_inv='
+                  || rsp_inv
+                  || ' rsp_level='
+                  || rsp_level
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
+
                RAISE;
          END getActionCode;
 
@@ -2310,6 +2551,19 @@ AS
 
                IF action_code != Amd_Defaults.DELETE_ACTION
                THEN
+                  DBMS_OUTPUT.put_line (
+                        'doRspSumDiff: 1 part_no='
+                     || part_no
+                     || ' rsp_location='
+                     || rsp_location
+                     || ' override_type='
+                     || override_type
+                     || ' qty_on_hand='
+                     || qty_on_hand
+                     || ' rsp_level='
+                     || rsp_level
+                     || ' action_code='
+                     || action_code);
                   RAISE badInsert;
                END IF;
             EXCEPTION
@@ -2321,6 +2575,23 @@ AS
                             key1              => doRspSumDiff.part_no,
                             key2              => doRspSumDiff.rsp_location,
                             key3              => doRspSumDiff.override_type);
+                  DBMS_OUTPUT.put_line (
+                        'doRspSumDiff: 2 part_no='
+                     || part_no
+                     || ' rsp_location='
+                     || rsp_location
+                     || ' override_type='
+                     || override_type
+                     || ' qty_on_hand='
+                     || qty_on_hand
+                     || ' rsp_level='
+                     || rsp_level
+                     || ' action_code='
+                     || action_code
+                     || ' sqlcode='
+                     || SQLCODE
+                     || ' sqlerrm='
+                     || SQLERRM);
                   RAISE;
             END getActionCode;
 
@@ -2362,6 +2633,23 @@ AS
                          key1              => part_no,
                          key2              => rsp_location,
                          key3              => override_type);
+               DBMS_OUTPUT.put_line (
+                     'doRspSumDiff: 2 part_no='
+                  || part_no
+                  || ' rsp_location='
+                  || rsp_location
+                  || ' override_type='
+                  || override_type
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' rsp_level='
+                  || rsp_level
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END insertAmdRspSum;
       END InsertRow;
@@ -2390,6 +2678,23 @@ AS
                          key1              => part_no,
                          key2              => rsp_location,
                          key3              => override_type);
+               DBMS_OUTPUT.put_line (
+                     'doRspSumDiff: 3 part_no='
+                  || part_no
+                  || ' rsp_location='
+                  || rsp_location
+                  || ' override_type='
+                  || override_type
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' rsp_level='
+                  || rsp_level
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END updateAmdRspSum;
       END UpdateRow;
@@ -2414,6 +2719,23 @@ AS
                          key1              => part_no,
                          key2              => rsp_location,
                          key3              => override_type);
+               DBMS_OUTPUT.put_line (
+                     'doRspSumDiff: 4 part_no='
+                  || part_no
+                  || ' rsp_location='
+                  || rsp_location
+                  || ' override_type='
+                  || override_type
+                  || ' qty_on_hand='
+                  || qty_on_hand
+                  || ' rsp_level='
+                  || rsp_level
+                  || ' action_code='
+                  || action_code
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END updateAmdRspSum;
       END DeleteRow;
@@ -2433,6 +2755,23 @@ AS
                    331,
                    part_no,
                    rsp_location);
+         DBMS_OUTPUT.put_line (
+               'doRspSumDiff: 5 part_no='
+            || part_no
+            || ' rsp_location='
+            || rsp_location
+            || ' override_type='
+            || override_type
+            || ' qty_on_hand='
+            || qty_on_hand
+            || ' rsp_level='
+            || rsp_level
+            || ' action_code='
+            || action_code
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE badActionCode;
       END IF;
 
@@ -2479,6 +2818,21 @@ AS
 
             IF action_code != Amd_Defaults.DELETE_ACTION
             THEN
+               DBMS_OUTPUT.put_line (
+                     'insertRow: to_loc_sid='
+                  || to_loc_sid
+                  || ' quantity='
+                  || quantity
+                  || ' document_id='
+                  || document_id
+                  || ' part_no='
+                  || part_no
+                  || ' from_location='
+                  || from_location
+                  || ' in_transit_date='
+                  || TO_CHAR (in_transit_date, 'MM/DD/YYYY')
+                  || ' serviceable_flag='
+                  || serviceable_flag);
                RAISE badInsert;
             END IF;
          EXCEPTION
@@ -2675,6 +3029,19 @@ AS
                          pKey_1            => part_no,
                          pKey_2            => site_location,
                          pKey_3            => serviceable_flag);
+            DBMS_OUTPUT.put_line (
+                  'insertRow: 1 part_no='
+               || part_no
+               || ' site_location='
+               || site_location
+               || ' quantity='
+               || quantity
+               || ' serviceable_flag='
+               || serviceable_flag
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END doUpdate;
    BEGIN
@@ -2708,6 +3075,19 @@ AS
                             pKey_2            => site_location,
                             pKey_3            => serviceable_flag,
                             pKey_4            => quantity);
+               DBMS_OUTPUT.put_line (
+                     'insertRow: 1 part_no='
+                  || part_no
+                  || ' site_location='
+                  || site_location
+                  || ' quantity='
+                  || quantity
+                  || ' serviceable_flag='
+                  || serviceable_flag
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END insertAmdIntransitSum;
       -- END IF ;
@@ -2987,6 +3367,13 @@ AS
          ErrorMsg (sqlFunction       => 'select',
                    tableName         => 'tmp_amd_on_hand_invs',
                    pError_Location   => 520);
+         DBMS_OUTPUT.put_line (
+               'loadOnHandInvs: cntOnHandInvs='
+            || cntOnHandInvs
+            || ' cntType1='
+            || cntType1
+            || ' cntType1WholeSale='
+            || cntType1WholeSale);
          RAISE;
    END loadOnHandInvs;
 
@@ -3310,6 +3697,8 @@ AS
          ErrorMsg (sqlFunction       => 'select',
                    tableName         => 'tmp_amd_in_repair',
                    pError_Location   => 580);
+         DBMS_OUTPUT.put_line (
+            'loadInRepair: sqlcode=' || SQLCODE || ' sqlerrm=' || SQLERRM);
          RAISE;
    END loadInRepair;
 
@@ -3535,6 +3924,13 @@ AS
       THEN
          IF fromDate > toDate
          THEN
+            DBMS_OUTPUT.put_line (
+                  'setScheduledReceiptDate: voucher='
+               || voucher
+               || ' fromDate='
+               || TO_CHAR (fromDate, 'MM/DD/YYYY')
+               || ' toDate='
+               || TO_CHAR (toDate, 'MM/DD/YYYY'));
             RAISE sched_receipt_date_exception;
          END IF;
       END IF;
@@ -3676,6 +4072,15 @@ AS
       THEN
          IF schedReceiptDateFrom > schedReceiptDateTo
          THEN
+            DBMS_OUTPUT.put_line (
+                  'setOnOrderParams: voucher='
+               || voucher
+               || ' orderCreeateDate='
+               || TO_CHAR (orderCreateDate, 'MM/DD/YYYY')
+               || ' schedReceiptDateFrom='
+               || TO_CHAR (schedReceiptDateFrom, 'MM/DD/YYYY')
+               || ' schedReceiptCalDays='
+               || schedReceiptCalDays);
             RAISE sched_receipt_date_exception;
          END IF;
 
@@ -3792,14 +4197,14 @@ AS
       writeMsg (pTableName        => 'amd_inventory',
                 pError_location   => 620,
                 pKey1             => 'amd_inventory',
-                pKey2             => '$Revision:   1.120 $');
+                pKey2             => '$Revision:   1.121 $');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.120  $';
+      RETURN '$Revision:   1.121  $';
    END getVersion;
 
    PROCEDURE setDebug (switch IN VARCHAR2)

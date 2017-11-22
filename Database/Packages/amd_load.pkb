@@ -1,15 +1,16 @@
-/* Formatted on 11/15/2017 3:34:34 PM (QP5 v5.287) */
+/* Formatted on 11/21/2017 2:04:26 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.AMD_LOAD
 AS
    /*
            PVCS Keywords
 
           $Author:   Douglas S. Elder
-        $Revision:   1.94
-            $Date:   15 Nov 2017
+        $Revision:   1.95
+            $Date:   21 Nov 2017
         $Workfile:   amd_load.pkb  $
 
-          Rev 1.94  15 Nov 2013 added qualified where clauses by using lock_sid, part_no, and nsn
+          Rev 1.95  21 Nov 2017 added dbms_output.put_line for every raise command
+          Rev 1.94  15 Nov 2017 added qualified where clauses by using lock_sid, part_no, and nsn
                                 for bssm_parts since that is the primary key!
                                 Added nsn qualifier for queries of bssm_parts when having part_no and nsn
                                 removed calculation of elapsed time for loadGold since SQL*Plus will
@@ -352,6 +353,8 @@ AS
          THEN
             NULL;    -- cannot do a commit inside a query, so ignore the error
          ELSE
+            DBMS_OUTPUT.put_line (
+               'debugMsg: sqlcode=' || SQLCODE || ' sqlerrm=' || SQLERRM);
             RAISE;
          END IF;
    END debugMsg;
@@ -473,6 +476,13 @@ AS
                   tableName         => 'amd_people_all_v',
                   pError_location   => 10,
                   key1              => 'wk_employeeNo=' || wk_employeeNo);
+               DBMS_OUTPUT.put_line (
+                     'getViaBemsId: wkr_employeeNo='
+                  || wk_employeeNo
+                  || ' select amd_people_all_v 1 sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END;
       EXCEPTION
@@ -482,6 +492,13 @@ AS
                       tableName         => 'amd_people_all_v',
                       pError_location   => 20,
                       key1              => 'wk_employeeNo=' || wk_employeeNo);
+            DBMS_OUTPUT.put_line (
+                  'getViaBemsId: wkr_employeeNo='
+               || wk_employeeNo
+               || ' select amd_people_all_v 2 sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END getViaBemsId;
    BEGIN
@@ -519,6 +536,13 @@ AS
                   tableName         => 'amd_people_all_v',
                   pError_location   => 30,
                   key1              => 'wk_employeeNo=' || wk_employeeNo);
+               DBMS_OUTPUT.put_line (
+                     'getViaBemsId: wkr_employeeNo='
+                  || wk_employeeNo
+                  || ' select amd_people_all_v 3 sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END;
       ELSE
@@ -539,10 +563,24 @@ AS
                       tableName         => 'amd_people_all_v',
                       pError_location   => 40,
                       key1              => 'wk_employeeNo=' || wk_employeeNo);
+            DBMS_OUTPUT.put_line (
+                  'getViaBemsId: wkr_employeeNo='
+               || wk_employeeNo
+               || ' select amd_people_all_v 4 sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
          ELSE
             DBMS_OUTPUT.put_line (
                'getBemsId: sqlcode=' || SQLCODE || ' sqlerrm=' || SQLERRM);
+            DBMS_OUTPUT.put_line (
+                  'getViaBemsId: wkr_employeeNo='
+               || wk_employeeNo
+               || ' select amd_people_all_v 5 sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             raise_application_error (
                -20001,
                   'getBemsId: sqlcode='
@@ -680,6 +718,13 @@ AS
             -- ignore trigger compile errors
             IF SQLCODE != -4098
             THEN
+               DBMS_OUTPUT.put_line (
+                     'update_amd_spare_parts: pPartNo='
+                  || pPartNo
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
             END IF;
       END update_amd_spare_parts;
@@ -834,6 +879,15 @@ AS
                    key1              => 'part=' || pPart,
                    key2              => 'cage=' || pCage,
                    key3              => 'getSmr');
+         DBMS_OUTPUT.put_line (
+               'getsmr: pPar='
+            || pPart
+            || ' pCage='
+            || pCage
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    --
    END getsmr;
@@ -891,6 +945,15 @@ AS
                       pError_location   => 60,
                       key1              => 'part=' || pPartNo,
                       key2              => 'cage=' || pCage);
+            DBMS_OUTPUT.put_line (
+                  'getPsmlsHa: part='
+               || pPartNo
+               || ' pCage='
+               || pCage
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END getPsmlsHa;
 
@@ -909,6 +972,13 @@ AS
                          tableName         => 'amd_shelf_life_codes',
                          pError_location   => 70,
                          key1              => 'sLife=' || sLife);
+               DBMS_OUTPUT.put_line (
+                     'getStorageDays: sLife='
+                  || sLife
+                  || ' sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END getStorageDays;
       END IF;
@@ -939,6 +1009,15 @@ AS
                    key1              => 'part=' || pPartNo,
                    key2              => 'cage=' || pCage,
                    key3              => 'GetPsmsData');
+         DBMS_OUTPUT.put_line (
+               'getPsmsData: pPartNo='
+            || pPartNo
+            || ' pCage='
+            || pCage
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END GetPsmsData;
 
@@ -1178,6 +1257,15 @@ AS
                key1              => 'part=' || getOriginalBssmData.part_no,
                key2              => 'nsn=' || getOriginalBssmData.nsn,
                key3              => 'locksid=' || ORIGINAL_DATA);
+            DBMS_OUTPUT.put_line (
+                  'getByPartNo: part_no='
+               || getOriginalBssmData.part_no
+               || ' nsn='
+               || getOriginalBssmData.nsn
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END getByPartNo;
    BEGIN
@@ -1211,6 +1299,15 @@ AS
             key1              => 'part=' || getOriginalBssmData.part_no,
             key2              => 'nsn=' || getOriginalBssmData.nsn,
             key3              => 'locksid=' || ORIGINAL_DATA);
+         DBMS_OUTPUT.put_line (
+               'getOriginalBssmData: part_no='
+            || getOriginalBssmData.part_no
+            || ' nsn='
+            || getOriginalBssmData.nsn
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END getOriginalBssmData;
 
@@ -1479,6 +1576,15 @@ AS
                    key1              => TO_CHAR (line_no),
                    key2              => nsn,
                    key3              => part_no);
+         DBMS_OUTPUT.put_line (
+               'getCleanedBssmData: nsn='
+            || nsn
+            || ' part_no='
+            || part_no
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END getCleanedBssmData;
 
@@ -1556,6 +1662,13 @@ AS
                    tableName         => 'amd_rmads_source_tmp',
                    pError_location   => 160,
                    key1              => getRmadsData.part_no);
+         DBMS_OUTPUT.put_line (
+               'getRmadsData: part_no='
+            || getRmadsData.part_no
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END getRmadsData;
 
@@ -1895,6 +2008,13 @@ AS
                             key1              => catRecs (indx).part,
                             key2              => 'cur_line=' || cur_line,
                             pError_location   => 230);
+                  DBMS_OUTPUT.put_line (
+                        'cat1_proc: part='
+                     || catRecs (indx).part
+                     || ' sqlcode='
+                     || SQLCODE
+                     || ' sqlerrm='
+                     || SQLERRM);
                   RAISE;
             END cat1_proc;
 
@@ -2042,6 +2162,13 @@ AS
                                pError_location   => 180,
                                key1              => catRecs (indx).part,
                                key2              => 'cur_line=' || cur_line);
+                     DBMS_OUTPUT.put_line (
+                           'addRec: part='
+                        || catRecs (indx).part
+                        || ' sqlcode='
+                        || SQLCODE
+                        || ' sqlerrm='
+                        || SQLERRM);
                      RAISE;
                END addRec;
             BEGIN
@@ -2129,6 +2256,12 @@ AS
 
                   IF NOT trigger_problem
                   THEN
+                     DBMS_OUTPUT.put_line (
+                           'insertTmpAmdSpareParts: 1'
+                        || ' sqlcode='
+                        || SQLCODE
+                        || ' sqlerrm='
+                        || SQLERRM);
                      RAISE;
                   END IF;
                WHEN OTHERS
@@ -2148,6 +2281,12 @@ AS
 
                   IF NOT trigger_problem
                   THEN
+                     DBMS_OUTPUT.put_line (
+                           'insertTmpAmdSpareParts: 2'
+                        || ' sqlcode='
+                        || SQLCODE
+                        || ' sqlerrm='
+                        || SQLERRM);
                      RAISE;
                   END IF;
             END insertTmpAmdSpareParts;
@@ -2208,6 +2347,11 @@ AS
                                             SQL%BULK_EXCEPTIONS (j).ERROR_CODE));
                END LOOP;
 
+               DBMS_OUTPUT.put_line (
+                     'loadGold: bulk_insert sqlcode='
+                  || SQLCODE
+                  || ' sqlerrm='
+                  || SQLERRM);
                RAISE;
          END bulk_insert;
       END IF;
@@ -2236,7 +2380,11 @@ AS
                    key1              => 'cur_line=' || cur_line);
          DBMS_OUTPUT.put_line (
                'loadGold had an error - check amd_load_details. rowsInserted='
-            || rowsInserted);
+            || rowsInserted
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END LoadGold;
 
@@ -2406,6 +2554,8 @@ AS
                          tableName         => 'tmp_amd_spare_parts',
                          pError_location   => 260,
                          key1              => 'bulkUpdt');
+               DBMS_OUTPUT.put_line (
+                  'bulkUpdt: sqlcode=' || SQLCODE || ' sqlerrm=' || SQLERRM);
                RAISE;
          END bulkUpdt;
       END IF;
@@ -2434,6 +2584,13 @@ AS
                    pError_location   => 280,
                    key1              => 'loadPsms',
                    key2              => 'cnt=' || cnt);
+         DBMS_OUTPUT.put_line (
+               'loadPsms: cnt='
+            || cnt
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END LoadPsms;
 
@@ -2569,6 +2726,17 @@ AS
                             key2              => maxPoDate,
                             key3              => maxPo);
                   COMMIT;
+                  DBMS_OUTPUT.put_line (
+                        'loadMain: part_no='
+                     || mainRecs (indx).part_no
+                     || ' maxPoDate='
+                     || maxPoDate
+                     || ' maxPo='
+                     || maxPo
+                     || ' sqlcode='
+                     || SQLCODE
+                     || ' sqlerrm='
+                     || SQLERRM);
                   RAISE;
             END;
 
@@ -2808,6 +2976,13 @@ AS
                       tableName         => 'amd_planners',
                       pError_location   => 330,
                       key1              => insertRow.planner_code);
+            DBMS_OUTPUT.put_line (
+                  'doUpdate: planner_code='
+               || insertRow.planner_code
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END doUpdate;
    BEGIN
@@ -2831,6 +3006,13 @@ AS
                       tableName         => 'amd_planners',
                       pError_location   => 340,
                       key1              => insertRow.planner_code);
+            DBMS_OUTPUT.put_line (
+                  'insertAmdPlanners: planner_code='
+               || insertRow.planner_code
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END insertAmdPlanners;
 
@@ -2859,6 +3041,13 @@ AS
                       tableName         => 'amd_planners',
                       pError_location   => 350,
                       key1              => updateRow.planner_code);
+            DBMS_OUTPUT.put_line (
+                  'updateAmdPlanners: planner_code='
+               || updateRow.planner_code
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END updateAmdPlanners;
 
@@ -2886,6 +3075,13 @@ AS
                       tableName         => 'amd_planners',
                       pError_location   => 360,
                       key1              => deleteRow.planner_code);
+            DBMS_OUTPUT.put_line (
+                  'deleteAmdPlanners: planner_code='
+               || deleteRow.planner_code
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END deleteAmdPlanners;
 
@@ -2940,6 +3136,13 @@ AS
                       tableName         => 'amd_users',
                       pError_location   => 370,
                       key1              => bems_id);
+            DBMS_OUTPUT.put_line (
+                  'doUpdate: bems_id='
+               || bems_id
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END doUpdate;
    BEGIN
@@ -2968,6 +3171,13 @@ AS
                    tableName         => 'amd_users',
                    pError_location   => 380,
                    key1              => bems_id);
+         DBMS_OUTPUT.put_line (
+               'insertUsersRow: bems_id='
+            || bems_id
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END insertUsersRow;
 
@@ -2994,6 +3204,13 @@ AS
                    tableName         => 'amd_users',
                    pError_location   => 390,
                    key1              => bems_id);
+         DBMS_OUTPUT.put_line (
+               'updateUsersRows: bems_id='
+            || bems_id
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END updateUsersRow;
 
@@ -3022,6 +3239,13 @@ AS
                       tableName         => 'amd_users',
                       pError_location   => 400,
                       key1              => bems_id);
+            DBMS_OUTPUT.put_line (
+                  'getData: besm_id='
+               || bems_id
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END getData;
 
@@ -3033,6 +3257,13 @@ AS
                    tableName         => 'amd_users',
                    pError_location   => 410,
                    key1              => bems_id);
+         DBMS_OUTPUT.put_line (
+               'deleteUsersRow: bems_id='
+            || bems_id
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END deleteUsersRow;
 
@@ -3171,6 +3402,17 @@ AS
                       key1              => insertPlannerLogons.planner_code,
                       key2              => insertPlannerLogons.logon_id,
                       key3              => insertPlannerLogons.data_source);
+            DBMS_OUTPUT.put_line (
+                  'doUpdate: planner_code='
+               || insertPlannerLogons.planner_code
+               || ' logon_id='
+               || insertPlannerLogons.logon_id
+               || ' data_source='
+               || insertPlannerLogons.data_source
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END doUpdate;
    BEGIN
@@ -3207,6 +3449,17 @@ AS
                       key1              => insertPlannerLogons.planner_code,
                       key2              => insertPlannerLogons.logon_id,
                       key3              => insertPlannerLogons.data_source);
+            DBMS_OUTPUT.put_line (
+                  'insertAmdPlannerLogons: planner_code='
+               || insertPlannerLogons.planner_code
+               || ' logon_id='
+               || insertPlannerLogons.logon_id
+               || ' data_source='
+               || insertPlannerLogons.data_source
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END insertAmdPlannerLogons;
 
@@ -3244,6 +3497,17 @@ AS
                       key1              => updatePlannerLogons.planner_code,
                       key2              => updatePlannerLogons.logon_id,
                       key3              => updatePlannerLogons.data_source);
+            DBMS_OUTPUT.put_line (
+                  'updateAmdPlannerLogons: planner_code='
+               || updatePlannerLogons.planner_code
+               || ' logon_id='
+               || updatePlannerLogons.logon_id
+               || ' data_source='
+               || updatePlannerLogons.data_source
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END updateAmdPlannerLogons;
 
@@ -3281,6 +3545,17 @@ AS
                       key1              => deletePlannerLogons.planner_code,
                       key2              => deletePlannerLogons.logon_id,
                       key3              => deletePlannerLogons.data_source);
+            DBMS_OUTPUT.put_line (
+                  'deleteAmdPlanners: planner_code='
+               || deletePlannerLogons.planner_code
+               || ' logon_id='
+               || deletePlannerLogons.logon_id
+               || ' data_source='
+               || deletePlannerLogons.data_source
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE;
       END deleteAmdPlanners;
 
@@ -3310,6 +3585,15 @@ AS
    BEGIN
       IF batch_job_number IS NULL
       THEN
+         DBMS_OUTPUT.put_line (
+               'loadGoldPsmsMain: start_step='
+            || startStep
+            || ' endStep='
+            || endStep
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE no_active_job;
       END IF;
 
@@ -3681,6 +3965,15 @@ AS
    BEGIN
       IF batch_job_number IS NULL
       THEN
+            DBMS_OUTPUT.put_line (
+                  'postDiffProcess: startStep='
+               || startStep
+               || ' endStep='
+               || endStep
+               || ' sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
          RAISE amd_load.no_active_job;
       END IF;
 
@@ -3807,6 +4100,11 @@ AS
 
       IF batch_job_number IS NULL
       THEN
+            DBMS_OUTPUT.put_line (
+                  'prepAmdDatabase: sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
          RAISE amd_load.no_active_job;
       END IF;
 
@@ -3868,15 +4166,15 @@ AS
       writeMsg (pTableName        => 'amd_load',
                 pError_location   => 480,
                 pKey1             => 'amd_load',
-                pKey2             => '$Revision:   1.94  $');
-      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.94  $');
+                pKey2             => '$Revision:   1.95  $');
+      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.95  $');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.94  $';
+      RETURN '$Revision:   1.95  $';
    END getVersion;
 
    PROCEDURE validatePartStructure
