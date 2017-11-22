@@ -1,10 +1,13 @@
+/* Formatted on 11/22/2017 11:55:52 AM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
-       $Revision:   1.54.3
+       $Revision:   1.55
            $Date:   25 Aug 2017
        $Workfile:   amd_demand.sql  $
+
+            Rev 1.55    DSE 11/22/2017 added dbms_output for all raise commands
 
             Rev 1.54.3  DSE 8/25/2017 added loadWarnerRobinsDemands
 
@@ -1002,6 +1005,11 @@ AS
                         DBMS_OUTPUT.DISABLE ();
                         CONTINUE;
                      ELSE
+                        DBMS_OUTPUT.put_line (
+                              'getNsiSid: sqlcode='
+                           || SQLCODE
+                           || ' sqlerrm='
+                           || SQLERRM);
                         RAISE;
                      END IF;
                END getNsiSid;
@@ -1818,12 +1826,10 @@ AS
                   -- for the output
                   -- use loc_sid for EY1746 i.e. 1001
                   --
-                  /*
                   AND NOT (    SUBSTR (R.request_id, 1, 6) IN
                                   ('FB2065', 'EY1213', 'EY1746')
                            AND TRUNC (r.created_datetime, 'YEAR') >=
                                   TO_DATE ('01/01/2015', 'MM/DD/YYYY'))
-                                  */
                   AND SUBSTR (r.select_from_sc, 1, PROGRAM_ID_LL) = PROGRAM_ID
                   AND (  NVL (r.qty_issued, 0)
                        + NVL (r.qty_due, 0)
@@ -1993,11 +1999,21 @@ AS
       EXCEPTION
          WHEN NO_DATA_FOUND
          THEN
+            DBMS_OUTPUT.put_line (
+                  'load_amd_demands_table: 1 sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE_APPLICATION_ERROR (
                -20001,
                'no data found load_amd_demands_table proc for loc_id, amd_spare_networks');
          WHEN OTHERS
          THEN
+            DBMS_OUTPUT.put_line (
+                  'load_amd_demands_table: 1 sqlcode='
+               || SQLCODE
+               || ' sqlerrm='
+               || SQLERRM);
             RAISE_APPLICATION_ERROR (
                -20001,
                   'OTHERS: load_amd_demands_table proc SQLERRM '
@@ -2165,6 +2181,17 @@ AS
                    key1              => nsn,
                    key2              => sran,
                    key3              => period);
+         DBMS_OUTPUT.put_line (
+               'doDmndFrcstConsumables: 1 action_code='
+            || action_code
+            || ' nsn='
+            || nsn
+            || ' period='
+            || period
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE badActionCode;
       END IF;
 
@@ -2178,6 +2205,17 @@ AS
                    key1              => nsn,
                    key2              => sran,
                    key3              => period);
+         DBMS_OUTPUT.put_line (
+               'doDmndFrcstConsumables: 2 action_code='
+            || action_code
+            || ' nsn='
+            || nsn
+            || ' period='
+            || period
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE;
    END doDmndFrcstConsumablesDiff;
 
@@ -2370,14 +2408,14 @@ AS
       writeMsg (pTableName        => 'amd_demand',
                 pError_location   => 180,
                 pKey1             => 'amd_demand',
-                pKey2             => '$Revision:   1.54.3');
+                pKey2             => '$Revision:   1.55');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.54.3';
+      RETURN '$Revision:   1.55';
    END getVersion;
 END Amd_Demand;
 /
