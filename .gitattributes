@@ -1,0 +1,7 @@
+# set default behavior
+text=auto
+
+*.sql text eof=lf
+*.ksh text eof=lf
+*.ctl text eof=lf
+*.properties text eof=lf
