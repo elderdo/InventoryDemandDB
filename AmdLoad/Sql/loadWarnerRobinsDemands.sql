@@ -1,10 +1,11 @@
 /*
 
       Author:   Douglas S. Elder
-    Revision:   1.0
-        Date:   25 Aug 2017
+    Revision:   1.1
+        Date:   22 Nov 2017
     Workfile:   loadWarnerRobinsDemands.sql
 /*
+/*      Rev 1.1   22 Nov 2017 DSE us UNLIMITED for serveroutput
 /*      Rev 1.0   25 Aug 2017
 /*   Initial revision.
 */
@@ -15,7 +16,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
-set serveroutput on size 100000
+set serveroutput on size UNLIMITED
 
 exec   amd_demand.loadWarnerRobinsDemands;
 

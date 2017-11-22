@@ -1,12 +1,11 @@
 /*
       $Author:   c402417  $
     $Revision:   1.4  $
-        $Date:   6/20/16
+        $Date:   Nov 21 2017
     $Workfile:   AmdLoad1.sql  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\AmdLoad1.sql.-arc  $
 /*   
-/*      Rev 1.4   6/20/16 added set serveroutput and reformated code
-
+/*      Rev 1.4   Nov 21 2017 DSE added set serveroutput
 /*      Rev 1.3   Aug 09 2007 09:18:22   c402417
 /*   Added exec amd_load.loadwecm.
 /*   
@@ -26,25 +25,25 @@
 -- 11/21/01  FF   Mod order.
 --
 
-SET ECHO ON
-SET TERMOUT ON
-SET TIME ON
-SET SERVEROUTPUT ON SIZE 100000
+set echo on
+set termout on
+set time on
+set serveroutput on size unlimited
 
-PROMPT exec amd_load.LoadGold;
-EXEC amd_load.loadgold;
-COMMIT;
+prompt exec amd_load.LoadGold;
+exec amd_load.loadgold;
+commit;
 
-PROMPT exec amd_load.LoadPsms;
-EXEC amd_load.loadpsms;
-COMMIT;
+prompt exec amd_load.LoadPsms;
+exec amd_load.loadpsms;
+commit;
 
-PROMPT exec amd_load.LoadMain;
-EXEC amd_load.loadmain;
-COMMIT;
+prompt exec amd_load.LoadMain;
+exec amd_load.loadmain;
+commit;
 
-PROMPT exec amd_load.LoadWecm;
-EXEC amd_load.loadwecm;
-COMMIT;
+prompt exec amd_load.LoadWecm;
+exec amd_load.loadwecm;
+commit;
 
-QUIT
+quit

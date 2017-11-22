@@ -1,4 +1,4 @@
--- vim ff=unix:ts=2:sw=2:sts=2:et:
+UNLIMITED vim ff=unix:ts=2:sw=2:sts=2:et:
 PROMPT run repairInvsSumDiff.sql
 SHOW SQLTERMINATOR
 SHOW SQLBLANKLINES
@@ -10,11 +10,25 @@ PROMPT ready repairInvSumDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
-SET SERVEROUTPUT ON SIZE 100000
+SET SERVEROUTPUT ON SIZE UNLIMITED
 
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
 
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
+
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
+
+prompt rows in amd_repair_invs_sum
+select count(*) from amd_repair_invs_sum where action_code <> 'D' ;
 
 VARIABLE rc NUMBER
 
@@ -221,6 +235,18 @@ BEGIN
    END IF;
 END;
 /
+
+prompt rows inserted into amd_repair_invs_sum
+select count(*) from amd_repair_invs_sum where action_code = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+
+prompt rows updated for amd_repair_invs_sum
+select count(*) from amd_repair_invs_sum where action_code = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+
+prompt rows deleted for amd_repair_invs_sum
+select count(*) from amd_repair_invs_sum where action_code = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+
+prompt rows in amd_repair_invs_sum
+select count(*) from amd_repair_invs_sum where action_code <> 'D';
 
 PROMPT end repairInvsSumDiff.sql
 EXIT :rc

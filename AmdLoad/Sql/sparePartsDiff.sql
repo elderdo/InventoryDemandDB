@@ -10,10 +10,22 @@ PROMPT ready sparePartDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
-SET SERVEROUTPUT ON SIZE 1000000
+SET SERVEROUTPUT ON SIZE UNLIMITED
 
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
+
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
+
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
 
 
 prompt rows in amd_spare_parts 
@@ -575,13 +587,13 @@ END;
 /
 
 prompt rows inserted into amd_spare_parts 
-select count(*) from amd_spare_parts where action_code = 'A' and trunc(last_update_dt) = trunc(sysdate);
+select count(*) from amd_spare_parts where action_code = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
 prompt rows updated for amd_spare_parts 
-select count(*) from amd_spare_parts where action_code = 'C' and trunc(last_update_dt) = trunc(sysdate);
+select count(*) from amd_spare_parts where action_code = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
 prompt rows deleted for amd_spare_parts 
-select count(*) from amd_spare_parts where action_code = 'D' and trunc(last_update_dt) = trunc(sysdate);
+select count(*) from amd_spare_parts where action_code = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
 prompt rows in amd_spare_parts 
 select count(*) from amd_spare_parts where action_code <> 'D'; 

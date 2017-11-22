@@ -10,11 +10,25 @@ PROMPT ready rspSumDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
-SET SERVEROUTPUT ON SIZE 100000
+SET SERVEROUTPUT ON SIZE UNLIMITED
 
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
 
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
+
+var v_now varchar2(30)
+
+exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
+
+
+
+prompt rows in amd_rsp_sum 
+select count(*) from amd_rsp_sum where action_code <> 'D';
 
 VARIABLE rc NUMBER
 
@@ -271,6 +285,18 @@ BEGIN
    END IF;
 END;
 /
+
+prompt rows inserted into amd_rsp_sum 
+select count(*) from amd_rsp_sum where action_code  = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+
+prompt rows updated for amd_rsp_sum 
+select count(*) from amd_rsp_sum where action_code  = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+
+prompt rows deleted for amd_rsp_sum 
+select count(*) from amd_rsp_sum where action_code  = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+
+prompt rows in amd_rsp_sum 
+select count(*) from amd_rsp_sum where action_code  <> 'D';
 
 PROMPT end rspSumDiff.sql
 EXIT :rc

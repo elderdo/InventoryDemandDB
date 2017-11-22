@@ -1,12 +1,13 @@
+/* Formatted on 7/2/2016 11:32:43 PM (QP5 v5.256.13226.35538) */
 -- vim: ff=unix:ts=2:sw=2:sts=2:et:
-PROMPT run rspDiff.sql
+PROMPT run partFactorsDiff.sql
 SHOW SQLTERMINATOR
 SHOW SQLBLANKLINES
 SET SQLBLANKLINES ON
 SET SQLTERMINATOR ';'
 SHOW SQLTERMINATOR
 SHOW SQLBLANKLINES
-PROMPT ready rspDiff.sql
+PROMPT ready partFactorsDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
@@ -27,8 +28,8 @@ exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
 
 
 
-prompt rows in amd_rsp 
-select count(*) from amd_rsp where action_code <> 'D';
+prompt rows in  amd_part_factors
+select count(*) from amd_part_factors where action_code <> 'D';
 
 VARIABLE rc NUMBER
 
@@ -36,20 +37,31 @@ VARIABLE rc NUMBER
 DECLARE
    CURSOR newRecs
    IS
-        SELECT part_no,
-               loc_sid,
-               rsp_inv,
-               rsp_level
-          FROM tmp_amd_rsp
-      ORDER BY part_no, loc_sid;
+        SELECT tmp.part_no part_no,
+               tmp.loc_sid loc_sid,
+               tmp.pass_up_rate pass_up_rate,
+               tmp.rts rts,
+               tmp.cmdmd_rate cmdmd_rate,
+               ansi.criticality_cleaned criticality_cleaned,
+               ansi.criticality criticality,
+               ansi.criticality_changed criticality_changed
+          FROM tmp_amd_part_factors tmp,
+               amd_national_stock_items ansi,
+               amd_spare_parts asp
+         WHERE     tmp.part_no = asp.part_no
+               AND asp.nsn = ansi.nsn
+               AND ansi.action_code != 'D'
+               AND tmp.action_code != 'D'
+               AND asp.action_code != 'D'
+      ORDER BY tmp.part_no, tmp.loc_sid;
 
    CURSOR deleteRecs
    IS
       SELECT part_no, loc_sid
-        FROM amd_rsp cur
+        FROM amd_part_factors cur
        WHERE     NOT EXISTS
                     (SELECT NULL
-                       FROM tmp_amd_rsp
+                       FROM tmp_amd_part_factors pf
                       WHERE part_no = cur.part_no AND loc_sid = cur.loc_sid)
              AND action_code <> 'D';
 
@@ -66,22 +78,29 @@ DECLARE
    FUNCTION isDiff (newRec newRecs%ROWTYPE)
       RETURN BOOLEAN
    IS
-      CURSOR curRecs (partNo    amd_rsp.part_no%TYPE,
-                      locSid    amd_rsp.loc_sid%TYPE)
+      CURSOR curRecs (partNo    amd_part_factors.part_no%TYPE,
+                      locSid    amd_part_factors.loc_sid%TYPE)
       IS
-           SELECT *
-             FROM amd_rsp
+           SELECT part_no,
+                  loc_sid,
+                  pass_up_rate,
+                  rts,
+                  cmdmd_rate
+             FROM amd_part_factors
             WHERE action_code != 'D' AND part_no = partNo AND loc_sid = locSid
-         ORDER BY part_no, loc_sid;
+         ORDER BY part_no;
 
       result   BOOLEAN := FALSE;
       cnt      NUMBER := 0;
    BEGIN
       FOR oldRec IN curRecs (newRec.part_no, newRec.loc_sid)
       LOOP
-         result := amd_utils.isDiff (newRec.rsp_inv, oldRec.rsp_inv);
+         result := amd_utils.isDiff (newRec.pass_up_rate, oldRec.pass_up_rate);
+
+         result := result OR amd_utils.isDiff (newRec.rts, oldRec.rts);
+
          result :=
-            result OR amd_utils.isDiff (newRec.rsp_level, oldRec.rsp_level);
+            result OR amd_utils.isDiff (newRec.cmdmd_rate, oldRec.cmdmd_rate);
 
          cnt := cnt + 1;
       END LOOP;
@@ -101,8 +120,8 @@ DECLARE
       RETURN result;
    END isDiff;
 
-   FUNCTION isInsert (partNo    amd_rsp.part_no%TYPE,
-                      locSid    amd_rsp.loc_sid%TYPE)
+   FUNCTION isInsert (partNo    amd_part_factors.part_no%TYPE,
+                      locSid    amd_part_factors.loc_sid%TYPE)
       RETURN BOOLEAN
    IS
       result   BOOLEAN := FALSE;
@@ -111,7 +130,7 @@ DECLARE
       BEGIN
          SELECT 1
            INTO hit
-           FROM amd_rsp
+           FROM amd_part_factors
           WHERE part_no = partNo AND loc_sid = locSid AND action_code <> 'D';
       EXCEPTION
          WHEN NO_DATA_FOUND
@@ -126,32 +145,42 @@ DECLARE
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_inventory.RspInsertRow (rec.part_no,
-                                         rec.loc_sid,
-                                         rec.rsp_inv,
-                                         rec.rsp_level);
+      RETURN amd_part_factors_pkg.insertRow (rec.part_no,
+                                             rec.loc_sid,
+                                             rec.pass_up_rate,
+                                             rec.rts,
+                                             rec.cmdmd_rate,
+                                             rec.criticality,
+                                             rec.criticality_changed,
+                                             rec.criticality_cleaned);
    END insertRow;
 
    FUNCTION updateRow (rec newRecs%ROWTYPE)
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_inventory.RspUpdateRow (rec.part_no,
-                                         rec.loc_sid,
-                                         rec.rsp_inv,
-                                         rec.rsp_level);
+      RETURN amd_part_factors_pkg.updateRow (rec.part_no,
+                                             rec.loc_sid,
+                                             rec.pass_up_rate,
+                                             rec.rts,
+                                             rec.cmdmd_rate,
+                                             rec.criticality,
+                                             rec.criticality_changed,
+                                             rec.criticality_cleaned);
    END updateRow;
 
    FUNCTION deleteRow (rec deleteRecs%ROWTYPE)
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_inventory.RspDeleteRow (rec.part_no, rec.loc_sid);
+      RETURN amd_part_factors_pkg.deleteRow (rec.part_no,
+                                             rec.loc_sid);
    END;
 BEGIN
    FOR newRec IN newRecs
    LOOP
       newCnt := newCnt + 1;
+
       IF isInsert (newRec.part_no, newRec.loc_sid)
       THEN
          IF insertRow (newRec) = 0
@@ -214,14 +243,17 @@ BEGIN
 END;
 /
 
-prompt rows inserted into amd_rsp 
-select count(*) from amd_rsp where action_code = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+prompt rows inserted into  amd_part_factors
+select count(*) from amd_part_factors where action_code =  'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
-prompt rows updated for amd_rsp 
-select count(*) from amd_rsp where action_code = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+prompt rows updated for amd_part_factors
+select count(*) from amd_part_factors where action_code =  'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
-prompt rows deleted for amd_rsp 
-select count(*) from amd_rsp where action_code = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
+prompt rows deleted for amd_part_factors
+select count(*) from amd_part_factors where action_code =  'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
-prompt rows in amd_rsp 
-select count(*) from amd_rsp where action_code <> 'D';
+prompt rows in amd_part_factors
+select count(*) from amd_part_factors where action_code <>  'D';
+
+PROMPT end partFactorsDiff.sql
+EXIT :rc

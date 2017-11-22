@@ -1,11 +1,11 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.0  $
-        $Date:   20 May 2008 15:01:38  $
+      $Author:   Douglas S Elder
+    $Revision:   1.1
+        $Date:   21 Nov 2017
     $Workfile:   loadAmdDemands.sql  $
-         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadAmdDemands.sql.-arc  $
 /*   
-/*      Rev 1.0   20 May 2008 15:01:38   zf297a
+/*      Rev 1.1   21 Nov 2017 DSE added set serveroutput
+/*      Rev 1.0   20 May 2008 15:01:38   DSE
 /*   Initial revision.
 */
 
@@ -15,6 +15,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
+set serveroutput on size unlimited
 
 exec   amd_demand.loadamddemands;
 

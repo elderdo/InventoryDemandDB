@@ -1,23 +1,25 @@
-/* Formatted on 6/20/2016 2:42:54 PM (QP5 v5.256.13226.35538) */
 /*
-      $Author:   zf297a  $
+      $Author:   Douglas S. Elder
     $Revision:   1.1
-        $Date:   6/20/2016
+        $Date:   Nov 21 2017
     $Workfile:   loadTempNsns.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadTempNsns.sql.-arc  $
 /*   
+/*      Rev 1.1   21 Nov 2017 DSE added set serveroutput
 /*      Rev 1.0   20 May 2008 15:01:38   zf297a
 /*   Initial revision.
-/*      Rev 1.1   6/20/2016 added set serveroutput and reformatted code
 */
 
-WHENEVER SQLERROR EXIT FAILURE
-WHENEVER OSERROR EXIT FAILURE
+whenever sqlerror exit FAILURE
+whenever oserror exit FAILURE
 
-SET TIME ON
-SET TIMING ON
-SET ECHO ON
-SET SERVEROUTPUT ON SIZE 100000
+set time on
+set timing on
+set echo on
+set serveroutput on size unlimited
 
-EXEC  amd_load.loadtempnsns;
+exec  amd_load.loadtempnsns;
 
-EXIT
+exit 
+
+

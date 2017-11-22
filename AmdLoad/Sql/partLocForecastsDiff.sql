@@ -1,12 +1,12 @@
 -- vim: ff=unix:ts=2:sw=2:sts=2:et:
-PROMPT run amdReqsDiff.sql
+PROMPT run partLocForecastsDiff.sql
 SHOW SQLTERMINATOR
 SHOW SQLBLANKLINES
 SET SQLBLANKLINES ON
 SET SQLTERMINATOR ';'
 SHOW SQLTERMINATOR
 SHOW SQLBLANKLINES
-PROMPT ready amdReqsDiff.sql
+PROMPT ready partLocForecastsDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
@@ -27,8 +27,8 @@ exec :v_now := to_char(sysdate,'MM/DD/YYYY HH:MI:SS PM');
 
 
 
-prompt rows in amd_reqs
-select count(*) from amd_reqs where action_code <> 'D' ;
+prompt rows in amd_part_loc_forecasts 
+select count(*) from amd_part_loc_forecasts where action_code <> 'D';
 
 VARIABLE rc NUMBER
 
@@ -36,23 +36,19 @@ VARIABLE rc NUMBER
 DECLARE
    CURSOR newRecs
    IS
-        SELECT req_id,
-               part_no,
-               loc_sid,
-               quantity_due
-          FROM tmp_amd_reqs
-      ORDER BY req_id, part_no, loc_sid;
+        SELECT part_no, loc_sid, NVL (forecast_qty, 0) forecast_qty
+          FROM tmp_amd_part_loc_forecasts
+         WHERE NVL (forecast_qty, 0) > 0 AND action_code != 'D'
+      ORDER BY part_no, loc_sid;
 
    CURSOR deleteRecs
    IS
-      SELECT req_id, part_no, loc_sid
-        FROM amd_reqs cur
+      SELECT part_no, loc_sid, forecast_qty
+        FROM amd_part_loc_forecasts cur
        WHERE     NOT EXISTS
-                        (SELECT NULL
-                           FROM tmp_amd_reqs
-                          WHERE     req_id = cur.req_id
-                                AND part_no = cur.part_no
-                                AND loc_sid = cur.loc_sid)
+                    (SELECT NULL
+                       FROM tmp_amd_part_loc_forecasts
+                      WHERE part_no = cur.part_no AND loc_sid = cur.loc_sid)
              AND action_code <> 'D';
 
    updateCnt      NUMBER := 0;
@@ -68,25 +64,20 @@ DECLARE
    FUNCTION isDiff (newRec newRecs%ROWTYPE)
       RETURN BOOLEAN
    IS
-      CURSOR curRecs (
-         reqId     amd_reqs.req_id%TYPE,
-         partNo    amd_reqs.part_no%TYPE,
-         locSid    amd_reqs.loc_sid%TYPE)
+      CURSOR curRecs (partNo    amd_part_loc_forecasts.part_no%TYPE,
+                      locSid    amd_part_loc_forecasts.loc_sid%TYPE)
       IS
            SELECT *
-             FROM amd_reqs
-            WHERE     action_code != 'D'
-                  AND req_id = reqId
-                  AND part_no = partNo
-                  AND loc_sid = locSid
-         ORDER BY req_id, part_no, loc_sid;
+             FROM amd_part_loc_forecasts
+            WHERE action_code != 'D' AND part_no = partNo AND loc_sid = locSid
+         ORDER BY part_no;
 
       result   BOOLEAN := FALSE;
       cnt      NUMBER := 0;
    BEGIN
-      FOR oldRec IN curRecs (newRec.req_id, newRec.part_no, newRec.loc_sid)
+      FOR oldRec IN curRecs (newRec.part_no, newRec.loc_sid)
       LOOP
-         result := amd_utils.isDiff (newRec.quantity_due, oldRec.quantity_due);
+         result := amd_utils.isDiff (newRec.forecast_qty, oldRec.forecast_qty);
 
          cnt := cnt + 1;
       END LOOP;
@@ -94,9 +85,7 @@ DECLARE
       IF cnt = 0 OR cnt > 1
       THEN
          DBMS_OUTPUT.put_line (
-               'diff error:req_id='
-            || newRec.req_id
-            || ' part_no='
+               'diff error:part_no='
             || newRec.part_no
             || ' loc_sid='
             || newRec.loc_sid
@@ -108,9 +97,8 @@ DECLARE
       RETURN result;
    END isDiff;
 
-   FUNCTION isInsert (reqId     amd_reqs.req_id%TYPE,
-                      partNo    amd_reqs.part_no%TYPE,
-                      locSid    amd_reqs.loc_sid%TYPE)
+   FUNCTION isInsert (partNo    amd_part_loc_forecasts.part_no%TYPE,
+                      locSid    amd_part_loc_forecasts.loc_sid%TYPE)
       RETURN BOOLEAN
    IS
       result   BOOLEAN := FALSE;
@@ -119,11 +107,8 @@ DECLARE
       BEGIN
          SELECT 1
            INTO hit
-           FROM amd_reqs
-          WHERE     req_id = reqId
-                AND part_no = partNo
-                AND loc_sid = locSid
-                AND action_code <> 'D';
+           FROM amd_part_loc_forecasts
+          WHERE part_no = partNo AND loc_sid = locSid AND action_code <> 'D';
       EXCEPTION
          WHEN NO_DATA_FOUND
          THEN
@@ -137,33 +122,33 @@ DECLARE
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_reqs_pkg.insertRow (rec.req_id,
-                                     rec.part_no,
-                                     rec.loc_sid,
-                                     rec.quantity_due);
+      RETURN amd_part_loc_forecasts_pkg.insertRow (rec.part_no,
+                                                   rec.loc_sid,
+                                                   rec.forecast_qty);
    END insertRow;
 
    FUNCTION updateRow (rec newRecs%ROWTYPE)
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_reqs_pkg.updateRow (rec.req_id,
-                                     rec.part_no,
-                                     rec.loc_sid,
-                                     rec.quantity_due);
+      RETURN amd_part_loc_forecasts_pkg.updateRow (rec.part_no,
+                                                   rec.loc_sid,
+                                                   rec.forecast_qty);
    END updateRow;
 
    FUNCTION deleteRow (rec deleteRecs%ROWTYPE)
       RETURN NUMBER
    IS
    BEGIN
-      RETURN amd_reqs_pkg.deleteRow (rec.req_id, rec.part_no, rec.loc_sid);
+      RETURN amd_part_loc_forecasts_pkg.deleteRow (rec.part_no,
+                                                   rec.loc_sid,
+                                                   rec.forecast_qty);
    END;
 BEGIN
    FOR newRec IN newRecs
    LOOP
       newCnt := newCnt + 1;
-      IF isInsert (newRec.req_id, newRec.part_no, newRec.loc_sid)
+      IF isInsert (newRec.part_no, newRec.loc_sid)
       THEN
          IF insertRow (newRec) = 0
          THEN
@@ -225,19 +210,17 @@ BEGIN
 END;
 /
 
-prompt rows inserted into amd_reqs
-select count(*) from amd_reqs where action_code = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+prompt rows inserted in amd_part_loc_forecasts 
+select count(*) from amd_part_loc_forecasts where action_code = 'A' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
+prompt rows updated for amd_part_loc_forecasts 
+select count(*) from amd_part_loc_forecasts where action_code = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
-prompt rows updated for amd_reqs
-select count(*) from amd_reqs where action_code = 'C' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+prompt rows deleted for amd_part_loc_forecasts 
+select count(*) from amd_part_loc_forecasts where action_code = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM');
 
-prompt rows deleted for amd_reqs
-select count(*) from amd_reqs where action_code = 'D' and last_update_dt >= to_date(:v_now,'MM/DD/YYYY HH:MI:SS PM') ;
+prompt rows in amd_part_loc_forecasts 
+select count(*) from amd_part_loc_forecasts where action_code <> 'D' ;
 
-prompt rows in amd_reqs
-select count(*) from amd_reqs where action_code <> 'D' ;
-
-PROMPT end amdReqsDiff.sql
-
+PROMPT end partLocForecastsDiff.sql
 EXIT :rc

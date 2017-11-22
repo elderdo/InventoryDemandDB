@@ -1,10 +1,11 @@
 /*
-      $Author:   c402417  $
-    $Revision:   1.2  $
-        $Date:   Jan 30 2007 09:52:10  $
+      $Author:   Douglas S. Elder
+    $Revision:   1.3
+        $Date:   Nov 21 2017
     $Workfile:   AmdLoad2.sql  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\AmdLoad2.sql.-arc  $
 /*   
+/*      Rev 1.3   Nov 21 2017 DSE added set serveroutput
 /*      Rev 1.2   Jan 30 2007 09:52:10   c402417
 /*   Add exec amd_load.LoadRblPairs.
 /*   
@@ -35,6 +36,7 @@
 set echo on
 set termout on
 set time on
+set serveroutput on size unlimited
 
 prompt a2a_pkg.deleteinvalidparts()
 exec amd_owner.a2a_pkg.deleteinvalidparts;

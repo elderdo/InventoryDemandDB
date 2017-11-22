@@ -3,10 +3,10 @@
       Author:   Douglas S. Elder
     Revision:   1.1
         Date:   22 Nov 2017
-    Workfile:   unloadWarnerRobinsDemands.sql
+    Workfile:   loadSanAntonioDemands.sql
 /*
-/*      Rev 1.1   22 Nov 2017 DSE use UNLIMITED for serveroutput
-/*      Rev 1.0   25 Aug 2017
+/*      Rev 1.1   21 Nov 2017 DSE used UNLIMITED for serveroutput
+/*      Rev 1.0   2 Aug 2017
 /*   Initial revision.
 */
 
@@ -18,7 +18,7 @@ set timing on
 set echo on
 set serveroutput on size UNLIMITED
 
-exec   amd_demand.unloadWarnerRobinsDemands;
+exec   amd_demand.loadSanAntonioDemands;
 
 @@analyzeAmdBssmSource.sql
 @@analyzeTmpAmdDemands.sql

@@ -1,9 +1,10 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.3  $
-        $Date:   28 Oct 2014
+      $Author:   Douglas S Elder
+    $Revision:   1.4
+        $Date:   22 Nov 2017
     $Workfile:   loadVenn.sql  $
 /*   
+/*      Rev 1.4   22 Nov 2017 DSE changed serveroutput to UNLIMITED
 /*      Rev 1.3   28 Oct 2014
            have an inline proc ignore duplicates
 /*      Rev 1.2   28 Jun 2013
@@ -26,7 +27,7 @@ SET TIME ON
 SET TIMING ON
 SET ECHO ON
 SET SQLBLANKLINES ON
-SET SERVEROUTPUT ON SIZE 100000
+SET SERVEROUTPUT ON SIZE UNLIMITED
 
 DEFINE link = &1
 

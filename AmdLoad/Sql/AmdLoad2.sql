@@ -39,7 +39,7 @@ whenever oserror exit FAILURE
 set echo on
 set time on
 set timing on
-set serveroutput on size 1000000
+set serveroutput on size UNLIMITED
 
 
 prompt amd_part_loc_forecasts_pkg.LoadLatestRblRun()
@@ -59,7 +59,7 @@ prompt amd_spare_networks_pkg.auto_load_spare_networks()
 exec amd_spare_networks_pkg.auto_load_spare_networks;
 commit;
 
-prompt amd_demand.LoadAmdDemands()
+prompt amd_demand.loadAmdBssmSourceTmpAmdemands()
 exec amd_demand.loadamddemands;
 commit;
 

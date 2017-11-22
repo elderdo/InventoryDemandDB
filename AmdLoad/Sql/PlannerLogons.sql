@@ -1,13 +1,15 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.0  $
-        $Date:   11 Mar 2007 11:47:14  $
+      $Author:   Douglas S. Elder
+    $Revision:   1.1
+        $Date:   21 Nov 2017
     $Workfile:   PlannerLogons.sql  $
-         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\PlannerLogons.sql.-arc  $
 /*   
-/*      Rev 1.0   11 Mar 2007 11:47:14   zf297a
+/*      Rev 1.2   22 Nov 2017 DSE removed set's only output should be the count
+/*      Rev 1.1   21 Nov 2017 DSE added set serveroutput
+/*      Rev 1.0   11 Mar 2007 11:47:14   DSE
 /*   Initial revision.
 */
+
 
 select count(*) 
 from 
