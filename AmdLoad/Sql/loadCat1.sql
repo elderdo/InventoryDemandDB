@@ -38,7 +38,7 @@ define link=&1
 
 insert into cat1
 (
-	part,nsn,noun,prime,um_show_code,um_issue_code,um_turn_code,
+	part,nsn,noun,prime,created_datetime,um_show_code,um_issue_code,um_turn_code,
 	um_disp_code,um_cap_code,um_mil_code,asset_req_on_receipt,
 	record_changed1_yn,record_changed2_yn,record_changed3_yn,
 	record_changed4_yn,record_changed5_yn,record_changed6_yn,
@@ -51,6 +51,7 @@ SELECT TRIM (part),
        TRIM (nsn),
        REGEXP_REPLACE (TRIM (noun), '[^[:print:]]', ''),
        REGEXP_REPLACE (TRIM (prime), '[^[:print:]]', ''),
+       created_datetime,
        CASE
           WHEN LENGTH (TRIM (um_show_code)) > 2
           THEN
