@@ -1,13 +1,14 @@
-/* Formatted on 11/21/2017 2:04:26 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.AMD_LOAD
 AS
    /*
            PVCS Keywords
 
           $Author:   Douglas S. Elder
-        $Revision:   1.95
-            $Date:   21 Nov 2017
+        $Revision:   1.96
+            $Date:   5 Dec 2017
         $Workfile:   amd_load.pkb  $
+        
+          Rev 1.96   5 Dec 2017 use mtbdr when the associated part has been created within the last 5 years (tfs 47117)
 
           Rev 1.95  21 Nov 2017 added dbms_output.put_line for every raise command
           Rev 1.94  15 Nov 2017 added qualified where clauses by using lock_sid, part_no, and nsn
@@ -1647,10 +1648,20 @@ AS
       mtbdr              OUT amd_rmads_source_tmp.MTBDR%TYPE)
    IS
    BEGIN
-      SELECT qpei_weighted, mtbdr
+      SELECT qpei_weighted,
+             CASE
+                WHEN FLOOR (
+                        MONTHS_BETWEEN (SYSDATE, cat1.created_datetime) / 12) <
+                        5
+                THEN
+                   mtbdr
+                ELSE
+                   NULL
+             END
+                mtbdr
         INTO qpei_weighted, mtbdr
-        FROM AMD_RMADS_SOURCE_TMP
-       WHERE part_no = getRmadsData.part_no;
+        FROM AMD_RMADS_SOURCE_TMP, cat1
+       WHERE part_no = getRmadsData.part_no AND part_no = cat1.part;
    EXCEPTION
       WHEN STANDARD.NO_DATA_FOUND
       THEN
@@ -1659,7 +1670,7 @@ AS
       WHEN OTHERS
       THEN
          ErrorMsg (sqlFunction       => 'select',
-                   tableName         => 'amd_rmads_source_tmp',
+                   tableName         => 'amd_rmads_source_tmp,cat1',
                    pError_location   => 160,
                    key1              => getRmadsData.part_no);
          DBMS_OUTPUT.put_line (
@@ -3965,15 +3976,15 @@ AS
    BEGIN
       IF batch_job_number IS NULL
       THEN
-            DBMS_OUTPUT.put_line (
-                  'postDiffProcess: startStep='
-               || startStep
-               || ' endStep='
-               || endStep
-               || ' sqlcode='
-               || SQLCODE
-               || ' sqlerrm='
-               || SQLERRM);
+         DBMS_OUTPUT.put_line (
+               'postDiffProcess: startStep='
+            || startStep
+            || ' endStep='
+            || endStep
+            || ' sqlcode='
+            || SQLCODE
+            || ' sqlerrm='
+            || SQLERRM);
          RAISE amd_load.no_active_job;
       END IF;
 
@@ -4100,11 +4111,8 @@ AS
 
       IF batch_job_number IS NULL
       THEN
-            DBMS_OUTPUT.put_line (
-                  'prepAmdDatabase: sqlcode='
-               || SQLCODE
-               || ' sqlerrm='
-               || SQLERRM);
+         DBMS_OUTPUT.put_line (
+            'prepAmdDatabase: sqlcode=' || SQLCODE || ' sqlerrm=' || SQLERRM);
          RAISE amd_load.no_active_job;
       END IF;
 
@@ -4166,15 +4174,15 @@ AS
       writeMsg (pTableName        => 'amd_load',
                 pError_location   => 480,
                 pKey1             => 'amd_load',
-                pKey2             => '$Revision:   1.95  $');
-      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.95  $');
+                pKey2             => '$Revision:   1.96  $');
+      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.96  $');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.95  $';
+      RETURN '$Revision:   1.96  $';
    END getVersion;
 
    PROCEDURE validatePartStructure
