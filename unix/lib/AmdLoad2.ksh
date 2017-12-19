@@ -1,13 +1,21 @@
 #!/usr/bin/ksh
-# vim: set ts=2 sw=2 sts=2 et
-#   $Author:   Douglas S. Elder
-# $Revision:   1.24  $
-#     $Date:   29 Oct 2013
-# $Workfile:   AmdLoad2.ksh  $
+# vim: ts=2:sw=2:sts=2:et:autoindent:smartindent:
+#   Author:   Douglas S. Elder
+# Revision:   1.27
+#     Date:   19 Dec 2017
+#     File:   AmdLoad2.ksh
 
-# Rev 1.24 15 Mah 2017 used ksh -n to eliminate obsolete code
-#                      and used STEPS_FILE as a file that
-#                      indicates what functions to execute
+# Rev 1.27 19 Dec 2017 turned off loadSanAntonio data TFS 48244
+# Rev 1.26 28 Aug 2017 added loadWarnerRobinsDemands
+# Rev 1.25 02 Aug 2017 added loadSanAntonioDemands
+#                      performed ksh -x AmdLoad2.ksh scan
+#                      and replaced obsolete code with
+#                      current ksh standard code:
+#                      `   ` replaced with $(   )
+#                      = replaced with ==
+#                      -a replaced with -e
+#                      eliminated $'s from numeric expressions
+# Rev 1.24 19 Mar 2017 fixed function execSqlplus
 # Rev 1.23 29 Oct 2013 removed all spo functions
 # Rev 1.22 ignore spo import errors until converted to Spo 8
 # Rev 1.21 make sure the logs for the sqlplus scripts are
@@ -17,17 +25,16 @@
 
 # Rev 1.19 removed amdDemandA2A step
 
-USAGE="Usage: ${0##*/}  [-m] [-o] [-f] [-d] [-s step_file]  [startStep endStep ]\n\n
+USAGE="Usage: ${0##*/} [-h] [-m] [-o] [-f] [-d] [-s step_file]  [startStep endStep ]\n\n
 \twhere\n
+\t-h displays this message\n
 \t-m will enable a selection menu\n
 \t-o turn off notification via email\n
 \t-f run all sqlplus steps in the foreground (default is background)\n
 \t-s step file for overriding the steps - default is AmdLoad2Steps.ksh\n
 \t-d enables debug\n"
 
-STEPS_FILE=
-
-if (( $# > 0)) && [[ "$1" == "?" ]] ; then
+if [[ $# > 0 && "$1" == "-h" ]] ; then
   print $USAGE
   exit 0
 fi
@@ -46,7 +53,7 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
   . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 fi
 
-function abort {
+abort() {
   errmsg="AmdLoad2.ksh Failed"
   print "$errmsg $1"
   print -u2 "$errmsg $1"
@@ -163,7 +170,7 @@ function execSteps {
 
     for x in $*
     do
-      ((x==x)) # make sure x is a number with no leading zeros
+      ((x=x)) # make sure x is a number with no leading zerso
       if [[ "$AMD_AMDLOAD2_STEP" == "1" ]] ; then
         AMD_CUR_STEP=$(printf "%02d" $x)
       fi
@@ -228,16 +235,14 @@ AMDLOAD2_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thi
 
 
 function execSqlplus {
-  sqlscript=$1
-  if [[ "${AMDLOAD2_FOREGROUND:-N}" == "Y" ]] then
+  if [[ "${AMDLOAD2_FOREGROUND:-N}" == "Y" ]] ; then
     print "$0.ksh $1 started at $(date)"
-    $LIB_HOME/execSqlplus.ksh -e $AMDLOAD2_ERROR_LOG $sqlscript  
+    $LIB_HOME/execSqlplus.ksh -e $AMDLOAD2_ERROR_LOG $1  
     RC=$?
     print "$0.ksh $1 ended at $(date)"
     if ((RC!=0)) ; then
       abort "$0 failed for $1"
     fi
-    $LIB_HOME/checkforerrors.ksh ${CHECK4ERROROPT:-} $LOG_HOME/${TimeStamp}*${sqlscript}*.log
   else
     print "$0.ksh $1 started in background at $(date)"
     $LIB_HOME/execSqlplus.ksh -e $AMDLOAD2_ERROR_LOG $1   &
@@ -251,48 +256,35 @@ steps[3]="execSqlplus loadTempNsns"
 steps[4]="execSqlplus autoLoadSpareNetworks"
 steps[5]="execSqlplus loadAmdBssmSourceTmpAmdDemands"
 steps[6]="execSqlplus loadFmsDemands"
-steps[7]="execSqlplus loadBascUkDemands"
-steps[8]=wait
-steps[9]="checkSqlplusErrors 1-7"
-steps[10]="execSqlplus loadAmdDemandsTable"
-steps[11]="execSqlplus loadGoldInventory"
-steps[12]="execSqlplus loadAmdPartLocations"
-steps[13]=wait
-steps[14]="checkSqlplusErrors 10-12"
-steps[15]="execSqlplus loadAmdBaseFromBssmRaw"
-steps[16]="execSqlplus updateAmdAllBaseCleaned"
-steps[17]="execSqlplus loadAmdReqs"
-steps[18]="execSqlplus loadTmpAmdPartFactors"
-steps[19]="execSqlplus loadTmpAmdPartLocForecasts_Add"
-steps[20]="execSqlplus loadTmpAmdLocPartLeadTime"
-steps[21]=wait
-steps[22]="checkSqlplusErrors 17-22"
-steps[23]=return
+steps[7]="execSqlplus loadWarnerRobinsDemands"
+steps[8]="execSqlplus loadBascUkDemands"
+steps[9]=wait
+steps[10]="checkSqlplusErrors 1-8"
+steps[11]="execSqlplus loadAmdDemandsTable"
+steps[12]="execSqlplus loadGoldInventory"
+steps[13]="execSqlplus loadAmdPartLocations"
+steps[14]=wait
+steps[15]="checkSqlplusErrors 11-13"
+steps[16]="execSqlplus loadAmdBaseFromBssmRaw"
+steps[17]="execSqlplus updateAmdAllBaseCleaned"
+steps[18]="execSqlplus loadAmdReqs"
+steps[19]="execSqlplus loadTmpAmdPartFactors"
+steps[20]="execSqlplus loadTmpAmdPartLocForecasts_Add"
+steps[21]="execSqlplus loadTmpAmdLocPartLeadTime"
+steps[22]=wait
+steps[23]="checkSqlplusErrors 16-21"
+steps[24]=return
 
 THIS_FILE=$(basename $0)
 THIS_FILE_NO_EXT=$(echo $THIS_FILE | sed 's/\..\{3\}$//')
-
+STEPS_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}Steps.ksh
 if [[ -f $STEPS_FILE ]] ;  then
-  # override steps and run in foreground
-  # so each execution gets checked for errors
-  # with checkforerrors.ksh
-  AMDLOAD2_FOREGROUND=Y
-  print "Executing steps with ${STEP_FILE}" 
-  while IFS= read -r func
-  do
-    if echo "${steps[*]}" | grep "$func" > /dev/null
-    then
-      $func
-      if (($?!=0)) ; then
-        echo $func failed
-        return
-      fi 
-    else
-      echo $func is not a valid step for AmdLoad2.ksh
-      exit 4
-    fi
-  done < $STEPS_FILE
-  return
+  # override steps
+  print "$CUR_USER is executing script and overriding steps wiht ${STEP_FILE}" 2>&1 
+  cat $STEPS_FILE 2>&1 
+  . $STEPS_FILE
+  print "$CUR_USER is renaming override script $STEPS_FILE to ${STEPS_FILE}.bku" 
+  mv $STEPS_FILE ${STEPS_FILE}.bku
 fi
 
 
