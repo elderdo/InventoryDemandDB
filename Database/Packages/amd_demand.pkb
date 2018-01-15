@@ -1,11 +1,12 @@
-/* Formatted on 11/22/2017 11:55:52 AM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
-       $Revision:   1.55
-           $Date:   25 Aug 2017
+       $Revision:   1.56
+           $Date:   19 Dec 2017
        $Workfile:   amd_demand.sql  $
+            Rev 1.56    DSE 12/19/2017 removed locattion EY1746 from the date filter implemented by
+                        rev 1.54.1 per TFS 48244
 
             Rev 1.55    DSE 11/22/2017 added dbms_output for all raise commands
 
@@ -1818,16 +1819,8 @@ AS
             WHERE     r.prime = c.part
                   AND NVL (r.nsn, 'null') <> 'null'
                   AND SUBSTR (r.request_id, 1, 6) = depot.loc_id
-                  -- for this cursor exclude all the data that meets the following
-                  -- conditions:
-                  --   1. request_id,1,6) in ('FB2065', 'EY1213','EY1746') and
-                  --   2. and created_datetime >= 2015-01
-                  --
-                  -- for the output
-                  -- use loc_sid for EY1746 i.e. 1001
-                  --
                   AND NOT (    SUBSTR (R.request_id, 1, 6) IN
-                                  ('FB2065', 'EY1213', 'EY1746')
+                                  ('FB2065', 'EY1213')
                            AND TRUNC (r.created_datetime, 'YEAR') >=
                                   TO_DATE ('01/01/2015', 'MM/DD/YYYY'))
                   AND SUBSTR (r.select_from_sc, 1, PROGRAM_ID_LL) = PROGRAM_ID
@@ -2408,14 +2401,14 @@ AS
       writeMsg (pTableName        => 'amd_demand',
                 pError_location   => 180,
                 pKey1             => 'amd_demand',
-                pKey2             => '$Revision:   1.55');
+                pKey2             => '$Revision:   1.56');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.55';
+      RETURN '$Revision:   1.56';
    END getVersion;
 END Amd_Demand;
 /
