@@ -1,6 +1,6 @@
 DROP VIEW AMD_OWNER.GOLDSA_REQ1_V;
 
-/* Formatted on 2/21/2017 6:50:39 PM (QP5 v5.287) */
+/* Formatted on 1/26/2018 5:32:50 PM (QP5 v5.287) */
 CREATE OR REPLACE FORCE VIEW AMD_OWNER.GOLDSA_REQ1_V
 (
    REQUEST_ID,
@@ -20,8 +20,10 @@ CREATE OR REPLACE FORCE VIEW AMD_OWNER.GOLDSA_REQ1_V
    QTY_ISSUED,
    NEED_DATE,
    REQUEST_PRIORITY,
-   PURPOSE_CODE
+   PURPOSE_CODE,
+   PROC_CODE
 )
+   BEQUEATH DEFINER
 AS
    SELECT TRIM (request_id),
           r.created_datetime,
@@ -55,7 +57,8 @@ AS
           qty_issued,
           need_date,
           request_priority,
-          purpose_code
+          purpose_code,
+          proc_code
      FROM cat1@amd_goldsa_link c, req1@amd_goldsa_link r
     WHERE     c.part = r.select_from_part
           AND c.source_code = 'F77'
