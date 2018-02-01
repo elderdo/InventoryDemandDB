@@ -1,24 +1,35 @@
 #!/usr/bin/ksh
+# vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:
 # execLoadDemands.ksh
 # Author: Douglas S. Elder
-# Date: 10/17/2017
+# Date: 02/01/2018
 # Desc: load the amd demands
-# Rev 1.0 7/12/2013 init rev
-# Rev 1.1 5/15/2017 used a command file for amd_loader.ksh to execute the steps by name
-#                   and a steps_file for AmdLoad2.ksh  to execute the steps by name
-#                   scanned with ksh -n and eliminated all obsolete code
-# Rev 1.2 10/17/2017 specifiy the exact steps to run to load the amd_demands table
-#                    eliminated checkforerrors since each sqlplus step is checked
-#                    and the script is aborted if any step fails
-#                    exec the L67 script used by the main_amd_loader
-#                    make sure a log is generated
+# Rev 1.0 7/12/2013
+# Rev 2.0 8/02/2017
+# Rev 3.0 10/03/2017 fixed loadDemands to do
+#                    loadSanAntonioDemands
+#                    and loadWarnerRobinsDemands
+#                    use -f option as the 2nd argument for
+#                    execSqlplus so that the step will execute
+#                    in the foreground
+#                    Run the truncateDemands step in the foreground
+#                    so it completes before the other steps start
+#                    Run the loadAmdBssmSourceTmpAmdDemands step in the foreground
+#                    so its truncate completes before the other steps run
+# Rev 3.1 12/192017  removed loadSanAntonioDemands per TFS 48244
+# Rev 3.2 02/01/2018 put back loadSanAntonioDemands per TFS 52919
+#                    renamed loadBascUkDemand to loadDepotDemands
 
 
-USAGE="Usage: ${0##*/}  [-d -m]\n\n
+USAGE="Usage: ${0##*/}  [-d -f -m]\n\n
 \twhere\n
 \t-d enables debug\n
+\t-f run sqlplus in foreground (default is background)\n
 \t-m display menu and select steps\n"
 # setup the env
+set -o pipefail
+
+CHECK4ERROROPT=
 
 CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
@@ -35,17 +46,19 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
 fi
 
 # get command line options
-while getopts :dmo arguments
+while getopts :dfmo arguments
 do
   case $arguments in
     d) debug=Y
        export debug
        set -x ;;
 
+    f) FOREGROUND=Y ;;
     m) USE_MENU=Y ;;
 
     o) AMD_ERROR_NOTIFICATION=N
-       export AMD_ERROR_NOTIFICATION ;;
+       export AMD_ERROR_NOTIFICATION
+       CHECK4ERROROPT=-n ;;
 
     *) print -u2 "$USAGE"
        exit 4;;
@@ -66,7 +79,7 @@ shift $positions_occupied_by_switches
 print "$0 started at " $(date)
 thisFile=${0##*/}
 
-function abort {
+abort() {
   errmsg="AmdLoad2.ksh Failed"
   print "$errmsg $1"
   print -u2 "$errmsg $1"
@@ -79,28 +92,63 @@ else
   export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
+DEMAND_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.*}Errors.log
+
+
+function checkForErrors {
+  if [[ -e $DEMAND_LOG ]] ; then
+    $LIB_HOME/checkforerrors.ksh ${CHECK4ERROROPT:-} $DEMAND_LOG
+    if (($?!=0)) ; then
+      exit 4
+    fi
+  fi
+}
+
 function execSqlplus {
+
+  if [[ "${FOREGROUND:-N}" == "Y" || "$2" == "-f" ]] ; then
     print "$0.ksh $1 started at $(date)"
-    $LIB_HOME/execSqlplus.ksh -e $DEMAND_LOG $1  
+    $LIB_HOME/execSqlplus.ksh -e $DEMAND_LOG $1
     RC=$?
     print "$0.ksh $1 ended at $(date)"
     if ((RC!=0)) ; then
       abort "$0 failed for $1"
     fi
-    print "$0.ksh $1 ended at $(date)"
-}
-
-function processL67_File {
-  print "processL67_File started at $(date)"
-  $LIB_HOME/amd_LoadFtpFile.ksh L67 >$DEMAND_LOG 2>&1
-  RC=$?
-  $LIB_HOME/checkforerrors.ksh $DEMAND_LOG
-  if (($?!=0 || RC!=0)) ; then
-    print "Warning processL67_File without a return code of zero"
+  else
+    print "$0.ksh $1 started in background at $(date)"
+    $LIB_HOME/execSqlplus.ksh $1   &
   fi
-  print "processL67_File ended at $(date)"
+
 }
 
+function processL67_File
+{
+   $LIB_HOME/amd_LoadFtpFile.ksh L67 >$DEMAND_LOG 2>&1
+   RC=$?
+   $LIB_HOME/checkforerrors.ksh $DEMAND_LOG
+   if (($?!=0 || RC!=0)) ; then
+     print "Warning: $0 ended without a return code of zero"
+   fi
+}
+
+
+
+function loadDemands {
+  execSqlplus loadAmdBssmSourceTmpAmdDemands -f
+  execSqlplus loadFmsDemands
+  execSqlplus loadSanAntonioDemands
+  execSqlplus loadDepotDemands
+  execSqlplus loadWarnerRobinsDemands
+  wait
+  execSqlplus loadAmdDemandsTable
+  echo -e  \
+"\tloadAmdBssmSourceTmpAmdDemands\n
+\tloadFmsDemands\n
+\tloadSanAntonioDemands\n
+\tloadDepotDemands
+\tloadWarnerRobinsDemands\n
+\tloadAmdDemandsTable all ended at $(date)\n"
+}
 
 function execSteps {
 
@@ -163,26 +211,23 @@ function main
 
 
 
-steps[1]="execSqlplus truncateDemands"
+steps[1]="execSqlplus truncateDemands -f"
 steps[2]="processL67_File"
-steps[3]="execSqlplus loadAmdBssmSourceTmpAmdDemands"
-steps[4]="execSqlplus loadFmsDemands"
-steps[5]="execSqlplus loadBascUkDemands"
-steps[6]="execSqlplus loadAmdDemandsTable"
-steps[7]="return"
+steps[3]="loadDemands"
+steps[4]="checkForErrors"
+steps[5]="return"
 
 
-
-DEMAND_LOG=$LOG_HOME/${TimeStamp}_${thisFile%\.*}.log
 
 if [[ "${USE_MENU:-N}" == "Y" ]] ; then
   AMD_LOAD_DEMANDS_STEP=1
+  DEMAND_LOG=$LOG_HOME/${TimeStamp}_99_${thisFile%\.*}.log
   mainMenu 2>&1 | tee -a $DEMAND_LOG 
 else
   if (( $# > 0 )) ; then
-    execSteps $* > $DEMAND_LOG
+    execSteps $* 
   else
-    main > $DEMAND_LOG
+    main
   fi
 fi
 

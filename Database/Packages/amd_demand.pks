@@ -1,9 +1,10 @@
 CREATE OR REPLACE PACKAGE AMD_OWNER.amd_demand as
 /*
       $Author:   zf297a  $
-    $Revision:   1.23
-        $Date:   22 Aug 2017
+    $Revision:   1.24
+        $Date:   01 Feb 2018
     $Workfile:   amd_demand.sql  $
+        Rev 1.24 DSE 2/1/2018 renamed LoadBascUkDemands() to loadDepotDemands - related to TFS 52919                             
 
        Rev 1.23 DSE 8/22/17 added loadWarnerRobinsDemands
        
@@ -77,7 +78,7 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.amd_demand as
 
 	procedure loadAmdBssmSourceTmpAmdDemands;
     procedure LoadFmsDemands;
-	procedure LoadBascUkDemands;
+	procedure LoadDepotDemands;
     procedure loadSanAntonioDemands;    
     procedure loadWarnerRobinsDemands;
     procedure unloadWarnerRobinsDemands;

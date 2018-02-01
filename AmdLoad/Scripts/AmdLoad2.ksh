@@ -1,10 +1,12 @@
 #!/usr/bin/ksh
 # vim: ts=2:sw=2:sts=2:et:autoindent:smartindent:
 #   Author:   Douglas S. Elder
-# Revision:   1.27
-#     Date:   19 Dec 2017
+# Revision:   1.28
+#     Date:   01 Feb 2018
 #     File:   AmdLoad2.ksh
 
+# Rev 1.28 01 Feb 2018 turned on loadSanAntonio data TFS 52919
+#                      renamed loadBascUkDemands to loadDepotDemands
 # Rev 1.27 19 Dec 2017 turned off loadSanAntonio data TFS 48244
 # Rev 1.26 28 Aug 2017 added loadWarnerRobinsDemands
 # Rev 1.25 02 Aug 2017 added loadSanAntonioDemands
@@ -257,7 +259,7 @@ steps[4]="execSqlplus autoLoadSpareNetworks"
 steps[5]="execSqlplus loadAmdBssmSourceTmpAmdDemands"
 steps[6]="execSqlplus loadFmsDemands"
 steps[7]="execSqlplus loadWarnerRobinsDemands"
-steps[8]="execSqlplus loadBascUkDemands"
+steps[8]="execSqlplus loadDepotDemands"
 steps[9]="execSqlplus loadSanAntonioDemands"
 steps[10]=wait
 steps[11]="checkSqlplusErrors 1-8"

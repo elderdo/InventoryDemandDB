@@ -1,15 +1,17 @@
-/* Formatted on 1/31/2018 6:56:22 PM (QP5 v5.287) */
+/* Formatted on 2/1/2018 1:46:01 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
        $Revision:   1.57
            $Date:   31 Jan 2018
-       $Workfile:   amd_demand.sql  
+       $Workfile:   amd_demand.sql
             Rev 1.57    DSE 01/31/2018 for procedures loadSanAntonioDemands and its cursor sanAntonioDemands
                                        add a check of proc_code and accept it if it is NULL or GPF
+                                       and added EY1746 to the IN list for AND NOT (    SUBSTR (R.request_id, 1, 6) IN
+                                  ('FB2065', 'EY1213', 'EY1746') of loadDepotDemands ( formerly loadBascUkDemands)
                                        per TFS ticket 52919
-       
+
             Rev 1.56    DSE 12/19/2017 removed locattion EY1746 from the date filter implemented by
                         rev 1.54.1 per TFS 48244
 
@@ -1801,7 +1803,7 @@ AS
 
 
 
-   PROCEDURE LoadBascUkDemands
+   PROCEDURE LoadDepotDemands
    IS
       dup_cnt     NUMBER := 0;
       load_cnt    NUMBER := 0;
@@ -1826,7 +1828,7 @@ AS
                   AND NVL (r.nsn, 'null') <> 'null'
                   AND SUBSTR (r.request_id, 1, 6) = depot.loc_id
                   AND NOT (    SUBSTR (R.request_id, 1, 6) IN
-                                  ('FB2065', 'EY1213')
+                                  ('FB2065', 'EY1213', 'EY1746')
                            AND TRUNC (r.created_datetime, 'YEAR') >=
                                   TO_DATE ('01/01/2015', 'MM/DD/YYYY'))
                   AND SUBSTR (r.select_from_sc, 1, PROGRAM_ID_LL) = PROGRAM_ID
@@ -1846,7 +1848,7 @@ AS
       writeMsg (
          pTableName        => 'amd_bssm_source',
          pError_location   => 100,
-         pKey1             => 'LoadBascUkDemands',
+         pKey1             => 'LoadDepotDemands',
          pKey2             =>    'started at '
                               || TO_CHAR (SYSDATE, 'MM/DD/YYYY HH:MI:SS AM'));
 
@@ -1914,7 +1916,7 @@ AS
       END LOOP;
 
       DBMS_OUTPUT.put_line (
-            'LoadBascUkDemands: '
+            'LoadDepotDemands: '
          || rows_read
          || ' row(s) read '
          || load_cnt
@@ -1924,7 +1926,7 @@ AS
       writeMsg (
          pTableName        => 'amd_bssm_source',
          pError_location   => 130,
-         pKey1             => 'LoadBascUkDemands',
+         pKey1             => 'LoadDepotDemands',
          pKey2             =>    'ended at '
                               || TO_CHAR (SYSDATE, 'MM/DD/YYYY HH:MI:SS AM'),
          pKey3             =>    rows_read
@@ -1933,7 +1935,7 @@ AS
                               || ' row(s) loaded '
                               || dup_cnt
                               || ' duplicate(s)');
-   END LoadBascUkDemands;
+   END LoadDepotDemands;
 
    PROCEDURE load_amd_demands_table
    IS
