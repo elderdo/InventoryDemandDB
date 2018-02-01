@@ -1,10 +1,15 @@
+/* Formatted on 1/31/2018 6:56:22 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
-       $Revision:   1.56
-           $Date:   19 Dec 2017
-       $Workfile:   amd_demand.sql  $
+       $Revision:   1.57
+           $Date:   31 Jan 2018
+       $Workfile:   amd_demand.sql  
+            Rev 1.57    DSE 01/31/2018 for procedures loadSanAntonioDemands and its cursor sanAntonioDemands
+                                       add a check of proc_code and accept it if it is NULL or GPF
+                                       per TFS ticket 52919
+       
             Rev 1.56    DSE 12/19/2017 removed locattion EY1746 from the date filter implemented by
                         rev 1.54.1 per TFS 48244
 
@@ -1254,6 +1259,7 @@ AS
                                  'O',
                                  'R',
                                  'S')
+                AND NVL (proc_code, 'GPF') = 'GPF'
                 AND TO_CHAR (r.created_datetime, 'YYYY-MM') >= '2015-01'
                 AND p.nsn = n.nsn
                 AND n.action_code != 'D';
@@ -2401,14 +2407,14 @@ AS
       writeMsg (pTableName        => 'amd_demand',
                 pError_location   => 180,
                 pKey1             => 'amd_demand',
-                pKey2             => '$Revision:   1.56');
+                pKey2             => '$Revision:   1.57');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.56';
+      RETURN '$Revision:   1.57';
    END getVersion;
 END Amd_Demand;
 /
