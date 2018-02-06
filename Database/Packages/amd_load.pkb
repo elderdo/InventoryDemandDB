@@ -4,10 +4,13 @@ AS
            PVCS Keywords
 
           $Author:   Douglas S. Elder
-        $Revision:   1.96
-            $Date:   5 Dec 2017
+        $Revision:   1.97
+            $Date:   05 Feb 2018
         $Workfile:   amd_load.pkb  $
-        
+
+          Rev 1.97   05 FEb 2018 renamed loadBascUKDemands to loadDepotDemands per TFS 52919
+
+
           Rev 1.96   5 Dec 2017 use mtbdr when the associated part has been created within the last 5 years (tfs 47117)
 
           Rev 1.95  21 Nov 2017 added dbms_output.put_line for every raise command
@@ -3817,7 +3820,7 @@ AS
                   package_name       => THE_AMD_DEMAND_PKG,
                   procedure_name     => LOAD_BASC_UK_DEMANDS)
             THEN
-               amd_demand.loadBascUkdemands;
+               amd_demand.loadDepotDemands;
             END IF;
          ELSIF step = 9
          THEN
@@ -4174,15 +4177,15 @@ AS
       writeMsg (pTableName        => 'amd_load',
                 pError_location   => 480,
                 pKey1             => 'amd_load',
-                pKey2             => '$Revision:   1.96  $');
-      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.96  $');
+                pKey2             => '$Revision:   1.97  $');
+      DBMS_OUTPUT.put_line ('amd_load: $Revision:   1.97  $');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.96  $';
+      RETURN '$Revision:   1.97  $';
    END getVersion;
 
    PROCEDURE validatePartStructure
