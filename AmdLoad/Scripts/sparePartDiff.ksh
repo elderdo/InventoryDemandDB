@@ -18,7 +18,7 @@
 #
 USAGE="usage: ${0##*/} [-s 999]\n\twhere\n\t-s 999 will set the tmp_amd_spare_parts minimum # of rows (default 99999)"
 
-if [[ $# > 0 && $1 = "?" ]]
+if [[ $# > 0 && $1 == "?" ]]
 then
 	print $USAGE
 	exit 0
@@ -56,8 +56,8 @@ shift $positions_occupied_by_switches
 function checkThreshold {
 	if (( $1 <= $2 ))
 	then
-		TimeStamp=${TimeStamp:-`date $DateStr`}
-		hostname=`hostname -s`
+		TimeStamp=${TimeStamp:-$(date $DateStr)}
+		hostname=$(hostname -s)
 		errormsg="Error: the number of $3 is below the threshold ($1 <= $2) @ $TimeStamp on $hostname" 
 		print "$errormsg"
 		$LIB_HOME/notify.ksh -s "Threshold Error" -m "$errormsg"
@@ -66,7 +66,6 @@ function checkThreshold {
 	fi
 }
 
-checkThreshold `$LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_spare_parts;"`  ${SPARE_PARTS_NEW_DATA_THRESHOLD:-99999} "tmp_amd_spare_parts"
+checkThreshold $($LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_spare_parts;")  ${SPARE_PARTS_NEW_DATA_THRESHOLD:-99999} "tmp_amd_spare_parts"
 
-$LIB_HOME/execJavaApp.ksh SparePart
 $LIB_HOME/execSqlplus.ksh sparePartsDiff

@@ -1,10 +1,13 @@
 #!/bin/ksh
 # vim: ts=2:sw=2:sts=2:expandtab:ff=unix:
-#   $Author:   zf297a  $
-# $Revision:   1.16  $
-#     $Date:   25 Apr 2016
+#   $Author:   Douglas S. Elder
+# $Revision:   1.19
+#     $Date:   21 Feb 2017
 # $Workfile:   replicateGold.ksh  $
 
+# Rev 1.19 15 Feb 2017 DSE - removed obsolete back tic's
+# Rev 1.18 21 Feb 2017 DSE - added loadReq1SA
+# Rev 1.17 05 Dec 2016 DSE - added loadTurn
 # Rev 1.16 25 Apr 2016 DSE - 2nd arg not needed for loadWhse
 # Rev 1.15 23 Apr 2016 DSE - added analyzeTablesIndexes so all indexes are optimized 
 #                            for subsequent processing
@@ -23,12 +26,12 @@ USAGE="usage: ${0##*/} [-v] [-m] [-p | -s ] [-o override_file] [steps to execute
 \t-p use pgoldlb - default
 \t-s use sgoldlb"
 
-if [[ "$1" = "?" ]] ; then
+if [[ "$1" == "?" ]] ; then
   print "$USAGE"
   exit 0
 fi
 
-CUR_USER=`logname`
+CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
   CUR_USER=amduser
 fi
@@ -73,22 +76,22 @@ shift $positions_occupied_by_switches
 THE_DB_LINK=${THE_DB_LINK:-amd_pgoldlb_link}
 
 if [[ -z ${TimeStamp:-} ]] ; then
-  TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+  TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-  TimeStamp=`print $TimeStamp | sed "s/:/_/g"`
+  TimeStamp=$(print $TimeStamp | sed "s/:/_/g")
 fi
 
 if [[ -z ${TimeStamp:-} ]] ; then
-  export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+  export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-  export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+  export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
 function execSteps {
 
     typeset -Z3 array
     cnt=0
-    for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+    for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
     do
       let cnt=cnt+1
       array[$cnt]=$x
@@ -99,7 +102,7 @@ function execSteps {
 
     # empty work array
     i=1
-    while (( $i <= $cnt ))
+    while (( i <= cnt ))
     do
       array[$i]=
       let i=i+1
@@ -108,19 +111,19 @@ function execSteps {
     for x in $*
     do
       ((x=x)) # make sure x is a number with no leading zerso
-      if [[ "$AMD_REPLICATE_GOLD_STEP" = "1" ]] ; then
-        AMD_CUR_STEP=`printf "%02d" $x`
+      if [[ "$AMD_REPLICATE_GOLD_STEP" == "1" ]] ; then
+        AMD_CUR_STEP=$(printf "%02d" $x)
       fi
       if [[ "${steps[$x]}" != "exit" ]] ; then
-        print "${steps[$x]} started at `date` exec'ed by $CUR_USER"
+        print "${steps[$x]} started at $(date) exec'ed by $CUR_USER"
       fi
-      if [[ "${steps[$x]}" = "return" || "${steps[$x]}" = "exit" ]] ; then
+      if [[ "${steps[$x]}" == "return" || "${steps[$x]}" == "exit" ]] ; then
         AMD_EXIT=Y
         return
       else
         ${steps[$x]} 
       fi
-      print "${steps[$x]} ended at `date` exec'ed by $CUR_USER"
+      print "${steps[$x]} ended at $(date) exec'ed by $CUR_USER"
     done
 
 }
@@ -131,10 +134,10 @@ function mainMenu {
   do
     set  $REPLY
     execSteps $*
-    if [[ "${AMD_REPLICATE_GOLD_VERBOSE:-N}" = "Y" ]]  ; then
-      print "\$!=$! \$$=$$ \$PPID=$PPID"
+    if [[ "${AMD_REPLICATE_GOLD_VERBOSE:-N}" == "Y" ]]  ; then
+      print "$! $$ PPID=$PPID"
     fi
-    if [[ "${AMD_EXIT:-N}" = "Y" ]] ; then
+    if [[ "${AMD_EXIT:-N}" == "Y" ]] ; then
       return
     fi
   done
@@ -142,28 +145,28 @@ function mainMenu {
 
 function main {
     
-  echo "$0 started at `date`" 
+  echo "$0 started at $(date)" 
   let curStep=${1:-1}
   let endStep=${2:-${#steps[*]}}
-  if (( $curStep > $endStep ))
+  if (( curStep > endStep ))
   then
     print -u2 "start step must be <= end step"
     exit 4
   fi
 
   execSteps $curStep-$endStep
-  echo "$0 ended at `date`" 
+  echo "$0 ended at $(date)" 
 }   
 
 function execSqlplus {
   $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG $1 $2 $3   &
-  if [[ "${AMD_REPLICATE_GOLD_VERBOSE:-N}" = "Y" ]]  ; then
-    print "RC=$RC BATCH_PID=$BATCH_PID \$$=$$ \$PPID=$PPID"
+  if [[ "${AMD_REPLICATE_GOLD_VERBOSE:-N}" == "Y" ]]  ; then
+    print "RC=$RC BATCH_PID=$BATCH_PID $$ \$PPID=$PPID"
   fi
 }
 
 thisFile=${0##*/}
-print "$thisFile started at " `date` " with DBLink of $THE_DB_LINK"
+print "$thisFile started at " $(date) " with DBLink of $THE_DB_LINK"
 
 steps[1]="execSqlplus loadPoi1 $THE_DB_LINK"
 steps[2]="execSqlplus loadOrd1 $THE_DB_LINK"
@@ -186,17 +189,19 @@ steps[18]="execSqlplus loadUse1 $THE_DB_LINK"
 steps[19]="execSqlplus loadOrdv $THE_DB_LINK"
 steps[20]="execSqlplus loadWhse $THE_DB_LINK"
 steps[21]="execSqlplus loadItemsa amd_goldsa_link"
-steps[22]="execSqlplus loadUims $THE_DB_LINK"
-steps[23]="execSqlplus loadCgvt $THE_DB_LINK"
-steps[24]="execSqlplus loadLvls $THE_DB_LINK"
-steps[25]="execSqlplus loadTrhi $THE_DB_LINK"
-steps[26]="wait"
-steps[27]="execSqlplus updateRamp"
-steps[28]="execSqlplus analyzeTablesIndexes"
-steps[29]="return"
+steps[22]="execSqlplus loadReq1SA"
+steps[23]="execSqlplus loadUims $THE_DB_LINK"
+steps[24]="execSqlplus loadCgvt $THE_DB_LINK"
+steps[25]="execSqlplus loadLvls $THE_DB_LINK"
+steps[26]="execSqlplus loadTrhi $THE_DB_LINK"
+steps[27]="execSqlplus loadTurn $THE_DB_LINK"
+steps[28]="wait"
+steps[29]="execSqlplus updateRamp"
+steps[30]="execSqlplus analyzeTablesIndexes"
+steps[31]="return"
 
-THIS_FILE=`basename $0`
-THIS_FILE_NO_EXT=`echo $THIS_FILE | sed 's/\..\{3\}$//'`
+THIS_FILE=$(basename $0)
+THIS_FILE_NO_EXT=$(echo $THIS_FILE | sed 's/\..\{3\}$//')
 STEPS_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}Steps.ksh
 if [[ -f $STEPS_FILE ]] ;  then
   # override steps
@@ -218,7 +223,7 @@ else
   AMD_REPLICATE_GOLD_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${thisFile%\.*}.log
 fi
 
-if [[ "$AMD_REPLICATE_GOLD_MENU" = "Y" ]] ; then
+if [[ "$AMD_REPLICATE_GOLD_MENU" == "Y" ]] ; then
   mainMenu 2>&1 | tee -a $AMD_REPLICATE_GOLD_LOG
 else
   if (($#>0)) ; then
@@ -231,15 +236,15 @@ fi
 ps -elf | grep amduser | tee -a $AMD_REPLICATE_GOLD_LOG
 wait
 
-print "$thisFile ending at " `date` " with DBLink of $THE_DB_LINK"
+print "$thisFile ending at " $(date) " with DBLink of $THE_DB_LINK"
 
-if [[ -a $SQLPLUS_ERROR_LOG ]] ; then
+if [[ -e $SQLPLUS_ERROR_LOG ]] ; then
   if [[ -e /tmp/msg ]] ; then
     rm /tmp/msg
   fi
   $LIB_HOME/checkforerrors.ksh $SQLPLUS_ERROR_LOG > /tmp/msg
   if (($?!=0)) ; then
-    $LIB_HOME/notify.ksh -s "replicateGold.ksh Error(s)" -m `cat /tmp/msg`
+    $LIB_HOME/notify.ksh -s "replicateGold.ksh Error(s)" -m $(cat /tmp/msg)
     $LIB_HOME/sendPage.ksh  "replicateGold.ksh Error(s)"
     rm /tmp/msg
     exit 4

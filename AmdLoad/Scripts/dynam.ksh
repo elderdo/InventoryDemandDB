@@ -1,20 +1,23 @@
 #!/usr/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.1  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# dynam.ksh  $
+#   $Author:   Douglas S. Elder
+# $Revision:   1.2
 #     $Date:   20 Jun 2008 08:55:06  $
-# $Workfile:   dynam.ksh  $
 # Use this as a template to construct the DynamSql step
+# $Revision:   1.1  20 Jun 2008 08:55:06  $
+# $Revision:   1.2  20 Jun 2008 replaced obsolete -a with -e
 
 
 function DynamSql
 {
-	if [[ -a  $DATA_HOME/dynam.sql ]]
+	if [[ -e  $DATA_HOME/dynam.sql ]]
 	then
-		fSize=`wc -l < $DATA_HOME/dynam.sql`
-		if (( ${fSize:-0} > 0 ))
+		fSize=$(wc -l < $DATA_HOME/dynam.sql)
+		if (( fSize > 0 ))
 		then
 			LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_amd_dynam.log"
-			if [[ -a $DATA_HOME/DYNAM_DB_CONNECTION_STRING ]]
+			if [[ -e $DATA_HOME/DYNAM_DB_CONNECTION_STRING ]]
 			then
 				. $DATA_HOME/DYNAM_DB_CONNECTION_STRING
 			fi

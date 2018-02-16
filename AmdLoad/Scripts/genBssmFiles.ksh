@@ -2,8 +2,8 @@
 # vim: ff=unix:ts=2:sw=2:sts=2:expandtab:
 #------------------------------------------------------------------------------
 # Module    : genBssmFiles.ksh
-# Version   : 1.3
-# Date      : 21/May/2017
+# Version   : 1.7
+# Date      : 15/Feb/2018
 # Author    : Douglas S Elder
 #
 # Purpose: Create the BSSM flat files used by the BSSM load process
@@ -13,6 +13,8 @@
 #
 #          Date          Who           Purpose
 #          ---------     -----------   -------------------------------------------------
+# Rev 1.5  15/Feb/18     Douglas Elder use ((.... )) for numeric compares
+# Rev 1.4  26/Sep/17     Douglas Elder fixed display of menu
 # Rev 1.3  13/Sep/17     Douglas Elder Uses only DATA_DIR for the home directory of the
 #                                      output files
 # Rev 1.2  19/May/17     Douglas Elder Since the sql scripts were changed to accept the
@@ -91,7 +93,7 @@ function check_app_files
   rc=0
   let i=0
   
-  while [[ $i -lt ${#steps[*]} ]]
+  while [[ ((i < ${#steps[*]})) ]]
   do
     # array item format is file.sql spoolname
     # so extract just the file.sql from each array item
@@ -129,7 +131,7 @@ function main
 
   n=0
   let i=0
-  while [[ $i -lt ${#steps[*]} ]]  
+  while [[ ((i < ${#steps[*]})) ]]  
   do
     l=${steps[$i]}
     let n+=1
@@ -196,7 +198,7 @@ function displayMenu
       clear
     fi
     cnt=j
-    for l in ${steps[@]}
+    for l in "${steps[@]}"
     do
       let cnt=$cnt+1
       echo " $cnt. $l"

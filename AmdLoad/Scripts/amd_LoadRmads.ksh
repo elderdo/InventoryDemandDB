@@ -1,11 +1,10 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.13  $
-#     $Date:   15 Oct 2009 11:14 $
-# $Workfile:   amd_LoadRmads.ksh  $
+# vim:ts=2:sw=2:sts=2:ai:et:ff=unix:
+# amd_LoadRmads.ksh
+#   $Author:   Douglas S. Elder
+# $Revision:   1.16
+#     $Date:   15 Feb 2018
 #
-# SCCSID: amd_LoadRmads.ksh  1.4  Modified: 12/05/01 11:16:49
-#                                                                             
 # Date      By               History
 # --------  ---------------  --------------------------------------
 # 11/21/01  Fernando F.      Initial implementation.
@@ -13,8 +12,9 @@
 # 11/29/01  Fernando F.      Fixed control filename.
 # 12/05/01  Fernando F.      Fixed logfile name.
 # 10/08/09  Elder D.         Fixed logfile name used by sqlldr.
-# 10/15/09  Elder D.         moved processed file and the log
-#			     for bad data to an RMADS data directory
+# 10/15/09  Elder D.         Rev 1.14 moved processed file and the log
+#			                       for bad data to an RMADS data directory
+# 02/15/15  Elder D.         Rev 1.15 removed obsolete back tics
 #
 
 USAGE="usage: ${0##*/} [-d] \n\n\twhere\n\t-d will turn on debug"
@@ -71,8 +71,8 @@ function fileProcessed {
 	if [[ ! -d $PROCESSED_DIR ]] ; then
 		makeDir $PROCESSED_DIR
 	fi
-	THE_FILE=`basename $1`
-	TIME_STAMP=`date $DateStr | sed "s/:/_/g"`
+	THE_FILE=$(basename $1)
+	TIME_STAMP=$(date $DateStr | sed "s/:/_/g")
 	print "Moving file $1 to $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}"
 	mv $1 $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}
 	chmod 440 $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}
@@ -87,9 +87,9 @@ function saveBadData {
 	if [[ ! -d $BAD_DATA_DIR ]] ; then
 		makeDir $BAD_DATA_DIR
 	fi
-	THE_FILE_BASENAME=`basename $1`
+	THE_FILE_BASENAME=$(basename $1)
 	THE_FILE=${THE_FILE_BASENAME%\.*} # remove file extension
-	TIME_STAMP=`date $DateStr | sed "s/:/_/g"`
+	TIME_STAMP=$(date $DateStr | sed "s/:/_/g")
 	print "Moving file $LOG_HOME/*${THE_FILE}*.bad to $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.bad"
 	mv $LOG_HOME/*${THE_FILE}*.bad $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.bad
 	print "Moving file $LOG_HOME/*${THE_FILE}*.log to $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.log"
@@ -106,8 +106,8 @@ function sendWarningMsg {
 
 	SQLLDR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${THE_INFILE}.log
 
-	if [[ -a $DATA_HOME/warnings.txt ]] ; then
-		hostname=`uname -n`
+	if [[ -e $DATA_HOME/warnings.txt ]] ; then
+		hostname=$(hostname -s)
 		MSG="Load of $TARGET_TABLE data for $AMDENV on $hostname"
 		REJECTED=$(grep -i "Total logical records rejected:" $SQLLDR_LOG)
 		$LIB_HOME/execSqlplus.ksh \
@@ -122,15 +122,15 @@ function execSqlldr {
 	$LIB_HOME/execSqlldr.ksh ${debug:+-d} amd_rmads_source_tmp
 	RC=$?
 	case $RC in
-		0) print "`date`: loaded $TARGET_TABLE successfully with $SQLLDR_INFILE"
+		0) print "$(date): loaded $TARGET_TABLE successfully with $SQLLDR_INFILE"
 		   fileProcessed $SQLLDR_INFILE ;;
-		1) print "`date`: sqlldr failed while loading $TARGET_TABLE with $SQLLDR_INFILE"
+		1) print "$(date): sqlldr failed while loading $TARGET_TABLE with $SQLLDR_INFILE"
 		   exit $RC ;;
-	  	2) print "`date`: all or some records rejected while loading $TARGET_TABLE with $SQLLDR_INFILE"
+	  	2) print "$(date): all or some records rejected while loading $TARGET_TABLE with $SQLLDR_INFILE"
 		   sendWarningMsg 
 		   fileProcessed $SQLLDR_INFILE
 		   saveBadData $SQLLDR_INFILE ;;
-		3) print "`date`: sqlldr had a fatal error trying to load $TARGET_TABLE with $SQLLDR_INFILE"
+		3) print "$(date): sqlldr had a fatal error trying to load $TARGET_TABLE with $SQLLDR_INFILE"
 		   exit $RC ;;
 	esac
 }
@@ -138,10 +138,10 @@ function execSqlldr {
 
 TARGET_TABLE=amd_rmads_source_tmp
 # determine the sqlldr infile from the ctl
-SQLLDR_INFILE=`$LIB_HOME/getInfile.ksh $SRC_HOME/amd_rmads_source_tmp.ctl`
+SQLLDR_INFILE=$($LIB_HOME/getInfile.ksh $SRC_HOME/amd_rmads_source_tmp.ctl)
 
 if [[ -f $SQLLDR_INFILE ]] ; then
-	THE_INFILE=`basename $SQLLDR_INFILE`
+	THE_INFILE=$(basename $SQLLDR_INFILE)
 	# remove the file extension
 	THE_INFILE=${THE_INFILE%\.*}
 	# get rid of any old log or bad file for this data

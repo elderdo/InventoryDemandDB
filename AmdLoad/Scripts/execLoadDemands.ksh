@@ -2,7 +2,7 @@
 # vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:
 # execLoadDemands.ksh
 # Author: Douglas S. Elder
-# Date: 02/01/2018
+# Date: 10/03/2017
 # Desc: load the amd demands
 # Rev 1.0 7/12/2013
 # Rev 2.0 8/02/2017
@@ -17,8 +17,6 @@
 #                    Run the loadAmdBssmSourceTmpAmdDemands step in the foreground
 #                    so its truncate completes before the other steps run
 # Rev 3.1 12/192017  removed loadSanAntonioDemands per TFS 48244
-# Rev 3.2 02/01/2018 put back loadSanAntonioDemands per TFS 52919
-#                    renamed loadBascUkDemand to loadDepotDemands
 
 
 USAGE="Usage: ${0##*/}  [-d -f -m]\n\n
@@ -136,16 +134,14 @@ function processL67_File
 function loadDemands {
   execSqlplus loadAmdBssmSourceTmpAmdDemands -f
   execSqlplus loadFmsDemands
-  execSqlplus loadSanAntonioDemands
-  execSqlplus loadDepotDemands
+  execSqlplus loadBascUkDemands
   execSqlplus loadWarnerRobinsDemands
   wait
   execSqlplus loadAmdDemandsTable
   echo -e  \
 "\tloadAmdBssmSourceTmpAmdDemands\n
 \tloadFmsDemands\n
-\tloadSanAntonioDemands\n
-\tloadDepotDemands
+\tloadBascUKDemands\n
 \tloadWarnerRobinsDemands\n
 \tloadAmdDemandsTable all ended at $(date)\n"
 }

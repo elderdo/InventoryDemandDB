@@ -1,7 +1,9 @@
 #!/usr/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.16  $
-#     $Date:   13 Jun 2016
+# vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:ff=unix:
+# plannersDiff.ksh 
+#   $Author:   Douglas S. Elder
+# $Revision:   1.17
+#     $Date:   15 Feb 2018
 #
 # Date      Who            Purpose
 # --------  -------------  --------------------------------------------------
@@ -18,6 +20,8 @@
 # 10/25/13  DouglasElder   1.14 use explicit path for sql files
 # 08/31/15  DouglasElder   1.15 Fixed checkThreshold message
 # 06/13/16  DouglasElder   1.16 used ...Diff.sql
+# 02/15/18  DouglasElder   1.17 got rid of obsolete back tic's, = vs ==, and (( )) for
+#                               numberic compares
 #
 USAGE="usage: ${0##*/} [-u 999] [-p 999] [-l 999]\n
 \twhere\n
@@ -27,7 +31,7 @@ USAGE="usage: ${0##*/} [-u 999] [-p 999] [-l 999]\n
 \t-m will enable a selection menu\n"
 
 
-if [[ "$#" -gt "0" && "$1" = "?" ]] ; then
+if [[ (($#>0)) && "$1" == "?" ]] ; then
 	print $USAGE
 	exit 0
 fi
@@ -74,13 +78,13 @@ abort() {
 }
 
 function execSteps {
-  if [[ "$debug" = "-d" ]] ; then
+  if [[ "$debug" == "-d" ]] ; then
     set -x
   fi
 
 		typeset -Z3 array
 		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+		for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
 		do
 			let cnt=cnt+1
 			array[$cnt]=$x
@@ -91,7 +95,7 @@ function execSteps {
 
 		# empty work array
 		i=1
-		while (( $i <= $cnt ))
+		while (( i <= cnt ))
 		do
 			array[$i]=
 			let i=i+1
@@ -100,7 +104,7 @@ function execSteps {
 		for x in $*
 		do
 			((x=x)) # make sure x is a number with no leading zerso
-			if [[ "${steps[$x]}" = "return" || "${steps[$x]}" = "exit" ]] ; then
+			if [[ "${steps[$x]}" == "return" || "${steps[$x]}" == "exit" ]] ; then
 				AMD_EXIT=Y
 				return
 			else
@@ -111,7 +115,7 @@ function execSteps {
 }
 
 function mainMenu {
-  if [[ "$debug" = "-d" ]] ; then
+  if [[ "$debug" == "-d" ]] ; then
     set -x
   fi
 	PS3="select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? "
@@ -120,7 +124,7 @@ function mainMenu {
 	do
 		set  $REPLY
 		execSteps $*
-		if [[ "${AMD_EXIT:-N}" = "Y" ]] ; then
+		if [[ "${AMD_EXIT:-N}" == "Y" ]] ; then
 			return
 		fi
 	done
@@ -128,17 +132,17 @@ function mainMenu {
 
 function main
 {
-  if [[ "$debug" = "-d" ]] ; then
+  if [[ "$debug" == "-d" ]] ; then
     set -x
   fi
-	echo "main started at `date`" 
+	echo "main started at $(date)" 
 	execSteps 1-${#steps[*]}
-	echo "main ended at `date`" 
+	echo "main ended at $(date)" 
 		
 }
 
 function checkThreshold {
-  if [[ "$debug" = "-d" ]] ; then
+  if [[ "$debug" == "-d" ]] ; then
     set -x
   fi
 	# make sure there are 3 arguments
@@ -163,8 +167,8 @@ function checkThreshold {
 
 	if (( $1 <= $2 ))
 	then
-		TimeStamp=${TimeStamp:-`date $DateStr`}
-		hostname=`uname -n`
+		TimeStamp=${TimeStamp:-$(date $DateStr)}
+		hostname=$(uname -n)
 		errormsg="Error: the number of $3 is below the threshold ($1 <= $2) @ $TimeStamp on $hostname" 
 		# don't write any error message to stdout or stderr so the load will continue
 		$LIB_HOME/notify.ksh -m "$errormsg"
@@ -174,11 +178,11 @@ function checkThreshold {
 }
 
 function execDiff {
-  if [[ "$debug" = "-d" ]] ; then
+  if [[ "$debug" == "-d" ]] ; then
     set -x
   fi
-	print "$0 started for $1 with a minimum input of $2 at `date`"
-	checkThreshold `$LIB_HOME/oraCheck.ksh "@$SRC_HOME/${1}.sql"` "$2" "$1"
+	print "$0 started for $1 with a minimum input of $2 at $(date)"
+	checkThreshold $($LIB_HOME/oraCheck.ksh "@$SRC_HOME/${1}.sql") "$2" "$1"
 	
 	if (($?!=0)) ; then
 		abort "checkThreshold failed for $1: the input had less than 10 records"
@@ -195,10 +199,10 @@ function execDiff {
 	if (($?!=0)) ; then
 		abort "$0 failed for execSqlplus.ksh $1"
 	fi
-	print "$0 for $1 ended at `date`"
+	print "$0 for $1 ended at $(date)"
 }
 
-print "$0 starting at " `date`
+print "$0 starting at " $(date)
 
 
 steps[1]="execDiff Users ${USERS_NEW_DATA_THRESHOLD:-10}"
@@ -206,7 +210,7 @@ steps[2]="execDiff Planner ${PLANNERS_NEW_DATA_THRESHOLD:-10}"
 steps[3]="execDiff PlannerLogons  ${PLANNER_LOGONS_NEW_DATA_THRESHOLD:-10}"
 steps[4]=return
 
-if [[ "${AMD_USE_PLANNERSDIFF_MENU:-N}" = "Y" ]] ; then
+if [[ "${AMD_USE_PLANNERSDIFF_MENU:-N}" == "Y" ]] ; then
 	mainMenu 
 else
 	if (( $# > 0 )) ; then
@@ -217,5 +221,5 @@ else
 fi
 
 chmod 666 $LOG_HOME/WinDiff.log*
-print "$0 ending at " `date`
+print "$0 ending at " $(date)
 exit 0

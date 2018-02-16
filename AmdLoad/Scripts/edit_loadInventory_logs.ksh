@@ -1,9 +1,9 @@
 #!/bin/ksh
-#   vim: ts=2 sw=2 sts=2 et 
+# vim:ts=2:w=2:sts=2:et:ai:ff=unix:
+# edit_loadInventory_logs.ksh
 #   $Author:   Douglas S. Elder
 # $Revision:   1.0
 #     $Date:   30 Jan 2017
-# $Workfile:   edit_loadInventory_logs.ksh
 #      Desc:   edit the lasts 6 loadInventory 
 #              logs 
 # 30 Jan 2017 $Revision:   1.0 Initial Rev
@@ -11,13 +11,15 @@
 #                          for the primary functionality
 #                          Removed unnecessary code: TimeStamp
 #                          and invoking env setup script
+# 15 Feb 2018 $Revision:   1.2 replaced = with ==
 #
 #
 
-if [[ "$debug" = "Y" ]] ; then
+if [[ "$debug" == "Y" ]] ; then
   set -x
 fi
 NUMLOGS=6
+. /apps/CRON/AMD/lib/amdconfig.ksh
 
 function usage {
   echo "edit_loadInventory_logs.ksh [ -d -n numlogs ]"

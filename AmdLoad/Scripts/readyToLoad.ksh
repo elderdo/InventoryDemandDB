@@ -15,9 +15,11 @@
 # Date      Rev     Who           Purpose
 # ---------         -----------   ----------------------------------------------------
 # 20/Nov/16 1.0     Douglas Elder Initial Revision
+# 15/Feb/18 1.1     Douglas Elder removed obsolete back tic's and use (( )) for
+#                                         numeric tests
 
 
-if [ "${debug:-}" = "Y" ] ; then
+if [ "${debug:-}" == "Y" ] ; then
   set -x
   DEBUG=Y
 else
@@ -31,7 +33,7 @@ rc=0
 HOME=/apps/CRON/AMD
 LOG_HOME=$HOME/log
 ADDR_FILE=$HOME/data/ready_addresses.txt
-TimeStamp=`date +%Y%m%d%H_%M_%S`
+TimeStamp=$(date +%Y%m%d%H_%M_%S)
 LOG_FILE=$LOG_HOME/${TimeStamp}_readyToLoad.log
 
 # return any non-zero return code
@@ -49,11 +51,11 @@ function usage
 
 # set default email recipients
 RECIPIENTS=
-if [[ -a $ADDR_FILE ]]
+if [[ -e $ADDR_FILE ]]
 then
   { while read myline; do
       # skip lines starting with #
-      [[ $myline = \#* ]] && continue
+      [[ $myline == \#* ]] && continue
       if [[ -z $RECIPIENTS ]] 
       then
         RECIPIENTS="$myline"
@@ -84,7 +86,7 @@ shift $(( $OPTIND - 1))
 function verifyPassword
 {
   
-  if [ "$DEBUG" = "Y" ] ; then
+  if [ "$DEBUG" == "Y" ] ; then
     set -x
   fi
 
@@ -101,23 +103,23 @@ function verifyPassword
   quit
 END
 
-  if [ "$TEST1" = "Y" ] ; then
+  if [ "$TEST1" == "Y" ] ; then
     echo "ORA-00988" >> /tmp/${TimeStamp}.log
   fi
-  if [ "$TEST2" = "Y" ] ; then
+  if [ "$TEST2" == "Y" ] ; then
     echo "ORA-28001" >> /tmp/${TimeStamp}.log
   fi
-  if [ "$TEST3" = "Y" ] ; then
+  if [ "$TEST3" == "Y" ] ; then
     echo "ORA-28002" >> /tmp/${TimeStamp}.log
   fi
-  if [ "$TEST4" = "Y" ] ; then
+  if [ "$TEST4" == "Y" ] ; then
     echo "ORA-28011" >> /tmp/${TimeStamp}.log
   fi
 
   # if grep find a matching string it returns 0
   grep -i "ORA-[0-9][0-9]*" /tmp/${TimeStamp}.log
   rc=$?
-  if [[ $rc -eq 0 ]] ; then
+  if ((rc==0)) ; then
     cat /tmp/${TimeStamp}.log
   fi
   rm /tmp/${TimeStamp}.log
@@ -144,7 +146,7 @@ function main
   rc=$?
   if [ $rc -ne 0 ]
   then
-    if [ "$MAIL" = "Y" ] 
+    if [ "$MAIL" == "Y" ] 
     then
       echo -e "From: AMD readyToLoad.sh\nSubject: AMD load is NOT ready to run - expired or invalid password.\nTo: ${RECIPIENTS}" | more $LOG_FILE | sed '/^~/s/~//' | sendmail -t
     fi

@@ -1,11 +1,15 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# execJavaApp.ksh  $
+#   $Author:   Douglas S. Elder
 # $Revision:   1.3  $
 #     $Date:   21 Aug 2013
-# $Workfile:   execJavaApp.ksh  $
 #
+# Rev:   1.3  21 Aug 2013
+# Rev:   1.4  15 Feb 2018 removed obsolete back tics and replaced with $(..)
+#                         use (( )) for numeric compares
 
-export JRE=/opt/java1.5/jre
+export JRE=/usr/java/jdk1.7.0_72/jre
 
 USAGE="usage: ${0##*/} [-j app_jar_file] [ -r jre ] [ -m amt_of_memory ] [-d] classname arg1..
 \nwhere
@@ -17,7 +21,7 @@ USAGE="usage: ${0##*/} [-j app_jar_file] [ -r jre ] [ -m amt_of_memory ] [-d] cl
 \n\tclassname is java class to execute
 \n\targ1..... command line arguments passed to the java class"
 
-if [[ "$1" = "?" || "$#" -eq "0" ]] ; then
+if [[ "$1" == "?" || (($#==0)) ]] ; then
 	print $USAGE
 	exit 0
 fi
@@ -35,7 +39,7 @@ while getopts :j:r:m:d arguments
 do
 	case $arguments in
 	  j) AMD_JAR=${OPTARG};;
-	  r) export JRE=${OPTARG};;
+	  r) export JRE=/usr/java/jdk1.7.0_72/jre ;;
 	  m) AMD_JVM_MEMORY=${OPTARG};;
 	  d) debug=Y
 	     set -x ;;

@@ -1,8 +1,9 @@
 #!/usr/bin/ksh
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# invDiff.ksh 
 #   $Author:   Douglas S. Elder
-# $Revision:   1.20
-#     $Date:   13 Jun 2016
-# $Workfile:   invDiff.ksh  $
+# $Revision:   1.22
+#     $Date:   15 Feb 2018
 #
 #SCCSID: %M%  %I%  Modified: %G% %U%
 #
@@ -21,6 +22,9 @@
 # 10/29/13  Douglas Elder  removed all spo funcions
 # 01/16/14  Douglas Elder  rev 1.19 removed DB_CONNECTION_STRING_FOR_SPO test
 # 01/16/14  Douglas Elder  rev 1.20 use Diff.sql for all diff's
+# 01/16/14  Douglas Elder  rev 1.21 replaced obsolete back tic's with $(..)
+#                                  replaced obsolete = with ==
+#                                  removed variables for numeric compares in (( ))
 #
 USAGE="usage: ${0##*/} [ -m ] [ -d ] [ -o ]
 \n\twhere
@@ -63,12 +67,12 @@ shift $positions_occupied_by_switches
 
 if [[ -z $TimeStamp ]] ; then
 	if [[ -z $DateStr ]] ; then
-		export TimeStamp=`date +%Y%m%d%H_%M_%S`
+		export TimeStamp=$(date +%Y%m%d%H_%M_%S)
 	else
-		export TimeStamp=`date $DateStr | sed "s/:/_/g"`
+		export TimeStamp=$(date $DateStr | sed "s/:/_/g")
 	fi
 else
-	TimeStamp=`print $TimeStamp | sed "s/:/_/g"`	
+	TimeStamp=$(print $TimeStamp | sed "s/:/_/g")	
 fi
 
 if [[ -z $AMD_CUR_STEP ]] ; then
@@ -133,7 +137,7 @@ function execSteps {
 
 		typeset -Z3 array
 		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+		for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
 		do
 			let cnt=cnt+1
 			array[$cnt]=$x
@@ -144,7 +148,7 @@ function execSteps {
 
 		# empty work array
 		i=1
-		while (( $i <= $cnt ))
+		while (( i <= cnt ))
 		do
 			array[$i]=
 			let i=i+1
@@ -154,13 +158,13 @@ function execSteps {
 		do
 			((x=x)) # make sure x is a number with no leading zerso
 			# update curent step when executing this script
-			if [[ "$AMD_INVDIFF_STEP" = "1" ]] ; then
-				AMD_CUR_STEP=`printf "%02d" $x`
+			if [[ "$AMD_INVDIFF_STEP" == "1" ]] ; then
+				AMD_CUR_STEP=$(printf "%02d" $x)
 			fi
 			if [[ "${steps[$x]}" != "exit" ]] ; then
-				print "${steps[$x]} started at `date`"
+				print "${steps[$x]} started at $(date)"
 			fi
-			if [[ "${steps[$x]}" = "amd2spo" ]] ; then
+			if [[ "${steps[$x]}" == "amd2spo" ]] ; then
 				${steps[$x]} &
 			else
 				${steps[$x]} 
@@ -168,7 +172,7 @@ function execSteps {
 			if (($?!=0)) ; then
 				abort "${steps[$x]} error."
 			fi
-			print "${steps[$x]} ended at `date`"
+			print "${steps[$x]} ended at $(date)"
 		done
 
 }
@@ -184,21 +188,21 @@ function mainMenu {
 
 function main {
 		
-	echo "$0 started at `date`" 
+	echo "$0 started at $(date)" 
 	let curStep=${1:-1}
 	let endStep=${2:-${#steps[*]}}
-	if (( $curStep > $endStep ))
+	if (( curStep > endStep ))
 	then
 		print -u2 "start step must be <= end step"
 		exit 4
 	fi
 
 	execSteps $curStep-$endStep
-	echo "$0 ended at `date`" 
+	echo "$0 ended at $(date)" 
 }		
 
-print "$0 starting at " `date`
-if [[ "$AMD_INVDIFF_MENU" = "Y" ]] ; then
+print "$0 starting at " $(date)
+if [[ "$AMD_INVDIFF_MENU" == "Y" ]] ; then
 	mainMenu | tee -a "$AMD_INVDIFF_LOG"
 else
 	main $@ | tee -a "$AMD_INVDIFF_LOG"
@@ -207,4 +211,4 @@ fi
 chmod 666 $LOG_HOME/WinDiff.log* 
 chmod 666 $AMD_INVDIFF_LOG
 
-print "$0 ending at " `date`
+print "$0 ending at " $(date)

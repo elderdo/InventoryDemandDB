@@ -1,10 +1,11 @@
 #!/usr/bin/ksh
 #   $Author:   Douglas S. Elder
-# $Revision:   1.02  $
-#     $Date:   13 Jun 2016
+# $Revision:   1.03
+#     $Date:   15 Feb 2018
 #
 # Rev 1.01 DouglasElder changed start/end messages to have this file name
-# Rev 1.02 DouglasElder 6/3/16 use ...Diff.sql
+# Rev 1.02 DouglasElder 06/03/16 use ...Diff.sql
+# Rev 1.03 DouglasElder 02/15/18 use == vs = and use (( )) for numeric compares
 #
 USAGE="usage: ${0##*/} [-m] [-s 999] [-o step_override_file]\n
 \twhere\n
@@ -12,13 +13,13 @@ USAGE="usage: ${0##*/} [-m] [-s 999] [-o step_override_file]\n
 \t-o step override file - defaults is pairsAndPartsSteps.ksh\n
 \t-s 999 will set the tmp_amd_spare_parts minimum # of rows (default 99999)"
 
-if [[ $# > 0 && $1 = "?" ]]
+if [[ $# > 0 && $1 == "?" ]]
 then
 	print $USAGE
 	exit 0
 fi
 
-CUR_USER=`logname` 2> /dev/null
+CUR_USER=$(logname) 2> /dev/null
 if [[ -z $CUR_USER ]] ; then
 	CUR_USER=amduser
 fi
@@ -42,7 +43,7 @@ done
 # nonswitch argument on the command line.  For example, if the first
 # nonswitch argume on the command line is positional parameter $<F5>,
 # OPTIND hold the number 5.
-((positions_occupied_by_switches = OPTIND - 1))
+((positions_occupied_by_switches == OPTIND - 1))
 # Use a shift statement to eliminate all switches and switch arguments
 # from the set of positional parameters.
 shift $positions_occupied_by_switches
@@ -81,14 +82,14 @@ function execSqlplus {
 }
 
 function checkThreshold {
-	AMD_COUNT=`$LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_spare_parts;"`  
+	AMD_COUNT=$($LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_spare_parts;")  
 	AMD_THRESHOLD=${SPARE_PARTS_NEW_DATA_THRESHOLD:-99999} 
 	AMD_TABLE="tmp_amd_spare_parts"
 
-	if (( $AMD_COUNT <= $AMD_THRESHOLD ))
+	if (( AMD_COUNT <= AMD_THRESHOLD ))
 	then
-		TimeStamp=${TimeStamp:-`date $DateStr`}
-		hostname=`hostname -s`
+		TimeStamp=${TimeStamp:-$(date $DateStr)}
+		hostname=$(hostname -s)
 		errormsg="Error: the number of $AMD_TABLE is below the threshold ($AMD_COUNT <= $AMD_THRESHOLD) @ $TimeStamp on $hostname" 
 		print "$errormsg"
 		$LIB_HOME/notify.ksh -s "Threshold Error" -m "$errormsg"
@@ -101,7 +102,7 @@ function execSteps {
 
 		typeset -Z3 array
 		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+		for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
 		do
 			let cnt=cnt+1
 			array[$cnt]=$x
@@ -112,7 +113,7 @@ function execSteps {
 
 		# empty work array
 		i=1
-		while (( $i <= $cnt ))
+		while (( i <= cnt ))
 		do
 			array[$i]=
 			let i=i+1
@@ -121,13 +122,13 @@ function execSteps {
 		for x in $*
 		do
 			((x=x)) # make sure x is a number with no leading zerso
-			if [[ "${steps[$x]}" = "return" || "${steps[$x]}" = "exit" ]] ; then
+			if [[ "${steps[$x]}" == "return" || "${steps[$x]}" == "exit" ]] ; then
 				AMD_EXIT=Y
 				return
 			else
-				print "${steps[$x]} started at `date`"
+				print "${steps[$x]} started at $(date)"
 				${steps[$x]} 
-				print "${steps[$x]} ended at `date`"
+				print "${steps[$x]} ended at $(date)"
 			fi
 		done
 
@@ -140,7 +141,7 @@ function mainMenu {
 	do
 		set  $REPLY
 		execSteps $*
-		if [[ "${AMD_EXIT:-N}" = "Y" ]] ; then
+		if [[ "${AMD_EXIT:-N}" == "Y" ]] ; then
 			return
 		fi
 	done
@@ -148,22 +149,21 @@ function mainMenu {
 
 function main
 {
-	print "${THIS_FILE}'s main started at `date` exec'ed by $CUR_USER" 
+	print "${THIS_FILE}'s main started at $(date) exec'ed by $CUR_USER" 
 	execSteps 1-${#steps[*]}
-	print "${THIS_FILE}'s main ended at `date` exec'ed by $CUR_USER" 
+	print "${THIS_FILE}'s main ended at $(date) exec'ed by $CUR_USER" 
 		
 }
 
 steps[1]="checkThreshold"
 steps[2]="execSqlplus truncRblPairs"
-steps[3]="execJavaApp SparePart"
-steps[4]="execSqlplus sparePartsDiff"
-steps[5]="execSqlplus updateCostToRepairOffBase"
-steps[6]="execSqlplus loadRblPairs"
-steps[7]=return
+steps[3]="execSqlplus sparePartsDiff"
+steps[4]="execSqlplus updateCostToRepairOffBase"
+steps[5]="execSqlplus loadRblPairs"
+steps[6]=return
 
-THIS_FILE=`basename $0`
-THIS_FILE_NO_EXT=`echo $THIS_FILE | sed 's/\..\{3\}$//'`
+THIS_FILE=$(basename $0)
+THIS_FILE_NO_EXT=$(echo $THIS_FILE | sed 's/\..\{3\}$//')
 STEPS_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}Steps.ksh
 if [[ -f $STEPS_FILE ]] ;  then
 	# override steps
@@ -174,7 +174,7 @@ if [[ -f $STEPS_FILE ]] ;  then
 	mv $STEPS_FILE ${STEPS_FILE}.bku
 fi
 
-if [[ "${AMD_SPOPART_MENU:-N}" = "Y" ]] ; then
+if [[ "${AMD_SPOPART_MENU:-N}" == "Y" ]] ; then
 	mainMenu 
 else
 	if (( $# > 0 )) ; then

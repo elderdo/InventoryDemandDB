@@ -12,7 +12,6 @@
 # 06/13/16  Douglas Elder  1.7 use ...Diff.sql
 . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 
-$LIB_HOME/execJavaApp.ksh PartFactors
 $LIB_HOME/execSqlplus.ksh partFactorsDiff
 if (($?!=0)) ; then
 	print "partFactorsDiff failed for partFactorsDiff.ksh"

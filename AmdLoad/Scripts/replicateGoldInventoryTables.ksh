@@ -1,15 +1,18 @@
-#   $Author:   zf297a  $
-# $Revision:   1.7  $
+# vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:ff=unix:
+# repliaceGoldInventoryTables.ksh
+#   $Author:   Douglas S. Elder
+# $Revision:   1.8
 #     $Date:   04 Nov 2014  $
 # $Workfile:   replicateGoldInventoryTables.ksh  $
-# Rev 1.7 DSE 11/4/2014 added updateRamp step
+# Rev 1.8 DSE 02/15/2018 added replaced obsolte back tic's, = vs ==
+# Rev 1.7 DSE 11/04/2014 added updateRamp step
 
 USAGE="usage: ${0##*/} [-p | -s ] 
 \nwhere
 \t-p use pgoldlb - default
 \t-s use sgoldlb"
 
-if [[ "$1" = "?" ]] ; then
+if [[ "$1" == "?" ]] ; then
 	print "$USAGE"
 	exit 0
 fi
@@ -45,13 +48,13 @@ shift $positions_occupied_by_switches
 THE_DB_LINK=${THE_DB_LINK:-amd_pgoldlb_link}
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+	export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
 thisFile=${0##*/}
-print "$0 started at " `date`
+print "$0 started at " $(date)
 SQLPLUS_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.*}Errors.log
 $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG loadItem $THE_DB_LINK &
 $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG loadItemsa pgoldsa  &
@@ -67,11 +70,14 @@ wait
 $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG updateRamp
 
 
-if [[ -a $SQLPLUS_ERROR_LOG ]] ; then
+if [[ -e $SQLPLUS_ERROR_LOG ]] ; then
 	$LIB_HOME/checkforerrors.ksh $SQLPLUS_ERROR_LOG
 	if (($?!=0)) ; then
+    $LIB_HOME/notify.ksh -s "Inventory Load Failed for AMD" \
+      -a $DATA_HOME/inv_loadfailed_user_addresses.txt \
+      -m "One or more inventory tables were not loaded"
 		exit 4
 	fi
 fi
 
-print "$0 ending at " `date`
+print "$0 ending at " $(date)

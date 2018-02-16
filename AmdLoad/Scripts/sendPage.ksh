@@ -11,7 +11,7 @@ USAGE="usage: ${0##*/} [-d data_directory] [-p phone_file] [-t phone number] [-b
 \t-o do not send message instead send to stdout
 \tthe message to be sent - is not required has a default message"
 
-if [[ $# > 0 && "$1" = "?" ]]
+if [[ $# > 0 && "$1" == "?" ]]
 then
 	print $USAGE
 	exit 0
@@ -19,7 +19,7 @@ fi
 
 PROVIDER=${PROVIDER:-messaging.sprintpcs.com} # define default provider
 
-hostname=`uname -n`
+hostname=$(hostname -s)
 
 function abort {
 	print -u2 ${1:-"$0 failed"}
@@ -31,7 +31,7 @@ function abort {
 
 UNVAR=${UNVAR:-}
 
-if [[ -n $UNVAR && -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -n $UNVAR && -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
@@ -39,14 +39,14 @@ then
 		abort "$UNVAR/apps/CrON/AMD/lib/amdconfig.ksh failed"
 	fi
 	print "Using $UNVAR for amdconfig.ksh"
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. /apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
 	then
 		abort "/apps/CRON/AMD/lib/amdconfig.ksh failed"
 	fi
-elif [[ -a ./amdconfig.ksh ]]
+elif [[ -e ./amdconfig.ksh ]]
 then
 	. ./amdconfig.ksh 
 	if (( $? > 0 ))
@@ -59,7 +59,7 @@ fi
 
 if [[ -z $TimeStamp ]]
 then
-	TimeStamp=`date $DateStr`
+	TimeStamp=$(date $DateStr)
 fi
 
 
@@ -74,14 +74,14 @@ function abort {
 function SendPage  {
 	PIN=$1
 	MESG=${2:-this is a test message}
-	ct=`expr $PIN : '^[0,2-9][0-9]\{9\}@.*\....$'`
+	ct=$(expr $PIN : '^[0,2-9][0-9]\{9\}@.*\....$')
 	if ((ct>0)) ; then
 		ADDR=$PIN
 	else
 		ADDR=${PIN}@${PROVIDER}
 	fi		
 
-	if [[ "$AMD_NOTIFY" = "N" ]] ; then
+	if [[ "$AMD_NOTIFY" == "N" ]] ; then
 		print "$ADDR"
 		print "$MESG"
 		return 0
@@ -94,14 +94,14 @@ EOF
 
 UNVAR=${UNVAR:-}
 
-if [[ -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
 	then
 		abort "$UNVAR/apps/CrON/AMD/lib/amdconfig.ksh failed"
 	fi
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. /apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
@@ -112,7 +112,7 @@ else
 	. amdconfig.ksh 
 	if (( $? > 0 ))
 	then
-		abort `which amdconfig.ksh` failed
+		abort $(which amdconfig.ksh) failed
 	fi
 fi
 

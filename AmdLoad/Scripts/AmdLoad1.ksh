@@ -1,16 +1,15 @@
 #!/bin/ksh
-# vim: ff=unix:ts=2:sw=2:sts=2:expandtab:autoindent:smartindent:
-#   $Author:   zf297a  $
-# $Revision:   1.15  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# AmdLoad1.ksh
+#   $Author:   Douglas S. Elder
+# $Revision:   1.13  $
 #     $Date:   04 Sep 2009 22:59:40  $
-# $Workfile:   AmdLoad1.ksh  $
-# rev 1.13 04 Sep 2009 
-# rev 1.14 21 Feb 2012 - made loadPsms a foreground process so deadlock does not occur
-# rev 1.15 24 Jan 2017 - add analyzeTmpAmdSpareParts
-# rev 1.16 19 Mar 2017 - fixed function execSqlplus
-# rev 1.17 03 Aug 2017 - fixed function abort to say AmdLoad1.ksh failed 
-#                        vs AmdLoad2.ksh failed
-
+#
+# $Revision:   1.13   04 Sep 2009 22:59:40  
+# $Revision:   1.14   15 Feb 2018 removed obsolte code
+#                                 replaced back tic's with $(..)
+#                                 replaced -a with -e
+#                                 use (( )) for numeric compares and calculations
 USAGE="usage: ${0##*/} [-m] [-f] [-d] [-o override_file]  [startStep endStep ]\n\n
 \twhere\n
 \t-m will enable a selection menu\n
@@ -18,12 +17,12 @@ USAGE="usage: ${0##*/} [-m] [-f] [-d] [-o override_file]  [startStep endStep ]\n
 \t-o override file - default is data/AmdLoad1Steps.ksh\n
 \t-d enables debug\n"
 
-if [[ "$#" -gt "0" && "$1" = "?" ]] ; then
+if [[ (($#>0)) && "$1" == "?" ]] ; then
 	print $USAGE
 	exit 0
 fi
 
-CUR_USER=`logname`
+CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
 	CUR_USER=amduser
 fi
@@ -37,8 +36,8 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 fi
 
-abort() {
-	errmsg="AmdLoad1.ksh Failed"
+function abort {
+	errmsg="AmdLoad2.ksh Failed"
 	print "$errmsg $1"
 	print -u2 "$errmsg $1"
 	exit 4
@@ -77,7 +76,7 @@ function execSteps {
 
 		typeset -Z3 array
 		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+		for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
 		do
 			let cnt=cnt+1
 			array[$cnt]=$x
@@ -88,7 +87,7 @@ function execSteps {
 
 		# empty work array
 		i=1
-		while (( $i <= $cnt ))
+		while (( i <= cnt ))
 		do
 			array[$i]=
 			let i=i+1
@@ -97,7 +96,7 @@ function execSteps {
 		for x in $*
 		do
 			((x=x)) # make sure x is a number with no leading zerso
-			if [[ "${steps[$x]}" = "return" || "${steps[$x]}" = "exit" ]] ; then
+			if [[ "${steps[$x]}" == "return" || "${steps[$x]}" == "exit" ]] ; then
 				AMD_EXIT=Y
 				return
 			else
@@ -114,7 +113,7 @@ function mainMenu {
 	do
 		set  $REPLY
 		execSteps $*
-		if [[ "${AMD_EXIT:-N}" = "Y" ]] ; then
+		if [[ "${AMD_EXIT:-N}" == "Y" ]] ; then
 			return
 		fi
 	done
@@ -122,14 +121,14 @@ function mainMenu {
 
 function main
 {
-	echo "main started at `date`" 
+	echo "main started at $(date)" 
 	execSteps 1-${#steps[*]}
-	echo "main ended at `date`" 
+	echo "main ended at $(date)" 
 		
 }
 
 function checkForErrors {
-	if [[ -a $SQLPLUS_ERROR_LOG ]] ; then
+	if [[ -e $SQLPLUS_ERROR_LOG ]] ; then
 		$LIB_HOME/checkforerrors.ksh $SQLPLUS_ERROR_LOG
 		if (($?!=0)) ; then
 			exit 4
@@ -138,22 +137,22 @@ function checkForErrors {
 }
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+	export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
-print "$0 started at " `date`
+print "$0 started at " $(date)
 thisFile=${0##*/}
 
 SQLPLUS_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.*}Errors.log
 
 function execSqlplus {
-	print "$0.ksh $1 started at `date` exec'ed by $CUR_USER"
-	if [[ -n $2 || "${AMD_FOREGROUND:-N}" = "Y" ]] ; then
+	print "$0.ksh $1 started at $(date) exec'ed by $CUR_USER"
+	if [[ -n $2 || "${AMD_FOREGROUND:-N}" == "Y" ]] then
 		$LIB_HOME/execSqlplus.ksh -t -e $SQLPLUS_ERROR_LOG $1  
 		RC=$?
-		if (($RC!=0)) ; then
+		if ((RC!=0)) ; then
 			print "$0 $1 had an error"
 		fi
 	else
@@ -164,14 +163,13 @@ function execSqlplus {
 # loadGold creates tmp_amd_spare_parts which is input to loadMain
 # so it must complete first
 steps[1]="execSqlplus loadGold -f"
-steps[2]="execSqlplus loadPsms -f"
+steps[2]="execSqlplus loadPsms"
 steps[3]="execSqlplus loadMain"
 steps[4]="execSqlplus loadWecm"
-steps[5]="execSqlplus analyzeTmpAmdSpareParts"
-steps[6]=return
+steps[5]=return
 
-THIS_FILE=`basename $0`
-THIS_FILE_NO_EXT=`echo $THIS_FILE | sed 's/\..\{3\}$//'`
+THIS_FILE=$(basename $0)
+THIS_FILE_NO_EXT=$(echo $THIS_FILE | sed 's/\..\{3\}$//')
 STEPS_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}Steps.ksh
 if [[ -f $STEPS_FILE ]] ;  then
 	# override steps
@@ -183,7 +181,7 @@ if [[ -f $STEPS_FILE ]] ;  then
 fi
 	
 
-if [[ "${AMD_USE_AMDLOAD1_MENU:-N}" = "Y" ]] ; then
+if [[ "${AMD_USE_AMDLOAD1_MENU:-N}" == "Y" ]] ; then
 	mainMenu 
 else
 	if (( $# > 0 )) ; then
@@ -194,4 +192,4 @@ else
 fi
 wait
 checkForErrors
-print "$0 ending at " `date`
+print "$0 ending at " $(date)

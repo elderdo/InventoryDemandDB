@@ -1,18 +1,18 @@
 #!/usr/bin/ksh
-# vim: ts=2 sw=2 sts=2 et
+# vim: ts=2:sw=2:sts=2:et:ai:ff=unix:
 #   $Author:   Douglas S. Elder
-# $Revision:   1.26
-#     $Date:   20 Jan 2014
+# $Revision:   1.25
+#     $Date:   15 Feb 2018
 # $Workfile:   loadInventory.ksh  $
 #
 # Rev 1.23 DouglasElder make spo related inv a separate step
-# Rev 1.24 DouglasElder issue warnings only if trimTactics.ksh fails
-# Rev 1.25 removed all Spo related steps
-# Rev 1.26 deleted step invSpoData and tacticalPostProcess
-#          and replace spoPartDiff with pairsAndParts
+# Rev 1.24 02/06/14 Douglas Elder got rid of spo steps
+# Rev 1.25 02/15/18 Douglas Elder got rid of obsolete back tic's and
+#                                 replaced them with $(....)
+#                                 use (( )) for numeric compares
 #          
 USAGE="usage: ${0##*/} [ -p] [-s step] [-d] [-w] [-o] [-n] [-z] [-g]\n
-\t\t[-v] [-t 999] [-m] [-x]\n
+\t\t[-v] [-t 999] [-m]\n
 \twhere\n
 \t-g get pgoldlb data - default\n
 \t-z get sgoldlb data\n
@@ -22,20 +22,20 @@ USAGE="usage: ${0##*/} [ -p] [-s step] [-d] [-w] [-o] [-n] [-z] [-g]\n
 \t-w abort for warnings\n
 \t-o turn off error notification\n
 \t-n don't load tmp_amd_spare_parts (default is to load it)\n
-\t-x don't do the pairsAndParts.ksh (default is to do it)\n
+\t-x don't do the spoPartDiff (default is to do it)\n
 \t-v send all logs and sqlplus output to stdout for viewing\n
 \t-t 999\tset the SPARE_PARTS_NEW_DATA_THRESHOLD for data\n
 \t-m execute this script interactively via a menu\n
 \t\twhere 999 is the min # or rows for tmp_amd_spare_parts.\n
 \t\tThe default is 99999\n"
 
-if [[ "$#" -gt "0" && "$1" = "?" ]]
+if [[ (($#>0)) && "$1" == "?" ]]
 then
   print $USAGE
   exit 0
 fi
 
-CUR_USER=`logname`
+CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
   CUR_USER=amduser
 fi
@@ -80,19 +80,19 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-hostname=`uname` 
+hostname=$(uname) 
 thisFile=${0##*/}
 
-abort() {
+function abort {
   $LIB_HOME/notify.ksh -a loadInventory.txt  -s "$thisFile failed at $1" -m "$thisFile has failed on $hostname at $1." 
   exit 4
 }
 
 if [[ -z ${TimeStamp:-} ]] ; then
-  export TimeStamp=`date $DateStr`
+  export TimeStamp=$(date $DateStr)
 fi
 
-export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 
 if [[ -z $AMD_CUR_STEP ]] ; then
   AMD_LOADINV_STEP=1
@@ -112,7 +112,7 @@ function execSteps {
 
     typeset -Z3 array
     cnt=0
-    for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+    for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
     do
       let cnt=cnt+1
       array[$cnt]=$x
@@ -123,7 +123,7 @@ function execSteps {
 
     # empty work array
     i=1
-    while (( $i <= $cnt ))
+    while (( i <= cnt ))
     do
       array[$i]=
       let i=i+1
@@ -132,13 +132,13 @@ function execSteps {
     for x in $*
     do
       ((x=x)) # make sure x is a number with no leading zerso
-      if [[ "$AMD_LOADINV_STEP" = "1" ]] ; then
-        AMD_CUR_STEP=`printf "%02d" $x`
+      if [[ "$AMD_LOADINV_STEP" == "1" ]] ; then
+        AMD_CUR_STEP=$(printf "%02d" $x)
       fi
       if [[ "${steps[$x]}" != "exit" ]] ; then
-        print "${steps[$x]} started at `date` exec'ed by $CUR_USER"
+        print "${steps[$x]} started at $(date) exec'ed by $CUR_USER"
       fi
-      if [[ "${steps[$x]}" = "amd2spo" ]] ; then
+      if [[ "${steps[$x]}" == "amd2spo" ]] ; then
         ${steps[$x]} &
       else
         ${steps[$x]} 
@@ -146,7 +146,7 @@ function execSteps {
       if (($?!=0)) ; then
         abort "${steps[$x]} error."
       fi
-      print "${steps[$x]} ended at `date` exec'ed by $CUR_USER"
+      print "${steps[$x]} ended at $(date) exec'ed by $CUR_USER"
     done
 
 }
@@ -162,17 +162,17 @@ function mainMenu {
 
 function main {
     
-  echo "$0 started at `date`" 
+  echo "$0 started at $(date)" 
   let curStep=${1:-1}
   let endStep=${2:-${#steps[*]}}
-  if (( $curStep > $endStep ))
+  if (( curStep > endStep ))
   then
     print -u2 "start step must be <= end step"
     exit 4
   fi
 
   execSteps $curStep-$endStep
-  echo "$0 ended at `date`" 
+  echo "$0 ended at $(date)" 
 }   
 
 
@@ -188,32 +188,33 @@ function loadTmpAmdSpareParts {
   fi
 }
 
-function pairsAndParts {
-    $LIB_HOME/$0.ksh $pairsAndParts_ARG
+function spoPartDiff {
+    $LIB_HOME/$0.ksh $spoPartDiff_ARG
     if (($?!=0)) ; then
       abort "$0.ksh"
     fi
 }
 
+
 function processParts {
-  if [[ "$1"  = "Y" ]] ; then
+  if [[ "$1"  == "Y" ]] ; then
     loadTmpAmdSpareParts
   fi
 
-  if [[ "$2" = "Y" ]] ; then
+  if [[ "$2" == "Y" ]] ; then
     if [[ -n ${SPARE_PARTS_NEW_DATA_THRESHOLD:-} ]] 
     then
-      pairsAndParts_ARG="-s $SPARE_PARTS_NEW_DATA_THRESHOLD"
+      spoPartDiff_ARG="-s $SPARE_PARTS_NEW_DATA_THRESHOLD"
     else
-      pairsAndParts_ARG=
+      spoPartDiff_ARG=
     fi
-    pairsAndParts
+    spoPartDiff
   fi
 
 }
 
 function checkIfSendingParts {
-  if [[ "${SEND_PARTS:-}" = "Y" || "${SEND_ALL_PARTS:-}" = "Y" ]] ; then
+  if [[ "${SEND_PARTS:-}" == "Y" || "${SEND_ALL_PARTS:-}" == "Y" ]] ; then
     processParts  ${AMD_LOAD_TMP:-Y}  \
       ${AMD_SPARE_PART_DIFF:-Y} 
   fi
@@ -269,6 +270,12 @@ function invDiff {
   fi
 }
 
+function invSpoData {
+  $LIB_HOME/$0.ksh 
+  if (($?!=0)) ; then
+    print "$0.ksh ended with a non-zero return code"
+  fi
+}
 
 function checkSqlplusErrorLog {
   if [[ -f $SQLPLUS_ERROR_LOG ]] ; then
@@ -280,20 +287,30 @@ function checkSqlplusErrorLog {
 }
 
 function notify {
-  hostname=`uname -n`
+  hostname=$(hostname -s)
   $LIB_HOME/$0.ksh -a loadInventory.txt \
           -s "$1 completed" \
     -m "$1 has completed on $hostname." 
 }
 
 
+function tacticalPostProcess
+{
+  $LIB_HOME/trimTactics.ksh -f none \
+              -o skip -t run -s default \
+        -c ATR -r no_restart 
+  if (($?!=0)) ; then
+    abort "trimTactics.ksh failed for $0"
+  fi 
 
-rename() {
+}
+
+function rename {
   print "$CUR_USER is renaming $1 to ${1}.bku" 
   mv $1 ${1}.bku
 }
 
-doOverride() 
+function doOverride 
 {
   for file in $STEPS_FILE $OVERRIDE_FILE ; do
     if [[ -f $file ]] ;  then
@@ -307,8 +324,8 @@ doOverride()
   done
 }
  
-THIS_FILE=`basename $0`
-THIS_FILE_NO_EXT=`echo $THIS_FILE | sed 's/\..\{3\}$//'`
+THIS_FILE=$(basename $0)
+THIS_FILE_NO_EXT=$(echo $THIS_FILE | sed 's/\..\{3\}$//')
 STEPS_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}Steps.txt
 OVERRIDE_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}_override.txt
 DO_NOT_EXECUTE_FILE=$DATA_HOME/${THIS_FILE_NO_EXT}_noexec.txt
@@ -317,9 +334,9 @@ if [[ -f $DO_NOT_EXECUTE_FILE ]] ; then
   rename $DO_NOT_EXECUTE_FILE
 fi
 
-if [[ "$AMD_LOADINV_MENU" = "Y" ]] ; then
+if [[ "$AMD_LOADINV_MENU" == "Y" ]] ; then
   steps[1]=loadTmpAmdSpareParts
-  steps[2]=pairsAndParts
+  steps[2]=spoPartDiff
   steps[3]=replicateGoldInventoryTables
   steps[4]=loadOnHandInvs
   steps[5]=loadInRepair
@@ -328,7 +345,7 @@ if [[ "$AMD_LOADINV_MENU" = "Y" ]] ; then
   steps[8]=loadRsp
   steps[9]=loadAmdReqs
   steps[10]=invDiff
-  steps[11]=exit
+  steps[13]=exit
 
   doOverride
 
@@ -342,16 +359,15 @@ else
   steps[4]=loadAmdReqs
   steps[5]=invDiff
   steps[6]="notify $0"
-  steps[7]=exit
 
   doOverride
 
   # execute the steps 
-  print "$0 starting at " `date`
-  if [[ "${DO_NOT_EXECUTE:-N}" = "N"  ]] ; then
+  print "$0 starting at " $(date)
+  if [[ "${DO_NOT_EXECUTE:-N}" == "N"  ]] ; then
     main $@ 2>&1 | tee -a $AMD_LOADINV_LOG
   else
     print "loadInventory.ksh was intentionally not executed"
   fi
-  print "$0 ending at " `date`
+  print "$0 ending at " $(date)
 fi

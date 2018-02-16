@@ -15,12 +15,12 @@ fi
 
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+	export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
-print "$0 started at " `date`
+print "$0 started at " $(date)
 thisFile=${0##*/}
 SQLPLUS_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.*}Errors.log
 $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG loadL11  &
@@ -28,9 +28,9 @@ $LIB_HOME/execSqlplus.ksh -e $SQLPLUS_ERROR_LOG loadActiveNiins  &
 
 wait
 
-print "$0 ending at " `date`
+print "$0 ending at " $(date)
 
-if [[ -a $SQLPLUS_ERROR_LOG ]] ; then
+if [[ -e $SQLPLUS_ERROR_LOG ]] ; then
 	$LIB_HOME/checkforerrors.ksh $SQLPLUS_ERROR_LOG
 	RetCd=$?
 	if [[ "$RetCd" != "0" ]]; then

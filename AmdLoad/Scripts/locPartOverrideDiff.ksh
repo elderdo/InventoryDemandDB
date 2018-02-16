@@ -1,12 +1,14 @@
 #!/usr/bin/ksh
-# vim: ts=2 sw=2 sts=2 et
+# vim: ts=2:sw=2:sts=2:et:autoindent:smartindent:ff=unix:
+# locPartOverrideDiff.ksh
 #   $Author:   Douglas S. Elder
-# $Revision:   1.15
-#     $Date:   13 Jun 2016 
+# $Revision:   1.16
+#     $Date:   15 Feb 2018 
 #
 #
 # Date                 Who            Purpose
 # --------             -------------  --------------------------------------------------
+# Rev 1.16  02/15/2018 DSE            use == vs = and replaced back tic's with $(...)
 # Rev 1.15  06/13/2016 DSE            used ...Diff.sql
 # Rev 1.14  10/29/2013 DSE            removed spo functions
 # Rev 1.13                            keep the import log and issue 
@@ -14,14 +16,14 @@
 # 08/09/05             KenShew	      Initial implementation
 
 if (($#>0)) ; then
-	if [[ "$1" = "-d" ]] ; then
+	if [[ "$1" == "-d" ]] ; then
 		set -x
 		DEBUG=-d
 	fi
 fi
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	export TimeStamp=`date +%Y%m%d`
+	export TimeStamp=$(date +%Y%m%d)
 fi
 
 export UNVAR=${UNVAR:-}
@@ -63,9 +65,7 @@ function execSqlplus {
 }
 
 
-$LIB_HOME/execJavaApp.ksh LocationPartOverride
 execSqlplus locationPartOverrideDiff 
-$LIB_HOME/execJavaApp.ksh LPOverrideConsumables
 execSqlplus lpOverrideConsumablesDiff 
 
 chmod 644 $LOG_HOME/WinDiff.log* 

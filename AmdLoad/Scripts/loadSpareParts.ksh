@@ -1,8 +1,13 @@
 #!/bin/ksh
-#   $Author$
-# $Revision$
-#     $Date$
-# $Workfile$
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# loadSpareParts.ksh
+#   $AuthorI Douglas S. Elder
+# $Revision: 1.1
+#     $Date: 02/15/2018
+# Rev 1.1  02/15/2018 removed obsolete back tic's and replace them with $(...)
+#                     removed obsolte = and replaced with ==
+#                     removed obsolte -a and replaced with -e
+#                     use (( )) without variable expansion for compares
 #
 USAGE="usage: ${0##*/} [-a] [-s step] [-d] [-w] [-o] [-n]\n
 \t\t[-v] [-t 999] [-m]\n
@@ -20,7 +25,7 @@ USAGE="usage: ${0##*/} [-a] [-s step] [-d] [-w] [-o] [-n]\n
 \t\twhere 999 is the min # or rows for tmp_amd_spare_parts.\n
 \t\tThe default is 99999\n"
 
-if [[ "$#" -gt "0" && "$1" = "?" ]]
+if [[ (($#>0)) && "$1" == "?" ]]
 then
 	print $USAGE
 	exit 0
@@ -65,13 +70,13 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-hostname=`uname` 
+hostname=$(uname) 
 thisFile=${0##*/}
 
-abort() {
-	if [[ -a $DATA_HOME/loadSparePart.txt ]] ; then
+function abort {
+	if [[ -e $DATA_HOME/loadSparePart.txt ]] ; then
 		ADDRESSES=loadSparePart.txt
-	elif [[ -a $DATA_HOME/LOADPARTSentory.txt ]] ; then
+	elif [[ -e $DATA_HOME/LOADPARTSentory.txt ]] ; then
 		ADDRESSES=LOADPARTSentory.txt
 	else
 		ADDRESSES=addresses.txt
@@ -81,10 +86,10 @@ abort() {
 }
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	export TimeStamp=`date $DateStr`
+	export TimeStamp=$(date $DateStr)
 fi
 
-export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 
 if [[ -z $AMD_CUR_STEP ]] ; then
 	AMD_LOADPARTS_STEP=1
@@ -100,7 +105,7 @@ function execSteps {
 
 		typeset -Z3 array
 		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+		for x in $(echo $* | awk -f $BIN_HOME/awkNumInput.txt)
 		do
 			let cnt=cnt+1
 			array[$cnt]=$x
@@ -111,7 +116,7 @@ function execSteps {
 
 		# empty work array
 		i=1
-		while (( $i <= $cnt ))
+		while (( i <= cnt ))
 		do
 			array[$i]=
 			let i=i+1
@@ -120,18 +125,18 @@ function execSteps {
 		for x in $*
 		do
 			((x=x)) # make sure x is a number with no leading zerso
-			if [[ "$AMD_LOADPARTS_STEP" = "1" ]] ; then
-				AMD_CUR_STEP=`printf "%02d" $x`
+			if [[ "$AMD_LOADPARTS_STEP" == "1" ]] ; then
+				AMD_CUR_STEP=$(printf "%02d" $x)
 			fi
 			if [[ "${steps[$x]}" != "exit" ]] ; then
-				print "${steps[$x]} started at `date`"
+				print "${steps[$x]} started at $(date)"
 			fi
-			if [[ "${steps[$x]}" = "amd2spo" ]] ; then
+			if [[ "${steps[$x]}" == "amd2spo" ]] ; then
 				${steps[$x]} &
 			else
 				${steps[$x]} 
 			fi
-			print "${steps[$x]} ended at `date`"
+			print "${steps[$x]} ended at $(date)"
 		done
 
 }
@@ -147,17 +152,17 @@ function mainMenu {
 
 function main {
 		
-	echo "$0 started at `date`" 
+	echo "$0 started at $(date)" 
 	let curStep=${1:-1}
 	let endStep=${2:-${#steps[*]}}
-	if (( $curStep > $endStep ))
+	if (( curStep > endStep ))
 	then
 		print -u2 "start step must be <= end step"
 		exit 4
 	fi
 
 	execSteps $curStep-$endStep
-	echo "$0 ended at `date`" 
+	echo "$0 ended at $(date)" 
 }		
 
 
@@ -184,11 +189,11 @@ function sendPartInfo {
 }
 
 function processParts {
-	if [[ "$1"  = "Y" ]] ; then
+	if [[ "$1"  == "Y" ]] ; then
 		loadTmpAmdSpareParts
 	fi
 
-	if [[ "$2" = "Y" ]] ; then
+	if [[ "$2" == "Y" ]] ; then
 		if [[ -n ${SPARE_PARTS_NEW_DATA_THRESHOLD:-} ]]	
 		then
 			SPAREPARTDIFF_ARG="-s $SPARE_PARTS_NEW_DATA_THRESHOLD"
@@ -199,16 +204,16 @@ function processParts {
 	fi
 
 	SENDPARTINFO_ARGS=
-	if [[ "$3" = "Y" ]] ; then
+	if [[ "$3" == "Y" ]] ; then
 		SENDPARTINFO_ARGS="-a"
 	fi
-	if [[ "$4" = "Y" ]] ; then
+	if [[ "$4" == "Y" ]] ; then
 		SENDPARTINFO_ARGS="$SENDPARTINFO_ARGS -w"
 	fi
-	if [[ "$5" = "Y" ]] ; then
+	if [[ "$5" == "Y" ]] ; then
 		SENDPARTINFO_ARGS="$SENDPARTINFO_ARGS -o"
 	fi
-	if [[ "$6" = "Y" ]] ; then
+	if [[ "$6" == "Y" ]] ; then
 		SENDPARTINFO_ARGS="$SENDPARTINFO_ARGS -d"
 	fi
 	if [[ -n $7 ]] ; then
@@ -238,14 +243,14 @@ function checkSqlplusErrorLog {
 }
 
 function notify {
-	hostname=`uname -n`
+	hostname=$(hostname -s)
 	$LIB_HOME/$0.ksh -a LOADPARTSentory.txt \
        		-s "$1 completed" \
 		-m "$1 has completed on $hostname." 
 }
 
 
-if [[ "$AMD_LOADPARTS_MENU" = "Y" ]] ; then
+if [[ "$AMD_LOADPARTS_MENU" == "Y" ]] ; then
 	steps[1]=loadTmpAmdSpareParts
 	steps[2]=sparePartDiff
 	steps[3]=sendPartInfo
@@ -254,8 +259,8 @@ if [[ "$AMD_LOADPARTS_MENU" = "Y" ]] ; then
 	mainMenu 2>&1 | tee -a $AMD_LOADPARTS_LOG
 else
 	steps[1]=loadTheParts
-	print "$0 starting at " `date`
+	print "$0 starting at " $(date)
 	main $@ 2>&1 | tee -a $AMD_LOADPARTS_LOG
-	print "$0 ending at " `date`
+	print "$0 ending at " $(date)
 fi
 

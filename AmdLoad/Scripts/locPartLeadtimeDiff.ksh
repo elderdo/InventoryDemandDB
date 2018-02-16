@@ -10,7 +10,6 @@
 # 07/10/09  D. Elder   Revision:   1.5
 . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 
-$LIB_HOME/execJavaApp.ksh LocationPartLeadtime
 $LIB_HOME/execSqlplus.ksh locationPartLeadtimeDiff 
 if (($?!=0)) ; then
 	print -u2 "execSqlplus.ksh failed for locationPartLeadtimeDiff"

@@ -1,9 +1,16 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.16  $
-#     $Date:   21 May 2009 17:51:04  $
-# $Workfile:   archive.ksh  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# archive.ksh
+#   $Author:   Douglas S Elder
+# $Revision:   1.17
+#     $Date:   15 Feb 2018
 # This script archives and compresses a set of files to a time_stamped file.
+#
+# $Revision:   1.16   21 May 2009 17:51:04
+# $Revision:   1.17   15 Feb 2018 removed obsolete back tics and replaced with $(..)
+#                                 removed obsolete -a and replaced with -e
+#                                 use (( )) and no $ variables for numeric compares
+#
 USAGE="usage: ${0##*/} [-x archname] [-d archive_directory] [file1 file2 file3...] [-a app_home_directory] [-b] [-p arch_data_pattern ]
 \n\t-x archname is the name of the archive without the time stamp. defaults to null 
 \n\t-d defaults to $ESCMXML
@@ -12,14 +19,14 @@ USAGE="usage: ${0##*/} [-x archname] [-d archive_directory] [file1 file2 file3..
 \n\t-b debug mode" 
 
 UNVAR=${UNVAR:-}
-if [[ -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
 	then
 		abort "$UNVAR/apps/CrON/AMD/lib/amdconfig.ksh failed"
 	fi
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. /apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
@@ -30,7 +37,7 @@ else
 	. amdconfig.ksh 
 	if (( $? > 0 ))
 	then
-		abort `which amdconfig.ksh` failed
+		abort $(which amdconfig.ksh) failed
 	fi
 fi
 OPTIND=1
@@ -60,13 +67,13 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-curUser=`whoami`
-belongingTo="belonging to the folowing group(s) `groups`"
+curUser=$(whoami)
+belongingTo="belonging to the folowing group(s) $(groups)"
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	TimeStamp=`print $TimeStamp | sed "s/:/_/g"`
+	TimeStamp=$(print $TimeStamp | sed "s/:/_/g")
 fi
 
 function abort {
@@ -76,7 +83,7 @@ function abort {
 }
 
 function checkDirectory {
-	if [[ ! -a $1 ]]
+	if [[ ! -e $1 ]]
 	then
 		abort "$1 does not exist"
 	else
@@ -97,12 +104,12 @@ then
 	abort "A writable directory must be defined for environment variable ARCH_HOME."
 fi
 
-if [[ ! -a $ARCH_HOME ]] ; then
+if [[ ! -e $ARCH_HOME ]] ; then
 	mkdir $ARCH_HOME
 	chmod 750 $ARCH_HOME
 fi
 
-ARCHFILE=`print arch_$TimeStamp${ARCH_NAME:+_${ARCH_NAME}}.tar | sed "s/:/_/g"`
+ARCHFILE=$(print arch_$TimeStamp${ARCH_NAME:+_${ARCH_NAME}}.tar | sed "s/:/_/g")
 
 file_cnt=0
 
@@ -114,7 +121,7 @@ then
 			((file_cnt=file_cnt+1))
 		fi
 	done
-	if (($file_cnt>0)) ; then
+	if ((file_cnt>0)) ; then
 		tar -cvvf $ARCH_HOME/$ARCHFILE $*
 		gzip $ARCH_HOME/$ARCHFILE
 		rm -f $*

@@ -16,7 +16,7 @@ USAGE="usage: ${0##*/} [-c connection_string | -s ] [-f datafile] [-d] [-l logfi
 \n\terrorlog is the name of an optional file to create 
 \n\t\twhen sqlldr has an error - used when concurrent loads occur"
 
-if [[ "$1" = "?" || "$#" -eq "0" ]] ; then
+if [[ "$1" == "?" || "$#" == "0" ]] ; then
 	print $USAGE
 	exit 0
 fi
@@ -60,9 +60,9 @@ if (($#>2)) ; then
 fi
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	TimeStamp=`print $TimeStamp | sed "s/:/_/g"`
+	TimeStamp=$(print $TimeStamp | sed "s/:/_/g")
 fi
 
 # default to the AMD Connection String
@@ -70,18 +70,18 @@ THE_CONNECTION_STRING=${THE_CONNECTION_STRING:-$DB_CONNECTION_STRING}
 
 if [[ -n $SQLLDR_DATA_FILE ]] ; then
 	# prefix with the keyword and equal sign
-	SQLLDR_DATA_FILE_NAME=`basename $SQLLDR_DATA_FILE`
-	SQLLDR_DATA_FILE_NAME=`print $SQLLDR_DATA_FILE_NAME | sed "s/\./_/g"`
+	SQLLDR_DATA_FILE_NAME=$(basename $SQLLDR_DATA_FILE)
+	SQLLDR_DATA_FILE_NAME=$(print $SQLLDR_DATA_FILE_NAME | sed "s/\./_/g")
 	SQLLDR_DATA_FILE="data=$SQLLDR_DATA_FILE"
 	SQLLDR_FILE=${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${SQLLDR_DATA_FILE_NAME}
 else
-	SQLLDR_INFILE=`$LIB_HOME/getInfile.ksh $SRC_HOME/${1}.ctl`
-	SQLLDR_FILE=`basename $SQLLDR_INFILE`
+	SQLLDR_INFILE=$($LIB_HOME/getInfile.ksh $SRC_HOME/${1}.ctl)
+	SQLLDR_FILE=$(basename $SQLLDR_INFILE)
 	SQLLDR_FILE=${SQLLDR_FILE%\.*}
 	SQLLDR_FILE=${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${SQLLDR_FILE}
 fi
 
-if [[ "$debug" = "Y" ]] ; then
+if [[ "$debug" == "Y" ]] ; then
 	print "SQLLDR_FILE=$SQLLDR_FILE"
 	print "SQLLDR_DATA_FILE=$SQLLDR_DATA_FILE"
 	print "SQLLDR_DATA_FILE_NAME=$SQLLDR_DATA_FILE_NAME"
@@ -108,11 +108,11 @@ RC=$?
 
 cat /tmp/${SQLLDR_FILE}.log >> $THE_LOG_FILE
 
-if [[ -a $LOG_HOME/${SQLLDR_FILE}.bad ]] ; then
+if [[ -e $LOG_HOME/${SQLLDR_FILE}.bad ]] ; then
 	chmod 644 $LOG_HOME/${SQLLDR_FILE}.bad
 	chgrp amd $LOG_HOME/${SQLLDR_FILE}.bad 
 fi		
-if [[ -a $LOG_HOME/${SQLLDR_FILE}.log ]] ; then
+if [[ -e $LOG_HOME/${SQLLDR_FILE}.log ]] ; then
 	chmod 644 $LOG_HOME/${SQLLDR_FILE}.log
 	chgrp amd $LOG_HOME/${SQLLDR_FILE}.log
 fi		
@@ -120,14 +120,14 @@ fi
 
 case $RC in
 	0) return $RC ;;
-	1) print -u2 "`date`: sqlldr failed for $1"
+	1) print -u2 "$(date): sqlldr failed for $1"
 	   if [[ -n ${2:-} && -f ${2:-} ]] ; then
 		print "Error: sqlldr exit code = $RC" >>$2
 	   fi
 	   exit $RC ;;
-  	2) print -u2 "`date`: all or some records rejected for sqlldr for $1" 
+  	2) print -u2 "$(date): all or some records rejected for sqlldr for $1" 
 	   return $RC ;;
-	3) print -u2 "`date`: sqlldr had a fatal error with $1"
+	3) print -u2 "$(date): sqlldr had a fatal error with $1"
 	   if [[ -n ${2:-} && -f ${2:-} ]] ; then
 		print "Error: sqlldr exit code = $RC" >>$2
 	   fi
