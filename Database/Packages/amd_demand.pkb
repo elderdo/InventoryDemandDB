@@ -1,11 +1,11 @@
-/* Formatted on 2/1/2018 1:46:01 PM (QP5 v5.287) */
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
-       $Revision:   1.57
-           $Date:   31 Jan 2018
+       $Revision:   1.58
+           $Date:   09 Feb 2018
        $Workfile:   amd_demand.sql
+            Rev 1.58    DSE 02/09/2018 fixed proc_code value to be GFP vs GPV
             Rev 1.57    DSE 01/31/2018 for procedures loadSanAntonioDemands and its cursor sanAntonioDemands
                                        add a check of proc_code and accept it if it is NULL or GPF
                                        and added EY1746 to the IN list for AND NOT (    SUBSTR (R.request_id, 1, 6) IN
@@ -1261,7 +1261,7 @@ AS
                                  'O',
                                  'R',
                                  'S')
-                AND NVL (proc_code, 'GPF') = 'GPF'
+                AND NVL (proc_code, 'GFP') = 'GFP'
                 AND TO_CHAR (r.created_datetime, 'YYYY-MM') >= '2015-01'
                 AND p.nsn = n.nsn
                 AND n.action_code != 'D';
@@ -2409,14 +2409,14 @@ AS
       writeMsg (pTableName        => 'amd_demand',
                 pError_location   => 180,
                 pKey1             => 'amd_demand',
-                pKey2             => '$Revision:   1.57');
+                pKey2             => '$Revision:   1.58');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.57';
+      RETURN '$Revision:   1.58';
    END getVersion;
 END Amd_Demand;
 /

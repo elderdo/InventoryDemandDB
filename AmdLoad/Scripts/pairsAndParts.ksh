@@ -43,7 +43,7 @@ done
 # nonswitch argument on the command line.  For example, if the first
 # nonswitch argume on the command line is positional parameter $<F5>,
 # OPTIND hold the number 5.
-((positions_occupied_by_switches == OPTIND - 1))
+((positions_occupied_by_switches = OPTIND - 1))
 # Use a shift statement to eliminate all switches and switch arguments
 # from the set of positional parameters.
 shift $positions_occupied_by_switches
