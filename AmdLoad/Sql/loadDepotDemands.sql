@@ -1,9 +1,10 @@
 /*
       $Author:   Douglas S. Elder
-    $Revision:   1.2
+    $Revision:   1.2.1
         $Date:   05 Feb 2017
     $Workfile:   loadBascUkDemands.sql  $
 /*   
+/*      Rev 1.2.1 19 Apr 2018 removed extra semicolon after loadDepotDemands
 /*      Rev 1.2   05 Feb 2018 renamed loadBascUkDemands related to TFS 52919
 /*      Rev 1.1   17 May 2017 added set serveroutput
  *                            and select counts
@@ -22,7 +23,7 @@ set serveroutput on size unlimited
 select count(*) from tmp_amd_demands ;
 select count(*) from amd_bssm_source ;
 
-exec   amd_demand.loadDepotDemands ;;
+exec   amd_demand.loadDepotDemands ;
 
 select count(*) from tmp_amd_demands ;
 select count(*) from amd_bssm_source ;
