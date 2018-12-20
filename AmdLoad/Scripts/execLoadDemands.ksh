@@ -2,7 +2,7 @@
 # vim:ts=2:sw=2:sts=2:autoindent:smartindent:expandtab:
 # execLoadDemands.ksh
 # Author: Douglas S. Elder
-# Date: 10/03/2017
+# Date: 02/01/2018
 # Desc: load the amd demands
 # Rev 1.0 7/12/2013
 # Rev 2.0 8/02/2017
@@ -17,10 +17,17 @@
 #                    Run the loadAmdBssmSourceTmpAmdDemands step in the foreground
 #                    so its truncate completes before the other steps run
 # Rev 3.1 12/192017  removed loadSanAntonioDemands per TFS 48244
+# Rev 3.2 02/01/2018 put back loadSanAntonioDemands per TFS 52919
+#                    renamed loadBascUkDemand to loadDepotDemands
+# Rev 4.0 04/19/2018 added function checkForLoadErrors - invoke
+#                    for every load which just performed whether it is one
+#                    or several
 
 
-USAGE="Usage: ${0##*/}  [-d -f -m]\n\n
+USAGE="Usage: ${0##*/}  [ -c -d -f -m ]\n\n
 \twhere\n
+\t-c show counts from tmp_amd_demands and\n
+\t   amd_demands after each step\n
 \t-d enables debug\n
 \t-f run sqlplus in foreground (default is background)\n
 \t-m display menu and select steps\n"
@@ -28,6 +35,7 @@ USAGE="Usage: ${0##*/}  [-d -f -m]\n\n
 set -o pipefail
 
 CHECK4ERROROPT=
+counts=
 
 CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
@@ -44,9 +52,10 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
 fi
 
 # get command line options
-while getopts :dfmo arguments
+while getopts :cdfmo arguments
 do
   case $arguments in
+    c) counts=Y;;
     d) debug=Y
        export debug
        set -x ;;
@@ -102,8 +111,23 @@ function checkForErrors {
   fi
 }
 
+function counts {
+  if [[ "$debug" == "Y" ]] ; then
+    set -x
+  fi
+  sqlplus $DB_CONNECTION_STRING << EOF
+  set echo on
+  set feedback on
+  select count(*) from tmp_amd_demands ;
+  select count(*) from amd_demands ;
+  quit
+EOF
+}
 function execSqlplus {
 
+  if [[ "$debug" == "Y" ]] ; then
+    set -x
+  fi
   if [[ "${FOREGROUND:-N}" == "Y" || "$2" == "-f" ]] ; then
     print "$0.ksh $1 started at $(date)"
     $LIB_HOME/execSqlplus.ksh -e $DEMAND_LOG $1
@@ -111,6 +135,9 @@ function execSqlplus {
     print "$0.ksh $1 ended at $(date)"
     if ((RC!=0)) ; then
       abort "$0 failed for $1"
+    fi
+    if [[ "$counts" == "Y" ]] ; then
+      counts >> $DEMAND_LOG
     fi
   else
     print "$0.ksh $1 started in background at $(date)"
@@ -129,19 +156,45 @@ function processL67_File
    fi
 }
 
-
+function checkForLoadErrors 
+{
+  for f in $* 
+   do
+     echo "scanning for log $f"
+     log=$(ls -t $LOG_HOME/$(date +%Y%m%d)*${f}.log | head -n 1)
+     if [[ -n $log && -e $log ]] ; then
+       $LIB_HOME/checkforerrors.ksh $log
+       if (($?!=0)) ; then
+         $LIB_HOME/sendPage.ksh "Errors in $log"
+         exit 4
+       fi
+     fi
+   done
+}
 
 function loadDemands {
+
   execSqlplus loadAmdBssmSourceTmpAmdDemands -f
+  checkForLoadErrors loadAmdBssmSourceTmpAmdDemands
+
   execSqlplus loadFmsDemands
-  execSqlplus loadBascUkDemands
+  execSqlplus loadSanAntonioDemands
+  execSqlplus loadDepotDemands
   execSqlplus loadWarnerRobinsDemands
   wait
+  checkForLoadErrors loadFmsDemands \
+    loadSanAntonioDemands \
+    loadDepotDemands \
+    loadWarnerRobinsDemands
+
   execSqlplus loadAmdDemandsTable
+  checkForLoadErrors loadAmdDemandsTable
+
   echo -e  \
 "\tloadAmdBssmSourceTmpAmdDemands\n
 \tloadFmsDemands\n
-\tloadBascUKDemands\n
+\tloadSanAntonioDemands\n
+\tloadDepotDemands
 \tloadWarnerRobinsDemands\n
 \tloadAmdDemandsTable all ended at $(date)\n"
 }

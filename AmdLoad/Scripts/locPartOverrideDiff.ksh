@@ -48,15 +48,6 @@ function cap {
     printf "%s%s\n" "$f" "${1:1}"
 }
 
-function execJavaApp {
-  # capitalize the first char of $1
-  JAVACLASS=$(cap $1)
-  # remove Diff
-  JAVACLASS=$(echo $JAVACLASS | sed 's/....$//')
-	$LIB_HOME/execJavaApp.ksh $JAVACLASS
-}
-
-
 function execSqlplus {
 	$LIB_HOME/execSqlplus.ksh ${DEBUG:-} $1 $2
 	if (($?!=0)) ; then

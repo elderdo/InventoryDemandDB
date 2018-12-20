@@ -67,13 +67,6 @@ function abort {
 	exit 4
 }
 
-function execJavaApp {
-	$LIB_HOME/execJavaApp.ksh $1 $2
-	if (($?!=0)) ; then
-		abort "$0 failed for $1"
-	fi
-}
-
 function execSqlplus {
 	$LIB_HOME/execSqlplus.ksh $1
 	if (($?!=0)) ; then

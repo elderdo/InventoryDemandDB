@@ -1,10 +1,13 @@
 #!/usr/bin/ksh
 # vim: ts=2:sw=2:sts=2:et:autoindent:smartindent:
 #   Author:   Douglas S. Elder
-# Revision:   1.27
-#     Date:   19 Dec 2017
+# Revision:   1.29
+#     Date:   19 Apr 2018
 #     File:   AmdLoad2.ksh
 
+# Rev 1.29 19 Apr 2018 fixed checkForErrors arguments to have the correct ranges
+# Rev 1.28 01 Feb 2018 turned on loadSanAntonio data TFS 52919
+#                      renamed loadBascUkDemands to loadDepotDemands
 # Rev 1.27 19 Dec 2017 turned off loadSanAntonio data TFS 48244
 # Rev 1.26 28 Aug 2017 added loadWarnerRobinsDemands
 # Rev 1.25 02 Aug 2017 added loadSanAntonioDemands
@@ -257,22 +260,23 @@ steps[4]="execSqlplus autoLoadSpareNetworks"
 steps[5]="execSqlplus loadAmdBssmSourceTmpAmdDemands"
 steps[6]="execSqlplus loadFmsDemands"
 steps[7]="execSqlplus loadWarnerRobinsDemands"
-steps[8]="execSqlplus loadBascUkDemands"
-steps[9]=wait
-steps[10]="checkSqlplusErrors 1-8"
-steps[11]="execSqlplus loadAmdDemandsTable"
-steps[12]="execSqlplus loadGoldInventory"
-steps[13]="execSqlplus loadAmdPartLocations"
-steps[14]=wait
-steps[15]="checkSqlplusErrors 11-13"
-steps[16]="execSqlplus loadAmdBaseFromBssmRaw"
-steps[17]="execSqlplus updateAmdAllBaseCleaned"
-steps[18]="execSqlplus loadAmdReqs"
-steps[19]="execSqlplus loadTmpAmdPartFactors"
-steps[20]="execSqlplus loadTmpAmdPartLocForecasts_Add"
-steps[21]="execSqlplus loadTmpAmdLocPartLeadTime"
-steps[22]=wait
-steps[23]="checkSqlplusErrors 16-21"
+steps[8]="execSqlplus loadDepotDemands"
+steps[9]="execSqlplus loadSanAntonioDemands"
+steps[10]=wait
+steps[11]="checkSqlplusErrors 1-9"
+steps[12]="execSqlplus loadAmdDemandsTable"
+steps[13]="execSqlplus loadGoldInventory"
+steps[14]="execSqlplus loadAmdPartLocations"
+steps[15]=wait
+steps[16]="checkSqlplusErrors 12-14"
+steps[17]="execSqlplus loadAmdBaseFromBssmRaw"
+steps[18]="execSqlplus updateAmdAllBaseCleaned"
+steps[19]="execSqlplus loadAmdReqs"
+steps[20]="execSqlplus loadTmpAmdPartFactors"
+steps[21]="execSqlplus loadTmpAmdPartLocForecasts_Add"
+steps[22]="execSqlplus loadTmpAmdLocPartLeadTime"
+steps[23]=wait
+steps[24]="checkSqlplusErrors 17-22"
 steps[24]=return
 
 THIS_FILE=$(basename $0)

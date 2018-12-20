@@ -30,5 +30,3 @@ case $hostname in
 	*) print -u2 $hostname is not a valid machine
 	   exit 4 ;;
 esac
-
-export JRE=/usr/java/jdk1.7.0_72/jre

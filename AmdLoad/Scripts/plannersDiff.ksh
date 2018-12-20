@@ -8,9 +8,6 @@
 # Date      Who            Purpose
 # --------  -------------  --------------------------------------------------
 # 11/20/01  Fernando F.    Initial implementation
-# 01/09/02  Fernando F.    Changed java1.2 to java1.3.
-# 07/30/02  Fernando F.    Added paths to jar's and zip's.
-# 08/05/02  Fernando F.    Added logger classes to CLASSPATH.
 # 08/26/02  Fernando F.    Added start end end times to script output.
 # 08/26/02  Fernando F.    Removed timestamps and added chmod.
 # 09/17/02  Fernando F.    Added WindowAlgo.ini as parameter and 'cd'.
