@@ -1,11 +1,13 @@
-CREATE OR REPLACE PACKAGE BODY amd_tmapi_pkg as
+DROP PACKAGE BODY AMD_OWNER.AMD_TMAPI_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_tmapi_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.2  $
      $Date:   Dec 01 2005 09:48:18  $
     $Workfile:   amd_tmapi_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\AMD_TMAPI_PKG.PKB-arc  $
-   
+
       Rev 1.2   Dec 01 2005 09:48:18   zf297a
    added pvcs keywords
 */
@@ -53,3 +55,13 @@ CREATE OR REPLACE PACKAGE BODY amd_tmapi_pkg as
 	end GetPriority;
 end amd_tmapi_pkg;
 /
+
+
+DROP PUBLIC SYNONYM AMD_TMAPI_PKG;
+
+CREATE PUBLIC SYNONYM AMD_TMAPI_PKG FOR AMD_OWNER.AMD_TMAPI_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_TMAPI_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_TMAPI_PKG TO AMD_WRITER_ROLE;
