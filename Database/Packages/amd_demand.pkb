@@ -1,10 +1,13 @@
+DROP PACKAGE BODY AMD_OWNER.AMD_DEMAND;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Demand
 AS
    /*
          $Author:    Douglas S. Elder
-       $Revision:   1.58
-           $Date:   09 Feb 2018
+       $Revision:   1.59
+           $Date:   21 Nov 2018
        $Workfile:   amd_demand.sql
+            Rev 1.59    DSE 11/20/2018 Per TFS # 72313 allow request_id's with EY1213 to be used
             Rev 1.58    DSE 02/09/2018 fixed proc_code value to be GFP vs GPV
             Rev 1.57    DSE 01/31/2018 for procedures loadSanAntonioDemands and its cursor sanAntonioDemands
                                        add a check of proc_code and accept it if it is NULL or GPF
@@ -814,7 +817,7 @@ AS
            SELECT tli.doc_no,
                   asn.loc_sid,
                   amd_utils.formatNsn (TLI.NSN) nsn,
-                  MIN (tli.trans_date) trans_date
+                  MIN (tli.trans_date)        trans_date
              FROM TMP_LCF_ICP tli, AMD_SPARE_NETWORKS asn
             WHERE tli.sran = asn.loc_id AND SUBSTR (tli.doc_no, 1, 4) <> 'S005'
          -- and  not exists (select null from amd_rbl_pairs where tli.nsn = old_nsn and old_nsn = new_nsn)
@@ -1120,15 +1123,15 @@ AS
 
       CURSOR demandCur
       IS
-         SELECT DISTINCT asp.nsn nsn,
-                         t.tran_id tran_id,
+         SELECT DISTINCT asp.nsn            nsn,
+                         t.tran_id          tran_id,
                          t.created_datetime created_datetime,
-                         (NVL (t.qty, 0)) quantity,
-                         asn2.loc_sid loc_sid,
-                         t.loc_id sc,
-                         t.part part
-           FROM TRHI t,
-                amd_spare_parts asp,
+                         (NVL (t.qty, 0))   quantity,
+                         asn2.loc_sid       loc_sid,
+                         t.loc_id           sc,
+                         t.part             part
+           FROM TRHI               t,
+                amd_spare_parts    asp,
                 amd_spare_networks asn1,
                 amd_spare_networks asn2
           WHERE     asp.part_no = t.part
@@ -1249,8 +1252,8 @@ AS
                 amd_utils.getLocSid ('EY1746') loc_sid,
                 r.prime,
                 n.nsi_sid
-           FROM Amd_spare_parts p,
-                req1sa r,
+           FROM Amd_spare_parts          p,
+                req1sa                   r,
                 amd_national_stock_items n,
                 cat1
           WHERE     p.part_no = r.select_from_part
@@ -1373,12 +1376,12 @@ AS
            SELECT items.nsn,
                   request_id,
                   created_datetime,
-                  qty quantity,
+                  qty                          quantity,
                   amd_utils.getLocSid ('EY1746') loc_sid,
-                  items.prime_part_no prime,
+                  items.prime_part_no          prime,
                   items.nsi_sid
-             FROM (  SELECT wr.nsn nsn,
-                            doc_no request_id,
+             FROM (  SELECT wr.nsn             nsn,
+                            doc_no             request_id,
                             MIN (transaction_date) created_datetime,
                             SUM (demand_quantity) qty
                        FROM amd_warner_robins_files wr, amd_nsns
@@ -1820,15 +1823,15 @@ AS
                      quantity,
                   asn.loc_sid,
                   r.prime
-             FROM REQ1 r,
-                  CAT1 c,
-                  amd_spare_networks asn,
+             FROM REQ1                         r,
+                  CAT1                         c,
+                  amd_spare_networks           asn,
                   amd_depot_partnering_locations depot
             WHERE     r.prime = c.part
                   AND NVL (r.nsn, 'null') <> 'null'
                   AND SUBSTR (r.request_id, 1, 6) = depot.loc_id
                   AND NOT (    SUBSTR (R.request_id, 1, 6) IN
-                                  ('FB2065', 'EY1213', 'EY1746')
+                                  ('FB2065',  'EY1746')
                            AND TRUNC (r.created_datetime, 'YEAR') >=
                                   TO_DATE ('01/01/2015', 'MM/DD/YYYY'))
                   AND SUBSTR (r.select_from_sc, 1, PROGRAM_ID_LL) = PROGRAM_ID
@@ -2409,14 +2412,24 @@ AS
       writeMsg (pTableName        => 'amd_demand',
                 pError_location   => 180,
                 pKey1             => 'amd_demand',
-                pKey2             => '$Revision:   1.58');
+                pKey2             => '$Revision:   1.59');
    END version;
 
    FUNCTION getVersion
       RETURN VARCHAR2
    IS
    BEGIN
-      RETURN '$Revision:   1.58';
+      RETURN '$Revision:   1.59';
    END getVersion;
 END Amd_Demand;
 /
+
+
+DROP PUBLIC SYNONYM AMD_DEMAND;
+
+CREATE PUBLIC SYNONYM AMD_DEMAND FOR AMD_OWNER.AMD_DEMAND;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_DEMAND TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_DEMAND TO AMD_WRITER_ROLE;
