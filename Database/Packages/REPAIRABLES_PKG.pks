@@ -1,15 +1,14 @@
+DROP PACKAGE AMD_OWNER.REPAIRABLES_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
  --
  -- SCCSID:   %M%   %I%   Modified: %G%  %U%
  --
  /*
       $Author:   zf297a  $
-    $Revision:   1.75  $
-     $Date:   13 Feb 2015
+    $Revision:   1.74  $
+     $Date:   26 Jul 2013
 
-
-        Rev 1.75 commented out references to datasys ( spo )
-        
          rev 1.74 removed all a2a dependencies
          
          Rev 1.73 renamed the package repairables_pkg
@@ -261,118 +260,118 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
 /*      Rev 1.0   Jul 19 2004 14:10:48   c970183
 /*   Initial revision.
     */
-	 SUCCESS 		  CONSTANT NUMBER := 0 ;
-	 FAILURE 		  CONSTANT NUMBER := 4 ;
-	 NEW_BUY 		  CONSTANT varchar2(20) := 'NEW-BUY' ;
-	 REPAIR  		  CONSTANT varchar2(20) := 'REPAIR' ;
-	 AN_ORDER 		  CONSTANT varchar2(5) := 'ORDER' ;
-	 OPEN_STATUS 	  CONSTANT varchar2(1)   := 'O' ;
-	 THIRD_PARTY_FLAG CONSTANT varchar2(1) := '?' ;
+     SUCCESS           CONSTANT NUMBER := 0 ;
+     FAILURE           CONSTANT NUMBER := 4 ;
+     NEW_BUY           CONSTANT varchar2(20) := 'NEW-BUY' ;
+     REPAIR            CONSTANT varchar2(20) := 'REPAIR' ;
+     AN_ORDER           CONSTANT varchar2(5) := 'ORDER' ;
+     OPEN_STATUS       CONSTANT varchar2(1)   := 'O' ;
+     THIRD_PARTY_FLAG CONSTANT varchar2(1) := '?' ;
      RCM_REPAIRABLE   CONSTANT varchar2(1) := 'T' ; -- used for rcm_ind
      RCM_CONSUMABLE   CONSTANT varchar2(1) := 'F' ; -- used for rcm_ind
-	 
-	 APPLICATION_ERROR EXCEPTION ;
-	
-	 
-	  TYPE partInfoRec IS RECORD (
-	 	  mfgr 		  AMD_SPARE_PARTS.mfgr%TYPE, 
-	      part_no	  AMD_SPARE_PARTS.part_no%TYPE,
-	      NOMENCLATURE AMD_SPARE_PARTS.nomenclature%TYPE,
-	      nsn		   AMD_SPARE_PARTS.nsn%TYPE,
-	      order_lead_time AMD_SPARE_PARTS.order_lead_time%TYPE,
-	      order_lead_time_defaulted AMD_SPARE_PARTS.order_lead_time_defaulted%TYPE,
-	      unit_cost					AMD_SPARE_PARTS.unit_cost%TYPE,
-	      unit_cost_defaulted		AMD_SPARE_PARTS.unit_cost_defaulted%TYPE,
-	      unit_of_issue				AMD_SPARE_PARTS.unit_of_issue%TYPE,
-	      unit_cost_cleaned			AMD_NATIONAL_STOCK_ITEMS.unit_cost_cleaned%TYPE,
-	      order_lead_time_cleaned	AMD_NATIONAL_STOCK_ITEMS.order_lead_time_cleaned%TYPE,
-	      planner_code				AMD_NATIONAL_STOCK_ITEMS.planner_code%TYPE,
-	      planner_code_cleaned		AMD_NATIONAL_STOCK_ITEMS.planner_code_cleaned%TYPE,
-	      mtbdr						AMD_NATIONAL_STOCK_ITEMS.mtbdr%TYPE,
-	      mtbdr_cleaned				AMD_NATIONAL_STOCK_ITEMS.mtbdr_cleaned%TYPE,
+     
+     APPLICATION_ERROR EXCEPTION ;
+    
+     
+      TYPE partInfoRec IS RECORD (
+           mfgr           AMD_SPARE_PARTS.mfgr%TYPE, 
+          part_no      AMD_SPARE_PARTS.part_no%TYPE,
+          NOMENCLATURE AMD_SPARE_PARTS.nomenclature%TYPE,
+          nsn           AMD_SPARE_PARTS.nsn%TYPE,
+          order_lead_time AMD_SPARE_PARTS.order_lead_time%TYPE,
+          order_lead_time_defaulted AMD_SPARE_PARTS.order_lead_time_defaulted%TYPE,
+          unit_cost                    AMD_SPARE_PARTS.unit_cost%TYPE,
+          unit_cost_defaulted        AMD_SPARE_PARTS.unit_cost_defaulted%TYPE,
+          unit_of_issue                AMD_SPARE_PARTS.unit_of_issue%TYPE,
+          unit_cost_cleaned            AMD_NATIONAL_STOCK_ITEMS.unit_cost_cleaned%TYPE,
+          order_lead_time_cleaned    AMD_NATIONAL_STOCK_ITEMS.order_lead_time_cleaned%TYPE,
+          planner_code                AMD_NATIONAL_STOCK_ITEMS.planner_code%TYPE,
+          planner_code_cleaned        AMD_NATIONAL_STOCK_ITEMS.planner_code_cleaned%TYPE,
+          mtbdr                        AMD_NATIONAL_STOCK_ITEMS.mtbdr%TYPE,
+          mtbdr_cleaned                AMD_NATIONAL_STOCK_ITEMS.mtbdr_cleaned%TYPE,
           mtbdr_computed            AMD_NATIONAL_STOCK_ITEMS.mtbdr_computed%type,
-	      smr_code					AMD_NATIONAL_STOCK_ITEMS.smr_code%TYPE,
-	      smr_code_cleaned			AMD_NATIONAL_STOCK_ITEMS.smr_code_cleaned%TYPE,
-	      smr_code_defaulted		AMD_NATIONAL_STOCK_ITEMS.smr_code_defaulted%TYPE,
-	      nsi_sid					AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE,
-	      TIME_TO_REPAIR_OFF_BASE_CLEAND AMD_NATIONAL_STOCK_ITEMS.TIME_TO_REPAIR_OFF_BASE_CLEAND%TYPE,
-		  last_update_dt			AMD_SPARE_PARTS.last_update_dt%TYPE,
-		  action_code				AMD_SPARE_PARTS.action_code%TYPE
-	) ;
-	
-	TYPE part2Delete IS RECORD (
-	 	  part_no AMD_SPARE_PARTS.part_no%TYPE,
-		  nomenclature AMD_SPARE_PARTS.nomenclature%TYPE
-	) ;
-	
-	
-	 TYPE partCur IS REF CURSOR RETURN partInfoRec ;
+          smr_code                    AMD_NATIONAL_STOCK_ITEMS.smr_code%TYPE,
+          smr_code_cleaned            AMD_NATIONAL_STOCK_ITEMS.smr_code_cleaned%TYPE,
+          smr_code_defaulted        AMD_NATIONAL_STOCK_ITEMS.smr_code_defaulted%TYPE,
+          nsi_sid                    AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE,
+          TIME_TO_REPAIR_OFF_BASE_CLEAND AMD_NATIONAL_STOCK_ITEMS.TIME_TO_REPAIR_OFF_BASE_CLEAND%TYPE,
+          last_update_dt            AMD_SPARE_PARTS.last_update_dt%TYPE,
+          action_code                AMD_SPARE_PARTS.action_code%TYPE
+    ) ;
+    
+    TYPE part2Delete IS RECORD (
+           part_no AMD_SPARE_PARTS.part_no%TYPE,
+          nomenclature AMD_SPARE_PARTS.nomenclature%TYPE
+    ) ;
+    
+    
+     TYPE partCur IS REF CURSOR RETURN partInfoRec ;
      type partTab is table of partInfoRec ;
-	 
+     
      TYPE onHandInvSumCur IS REF CURSOR RETURN AMD_ON_HAND_INVS_SUM%ROWTYPE ;
      type onHandInvSumTab is table of amd_on_hand_invs_sum%rowtype ;
-	 
+     
      TYPE repairInvInfoCur IS REF CURSOR RETURN AMD_REPAIR_INVS_SUM%ROWTYPE ;
      type repairInvInfoTab is table of amd_repair_invs_sum%rowtype ;
-	 
+     
      TYPE inTransitsCur IS REF CURSOR RETURN AMD_IN_TRANSITS_SUM%ROWTYPE ;
      type inTransitsTab is table of amd_in_transits_sum%rowtype ;
      
-	 TYPE inRepairCur IS REF CURSOR RETURN AMD_IN_REPAIR%ROWTYPE ;
+     TYPE inRepairCur IS REF CURSOR RETURN AMD_IN_REPAIR%ROWTYPE ;
      type inRepairTab is table of amd_in_repair%rowtype ;
      
-	 TYPE onOrderCur IS REF CURSOR RETURN AMD_ON_ORDER%ROWTYPE ;
+     TYPE onOrderCur IS REF CURSOR RETURN AMD_ON_ORDER%ROWTYPE ;
      type onOrderTab is table of amd_on_order%rowtype ;
      
-	 TYPE part2DeleteCur IS REF CURSOR RETURN part2Delete ;
+     TYPE part2DeleteCur IS REF CURSOR RETURN part2Delete ;
      type part2DeleteTab is table of part2Delete ;
      
-	 TYPE bomDetailCur IS REF CURSOR RETURN AMD_SENT_TO_A2A%ROWTYPE ;
+     TYPE bomDetailCur IS REF CURSOR RETURN AMD_SENT_TO_A2A%ROWTYPE ;
      type bomDetailTab is table of amd_sent_to_a2a%rowtype ;
      
-	 TYPE backOrderCur IS REF CURSOR RETURN AMD_BACKORDER_SUM%ROWTYPE ;
+     TYPE backOrderCur IS REF CURSOR RETURN AMD_BACKORDER_SUM%ROWTYPE ;
      type backOrderTab is table of amd_backorder_sum%rowtype ;
      
-	 type extForecastCur is ref cursor return amd_part_loc_forecasts%rowtype ;
+     type extForecastCur is ref cursor return amd_part_loc_forecasts%rowtype ;
      type extForecastTab is table of amd_part_loc_forecasts%rowtype ;
-	 
-	 PROCEDURE processParts(parts IN partCur) ;
-	 PROCEDURE processPartLeadTimes(parts IN partCur) ;
-	 PROCEDURE processOnHandInvSum(onHandInvSum IN onHandInvSumCur) ;
-	 PROCEDURE processRepairInvInfo(repairInvInfo IN repairInvInfoCur) ;
-	 PROCEDURE processInTransits(inTransit IN inTransitsCur) ;
-	 PROCEDURE processInRepair(inRepair IN inRepairCur) ;
-	 PROCEDURE processOnOrder(onOrder IN onOrderCur) ;
-	 PROCEDURE deletePartInfo(partInfo IN part2DeleteCur) ;
-	 PROCEDURE processBomDetail(bomDetail IN bomDetailCur) ;
-	 PROCEDURE processBackOrder(backOrder IN backOrderCur) ;
-	 PROCEDURE processExtForecast(extForecast IN extForecastCur) ;
-	
-	
-	
-	
-	 FUNCTION getIndenture(smr_code_preferred IN AMD_NATIONAL_STOCK_ITEMS.SMR_CODE%TYPE) RETURN varchar2 ;
-	
-	 FUNCTION getAssignedPlannerCode(part_no IN amd_spare_parts.part_no%TYPE) RETURN AMD_PLANNERS.planner_code%TYPE  ;
-	
-	 FUNCTION createPartInfo(part_no IN VARCHAR2,
-	        action_code IN VARCHAR2 := Amd_Defaults.UPDATE_ACTION) RETURN NUMBER ;
-	
-	 procedure InsertPartInfo(part_no in varchar2, action_code in varchar2) ;
+     
+     PROCEDURE processParts(parts IN partCur) ;
+     PROCEDURE processPartLeadTimes(parts IN partCur) ;
+     PROCEDURE processOnHandInvSum(onHandInvSum IN onHandInvSumCur) ;
+     PROCEDURE processRepairInvInfo(repairInvInfo IN repairInvInfoCur) ;
+     PROCEDURE processInTransits(inTransit IN inTransitsCur) ;
+     PROCEDURE processInRepair(inRepair IN inRepairCur) ;
+     PROCEDURE processOnOrder(onOrder IN onOrderCur) ;
+     PROCEDURE deletePartInfo(partInfo IN part2DeleteCur) ;
+     PROCEDURE processBomDetail(bomDetail IN bomDetailCur) ;
+     PROCEDURE processBackOrder(backOrder IN backOrderCur) ;
+     PROCEDURE processExtForecast(extForecast IN extForecastCur) ;
+    
+    
+    
+    
+     FUNCTION getIndenture(smr_code_preferred IN AMD_NATIONAL_STOCK_ITEMS.SMR_CODE%TYPE) RETURN varchar2 ;
+    
+     FUNCTION getAssignedPlannerCode(part_no IN amd_spare_parts.part_no%TYPE) RETURN AMD_PLANNERS.planner_code%TYPE  ;
+    
+     FUNCTION createPartInfo(part_no IN VARCHAR2,
+            action_code IN VARCHAR2 := Amd_Defaults.UPDATE_ACTION) RETURN NUMBER ;
+    
+     procedure InsertPartInfo(part_no in varchar2, action_code in varchar2) ;
      
            
-	 FUNCTION InsertPartInfo(
-	        mfgr IN VARCHAR2,
-	       part_no IN VARCHAR2,
-	       unit_issue IN VARCHAR2,
-	       nomenclature IN VARCHAR2,
-	       smr_code IN VARCHAR2,
-	       nsn IN VARCHAR2,
-	       planner_code IN VARCHAR2,
-	       third_party_flag IN VARCHAR2,
-	       mtbdr      IN NUMBER,
-	       indenture IN VARCHAR2,
-		   price IN NUMBER) RETURN NUMBER;
+     FUNCTION InsertPartInfo(
+            mfgr IN VARCHAR2,
+           part_no IN VARCHAR2,
+           unit_issue IN VARCHAR2,
+           nomenclature IN VARCHAR2,
+           smr_code IN VARCHAR2,
+           nsn IN VARCHAR2,
+           planner_code IN VARCHAR2,
+           third_party_flag IN VARCHAR2,
+           mtbdr      IN NUMBER,
+           indenture IN VARCHAR2,
+           price IN NUMBER) RETURN NUMBER;
 
      PROCEDURE insertPartInfo(
            part_no IN VARCHAR2,
@@ -387,122 +386,122 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
            mtbdr      IN NUMBER := NULL,
            indenture IN VARCHAR2 := NULL,
            price IN NUMBER := NULL) ; 
-	
-	 FUNCTION UpdatePartInfo(
-	       mfgr IN VARCHAR2,
-	       part_no IN VARCHAR2,
-	       unit_issue IN VARCHAR2,
-	       nomenclature IN VARCHAR2,
-	       smr_code IN VARCHAR2,
-	       nsn IN VARCHAR2,
-	       planner_code IN VARCHAR2,
-	       third_party_flag IN VARCHAR2,
-	       mtbdr      IN NUMBER,
-	       indenture IN VARCHAR2,
-		   price IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION DeletePartInfo(
-	       part_no IN VARCHAR2, nomenclature IN VARCHAR2) RETURN NUMBER ;
-	
+    
+     FUNCTION UpdatePartInfo(
+           mfgr IN VARCHAR2,
+           part_no IN VARCHAR2,
+           unit_issue IN VARCHAR2,
+           nomenclature IN VARCHAR2,
+           smr_code IN VARCHAR2,
+           nsn IN VARCHAR2,
+           planner_code IN VARCHAR2,
+           third_party_flag IN VARCHAR2,
+           mtbdr      IN NUMBER,
+           indenture IN VARCHAR2,
+           price IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION DeletePartInfo(
+           part_no IN VARCHAR2, nomenclature IN VARCHAR2) RETURN NUMBER ;
+    
 
 
-	 FUNCTION InsertPartLeadTime(
-	        part_no IN VARCHAR2,
-	       lead_time_type IN VARCHAR2,
-	       lead_time IN NUMBER) RETURN NUMBER;
-	
+     FUNCTION InsertPartLeadTime(
+            part_no IN VARCHAR2,
+           lead_time_type IN VARCHAR2,
+           lead_time IN NUMBER) RETURN NUMBER;
+    
      PROCEDURE insertPartLeadTime(
             part_no IN amd_spare_parts.PART_NO%type,
             lead_time_type varchar2,
             lead_time IN number,
             action_code IN amd_spare_parts.action_code%TYPE) ;
             
-	 FUNCTION UpdatePartLeadTime(
-	        part_no IN VARCHAR2,
-	       lead_time_type IN VARCHAR2,
-	       lead_time IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION DeletePartLeadTime(
-	        part_no IN VARCHAR2) RETURN NUMBER;
-	
-	 FUNCTION InsertPartPricing(
-	        part_no IN VARCHAR2,
-	       price_type IN VARCHAR2,
-	       unit_cost IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION UpdatePartPricing(
-	        part_no IN VARCHAR2,
-	       price_type IN VARCHAR2,
-	       unit_cost IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION DeletePartPricing(
-	        part_no IN VARCHAR2) RETURN NUMBER ;
-	
-	
-	 FUNCTION InsertLocPartLeadTime(
-	        part_no IN VARCHAR2,
-	       loc_sid IN NUMBER,
-	       location_name IN VARCHAR2,
-	       lead_time_type IN VARCHAR2,
-	       time_to_repair IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION UpdateLocPartLeadTime(
-	        part_no IN VARCHAR2,
-	       loc_sid IN NUMBER,
-	       location_name IN VARCHAR2,
-	       lead_time_type IN VARCHAR2,
-	       time_to_repair IN NUMBER) RETURN NUMBER;
-	
-	 FUNCTION DeleteLocPartLeadTime(
-	        part_no IN VARCHAR2,
-	       loc_sid IN NUMBER,
-	       location_name IN NUMBER) RETURN NUMBER;
-	
-		   
-	
-	 procedure initA2ADemands ;
-	
-	
-	
-	 FUNCTION initA2APartInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
-	
-	 FUNCTION initA2AOrderInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
-	
-	 FUNCTION initA2ARepairInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
-	
-	
-	 FUNCTION initA2AInvInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
-	
-	 FUNCTION initA2ARepairInvInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
-	 
-	
-	  PROCEDURE insertRepairInvInfo(part_no IN amd_spare_parts.part_no%TYPE,
-	    site_location IN varchar2,
-	    inv_qty IN number,
-	    action_code IN amd_spare_parts.action_code%TYPE)  ;
-	
-	 PROCEDURE insertInvInfo(part_no IN amd_spare_parts.part_no%TYPE,
-	    spo_location IN varchar2 ,
-	    qty_on_hand IN number,
-	    action_code IN amd_spare_parts.action_code%TYPE)  ;
-	
-	 PROCEDURE insertRepairInfo(part_no IN amd_spare_parts.part_no%TYPE,
-	    loc_sid IN NUMBER,
-	    doc_no IN varchar2, -- order_sid
-	    repair_date IN date,
-	    status IN varchar2,
-	    quantity IN number /* repair_qty */,
-		expected_completion_date IN date,
-	    action_code IN amd_spare_parts.action_code%TYPE) ;
-	
-	
-	
-	
-	  FUNCTION wasPartSent(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN ;
-	  FUNCTION wasPartSentYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 ;
+     FUNCTION UpdatePartLeadTime(
+            part_no IN VARCHAR2,
+           lead_time_type IN VARCHAR2,
+           lead_time IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION DeletePartLeadTime(
+            part_no IN VARCHAR2) RETURN NUMBER;
+    
+     FUNCTION InsertPartPricing(
+            part_no IN VARCHAR2,
+           price_type IN VARCHAR2,
+           unit_cost IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION UpdatePartPricing(
+            part_no IN VARCHAR2,
+           price_type IN VARCHAR2,
+           unit_cost IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION DeletePartPricing(
+            part_no IN VARCHAR2) RETURN NUMBER ;
+    
+    
+     FUNCTION InsertLocPartLeadTime(
+            part_no IN VARCHAR2,
+           loc_sid IN NUMBER,
+           location_name IN VARCHAR2,
+           lead_time_type IN VARCHAR2,
+           time_to_repair IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION UpdateLocPartLeadTime(
+            part_no IN VARCHAR2,
+           loc_sid IN NUMBER,
+           location_name IN VARCHAR2,
+           lead_time_type IN VARCHAR2,
+           time_to_repair IN NUMBER) RETURN NUMBER;
+    
+     FUNCTION DeleteLocPartLeadTime(
+            part_no IN VARCHAR2,
+           loc_sid IN NUMBER,
+           location_name IN NUMBER) RETURN NUMBER;
+    
+           
+    
+     procedure initA2ADemands ;
+    
+    
+    
+     FUNCTION initA2APartInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
+    
+     FUNCTION initA2AOrderInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
+    
+     FUNCTION initA2ARepairInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
+    
+    
+     FUNCTION initA2AInvInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
+    
+     FUNCTION initA2ARepairInvInfo(useTestParts IN BOOLEAN := FALSE) RETURN NUMBER ;
+     
+    
+      PROCEDURE insertRepairInvInfo(part_no IN amd_spare_parts.part_no%TYPE,
+        site_location IN varchar2,
+        inv_qty IN number,
+        action_code IN amd_spare_parts.action_code%TYPE)  ;
+    
+     PROCEDURE insertInvInfo(part_no IN amd_spare_parts.part_no%TYPE,
+        spo_location IN varchar2 ,
+        qty_on_hand IN number,
+        action_code IN amd_spare_parts.action_code%TYPE)  ;
+    
+     PROCEDURE insertRepairInfo(part_no IN amd_spare_parts.part_no%TYPE,
+        loc_sid IN NUMBER,
+        doc_no IN varchar2, -- order_sid
+        repair_date IN date,
+        status IN varchar2,
+        quantity IN number /* repair_qty */,
+        expected_completion_date IN date,
+        action_code IN amd_spare_parts.action_code%TYPE) ;
+    
+    
+    
+    
+      FUNCTION wasPartSent(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN ;
+      FUNCTION wasPartSentYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 ;
       
-	  FUNCTION isPartValid (partNo IN AMD_SPARE_PARTS.part_no%TYPE, showReason in boolean := false) RETURN BOOLEAN ;
-	  FUNCTION isPartValidYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE, showReason in varchar2 := 'N') RETURN VARCHAR2 ;
+      FUNCTION isPartValid (partNo IN AMD_SPARE_PARTS.part_no%TYPE, showReason in boolean := false) RETURN BOOLEAN ;
+      FUNCTION isPartValidYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE, showReason in varchar2 := 'N') RETURN VARCHAR2 ;
       
       function isPartValid(partNo IN VARCHAR2, 
         preferredSmrCode IN VARCHAR2, preferredMtbdr IN NUMBER, preferredPlannerCode IN VARCHAR2, 
@@ -510,10 +509,10 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
       function isPartValidYorN(partNo IN VARCHAR2, preferredSmrCode IN VARCHAR2, 
         preferredMtbdr IN NUMBER, preferredPlannerCode IN VARCHAR2, showReason in varchar2 := 'F') RETURN varchar2 ;
 
-	  FUNCTION isPlannerCodeAssigned2UserId(plannerCode IN VARCHAR2) RETURN BOOLEAN ;
-	  FUNCTION isPlannerCodeAssign2UserIdYorN(plannerCode IN VARCHAR2) RETURN VARCHAR2 ;
-	  FUNCTION isNsl(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN ;
-	  FUNCTION isNslYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 ;
+      FUNCTION isPlannerCodeAssigned2UserId(plannerCode IN VARCHAR2) RETURN BOOLEAN ;
+      FUNCTION isPlannerCodeAssign2UserIdYorN(plannerCode IN VARCHAR2) RETURN VARCHAR2 ;
+      FUNCTION isNsl(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN ;
+      FUNCTION isNslYorN(partNo IN AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 ;
       -- added 4/12/2007 by dse
       function isPartActive(part_no in amd_sent_to_a2a.part_no%type) return boolean ;
       -- added 4/12/2007 by dse
@@ -524,74 +523,74 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
       function isSpoPrimePartActive(spo_prime_part_no in amd_sent_to_a2a.spo_prime_part_no%type) return boolean ;
       -- added 4/12/2007 by dse
       function isSpoPrimePartActiveYorN(spo_prime_part_no in amd_sent_to_a2a.spo_prime_part_no%type) return varchar2 ;
-	
-	   PROCEDURE spoUser(bems_id IN varchar2,
-	  action_code IN amd_spare_parts.ACTION_CODE%TYPE) ;
-	
-	
-	 PROCEDURE initA2APartLeadTime(useTestParts IN BOOLEAN := FALSE) ;
-	 
-	 PROCEDURE initA2ABomDetail(useTestParts IN BOOLEAN := FALSE) ;
-	
-	 PROCEDURE deletePartInfo(useTestParts IN BOOLEAN := FALSE) ;
-	
-	 FUNCTION getTimeToRepair(loc_sid  IN AMD_IN_REPAIR.loc_sid%TYPE,
-	 		  part_no IN VARCHAR2) RETURN AMD_PART_LOCS.time_to_repair%TYPE ;
+    
+       PROCEDURE spoUser(bems_id IN varchar2,
+      action_code IN amd_spare_parts.ACTION_CODE%TYPE) ;
+    
+    
+     PROCEDURE initA2APartLeadTime(useTestParts IN BOOLEAN := FALSE) ;
+     
+     PROCEDURE initA2ABomDetail(useTestParts IN BOOLEAN := FALSE) ;
+    
+     PROCEDURE deletePartInfo(useTestParts IN BOOLEAN := FALSE) ;
+    
+     FUNCTION getTimeToRepair(loc_sid  IN AMD_IN_REPAIR.loc_sid%TYPE,
+               part_no IN VARCHAR2) RETURN AMD_PART_LOCS.time_to_repair%TYPE ;
      PROCEDURE insertTimeToRepair(part_no IN AMD_SPARE_PARTS.part_no%TYPE,
               nsi_sid IN AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE,
               time_to_repair_off_base_cleand IN AMD_NATIONAL_STOCK_ITEMS.time_to_repair_off_base_cleand%TYPE); 
-	
-	 PROCEDURE deleteInvalidParts (testOnly IN BOOLEAN := FALSE) ;
-	
-			  
-	 START_DT constant DATE := TO_DATE('01/01/1990','MM/DD/YYYY') ;
-	 
-	 PROCEDURE initA2AInvInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2ARepairInvInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2AInTransits(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2ARepairInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2AOrderInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2APartInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2ABomDetail(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE ) ;
-	 
-	 PROCEDURE initA2ABackorderInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE ) ;
-	 PROCEDURE initA2ABackorderInfo(useTestParts IN BOOLEAN := FALSE ) ;
-	 
-	 PROCEDURE initA2AExtForecast(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
-	 PROCEDURE initA2AExtForecast(useTestParts IN BOOLEAN := FALSE ) ;
-	
-	 FUNCTION getSendAllData RETURN BOOLEAN ;
-	 PROCEDURE setSendAllData(theIndicator IN BOOLEAN) ;
-	 PROCEDURE version ;
+    
+     PROCEDURE deleteInvalidParts (testOnly IN BOOLEAN := FALSE) ;
+    
+              
+     START_DT constant DATE := TO_DATE('01/01/1990','MM/DD/YYYY') ;
+     
+     PROCEDURE initA2AInvInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2ARepairInvInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2AInTransits(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2ARepairInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2AOrderInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2APartInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2ABomDetail(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE ) ;
+     
+     PROCEDURE initA2ABackorderInfo(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE ) ;
+     PROCEDURE initA2ABackorderInfo(useTestParts IN BOOLEAN := FALSE ) ;
+     
+     PROCEDURE initA2AExtForecast(from_dt IN DATE := start_dt, to_dt IN DATE := SYSDATE) ;
+     PROCEDURE initA2AExtForecast(useTestParts IN BOOLEAN := FALSE ) ;
+    
+     FUNCTION getSendAllData RETURN BOOLEAN ;
+     PROCEDURE setSendAllData(theIndicator IN BOOLEAN) ;
+     PROCEDURE version ;
 
-	 FUNCTION includeOrderYorN(gold_order_number IN AMD_ON_ORDER.gold_order_number%TYPE, 
-	 		  			  order_date IN AMD_ON_ORDER.order_date%TYPE,
-						  part_no in amd_on_order.part_no%type) RETURN Varchar2 ;
-	 
-	 FUNCTION includeOrder(gold_order_number IN AMD_ON_ORDER.gold_order_number%TYPE, 
-	 		  			  order_date IN AMD_ON_ORDER.order_date%TYPE,
-						  part_no in amd_on_order.part_no%type) RETURN BOOLEAN ;
-						  
-	 FUNCTION getDueDate(part_no in AMD_ON_ORDER.PART_NO%TYPE, order_date in AMD_ON_ORDER.ORDER_DATE%TYPE)  RETURN DATE ;
-	-- added 10/20/2006 by dse
-	 function isPartSent(part_no in amd_sent_to_a2a.part_no%type) return boolean ;
-	-- added 10/20/2006 by dse
-	 function isPartSentYorN(part_no in amd_sent_to_a2a.part_no%type) return varchar2 ;
-	 -- added functions to return constants 10/25/2006 by dse
-	 function getStart_dt return date ;
-	 function getNEW_BUY return varchar2 ; 
-	 function getREPAIR  return varchar2 ;
-	 function getAN_ORDER return varchar2 ;
-	 function getOPEN_STATUS return varchar2 ;
-	 function getTHIRD_PARTY_FLAG return varchar2;
-	 -- added 10/26/2006 by dse
-	 procedure deleteSentToA2AChildren ;
+     FUNCTION includeOrderYorN(gold_order_number IN AMD_ON_ORDER.gold_order_number%TYPE, 
+                             order_date IN AMD_ON_ORDER.order_date%TYPE,
+                          part_no in amd_on_order.part_no%type) RETURN Varchar2 ;
+     
+     FUNCTION includeOrder(gold_order_number IN AMD_ON_ORDER.gold_order_number%TYPE, 
+                             order_date IN AMD_ON_ORDER.order_date%TYPE,
+                          part_no in amd_on_order.part_no%type) RETURN BOOLEAN ;
+                          
+     FUNCTION getDueDate(part_no in AMD_ON_ORDER.PART_NO%TYPE, order_date in AMD_ON_ORDER.ORDER_DATE%TYPE)  RETURN DATE ;
+    -- added 10/20/2006 by dse
+     function isPartSent(part_no in amd_sent_to_a2a.part_no%type) return boolean ;
+    -- added 10/20/2006 by dse
+     function isPartSentYorN(part_no in amd_sent_to_a2a.part_no%type) return varchar2 ;
+     -- added functions to return constants 10/25/2006 by dse
+     function getStart_dt return date ;
+     function getNEW_BUY return varchar2 ; 
+     function getREPAIR  return varchar2 ;
+     function getAN_ORDER return varchar2 ;
+     function getOPEN_STATUS return varchar2 ;
+     function getTHIRD_PARTY_FLAG return varchar2;
+     -- added 10/26/2006 by dse
+     procedure deleteSentToA2AChildren ;
      
      -- added 3/21/2007 by dse
-    --function partExistsInDataSystems(pPartNo in datasys_part_v.part%type) return boolean ;
-    --function partExistsInDataSystemsYorN(pPartNo in datasys_part_v.part%type) return varchar2 ;
-    --function isDataSysPartMarkedDeleted(pPartNo in datasys_part_v.part%type) return boolean ;
-    --function isDataSysPartMarkedDeletedYorN(pPartNo in datasys_part_v.part%type) return varchar2 ;
+    function partExistsInDataSystems(pPartNo in datasys_part_v.part%type) return boolean ;
+    function partExistsInDataSystemsYorN(pPartNo in datasys_part_v.part%type) return varchar2 ;
+    function isDataSysPartMarkedDeleted(pPartNo in datasys_part_v.part%type) return boolean ;
+    function isDataSysPartMarkedDeletedYorN(pPartNo in datasys_part_v.part%type) return varchar2 ;
     
     -- added 3/28/2007 by DSE
     function tmpA2APartInfoAddOk(part_no in amd_spare_parts.part_no%type) return boolean ; 
@@ -609,9 +608,9 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
     function tmpA2ARepairInvInfoAddOk(part_no in amd_repair_invs_sum.part_no%type,
         site_location in amd_repair_invs_sum.site_location%type := null) return boolean ;
      
-	 function tmpA2AInTransitsAddOk(part_no in amd_in_transits.part_no%type) return boolean ;
+     function tmpA2AInTransitsAddOk(part_no in amd_in_transits.part_no%type) return boolean ;
      
-	 FUNCTION getValidRcmInd(rcmInd IN VARCHAR2) RETURN VARCHAR2 ;
+     FUNCTION getValidRcmInd(rcmInd IN VARCHAR2) RETURN VARCHAR2 ;
      
     function isPlannerCodeValid(plannerCode in amd_national_stock_items.planner_code%type,
         showReason in boolean := false) return boolean ;
@@ -630,8 +629,8 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
     function inventoryExistsYorN(part_no in amd_spare_parts.part_no%type, showReason in boolean := false) return varchar2 ;
 
     -- add 6/4/2007 by dse        
-    --function lpOverrideExists(part_no in datasys_lp_override_v.PART%type, site_location in datasys_lp_override_v.SITE_LOCATION%type) return boolean ;
-    --function lpOverrideExistsYorN(part_no in datasys_lp_override_v.PART%type, site_location in datasys_lp_override_v.SITE_LOCATION%type) return varchar2 ;
+    function lpOverrideExists(part_no in datasys_lp_override_v.PART%type, site_location in datasys_lp_override_v.SITE_LOCATION%type) return boolean ;
+    function lpOverrideExistsYorN(part_no in datasys_lp_override_v.PART%type, site_location in datasys_lp_override_v.SITE_LOCATION%type) return varchar2 ;
     
     -- added 9/19/2007 by dse
 
@@ -658,4 +657,15 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.repairables_Pkg AS
 
       
 END repairables_Pkg ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM REPAIRABLES_PKG;
+
+CREATE PUBLIC SYNONYM REPAIRABLES_PKG FOR AMD_OWNER.REPAIRABLES_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.REPAIRABLES_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.REPAIRABLES_PKG TO AMD_WRITER_ROLE;

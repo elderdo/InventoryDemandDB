@@ -1,3 +1,5 @@
+DROP PACKAGE BODY AMD_OWNER.CONSUMABLES_PKG;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
     
 /*
@@ -167,7 +169,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
                     || pKey_4 || ' '
                     || pKeywordValuePairs,1, 2000)) ;
         end if ;
-	 END errorMsg;
+     END errorMsg;
 
      PROCEDURE debugMsg(msg IN AMD_LOAD_DETAILS.DATA_LINE%TYPE, pError_Location IN NUMBER) IS
         pragma autonomous_transaction ;
@@ -241,12 +243,12 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
 
      
     FUNCTION getIndenture(smr_code_preferred IN AMD_NATIONAL_STOCK_ITEMS.SMR_CODE%TYPE) RETURN varchar2 IS
-	 BEGIN
-	   IF SUBSTR(smr_code_preferred,6,1) IN ('N','P') THEN
-	        RETURN '3' ;
-	   END IF ;
+     BEGIN
+       IF SUBSTR(smr_code_preferred,6,1) IN ('N','P') THEN
+            RETURN '3' ;
+       END IF ;
        return null;       
-	 END getIndenture ; 
+     END getIndenture ; 
 
     function isPlannerCodeValid(plannerCode in amd_national_stock_items.planner_code%type) 
         return boolean is
@@ -284,7 +286,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
              return false ;
         end if ;
         IF UPPER(part_No) = 'F117-PW-100' OR INSTR(UPPER(part_no),'17L8D') > 0 OR INSTR(UPPER(part_no),'17R9Y') > 0 OR INSTR(UPPER(smr_code),'PE') > 0 THEN
-        	  RETURN FALSE ;
+              RETURN FALSE ;
         END IF ;
        
        lineNo := 30 ;            
@@ -322,20 +324,20 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
            if showreason then 
             dbms_output.put_line('part ' || part_no || ' is NOT valid.') ; 
            end if ;
-	  end if ;
+      end if ;
       
-	  return result ;
+      return result ;
       
-	 exception when others then
-		if sqlcode = -20000 then
-			dbms_output.disable ; -- buffer overflow, disable
-			return isPartValid(part_no) ; -- try validation again
-		else
+     exception when others then
+        if sqlcode = -20000 then
+            dbms_output.disable ; -- buffer overflow, disable
+            return isPartValid(part_no) ; -- try validation again
+        else
             errorMsg(pSqlfunction => 'select',pTableName => 'isPartValid',
               pError_location => 50, pKey_1 => part_no, pKey_2 => lineNo ) ;
             raise ;
-		end if ;
-	
+        end if ;
+    
     end isPartValid ;
     
     function isPartValidYorN(part_no in varchar2,    
@@ -361,10 +363,10 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
         getPartInfoData(part_no, smr_code, nsn, planner_code, mtbdr) ;
 
         debugMsg('isPartVaid: ' || part_no 
-		|| ' ' || smr_code 
-		|| ' ' || nsn 
-		|| ' ' || planner_code
-		|| ' ' || mtbdr, pError_location => 55) ;          
+        || ' ' || smr_code 
+        || ' ' || nsn 
+        || ' ' || planner_code
+        || ' ' || mtbdr, pError_location => 55) ;          
 
         return isPartValid(part_no,  smr_code, nsn, planner_code, mtbdr) ;
         
@@ -397,9 +399,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
         
     end insertPartInfo ;
 
-	procedure insertPartInfo(action_code in varchar2, part_no in varchar2, nomenclature in varchar2,
+    procedure insertPartInfo(action_code in varchar2, part_no in varchar2, nomenclature in varchar2,
            mfgr in varchar2,  unit_issue in varchar2, smr_code in varchar2, nsn in varchar2, planner_code in varchar2,
-	       third_party_flag in varchar2, mtbdr in number, price in number) is
+           third_party_flag in varchar2, mtbdr in number, price in number) is
           
         indenture      varchar2(7) ;
         rcm_ind         varchar2(1) ;        
@@ -411,25 +413,25 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
         
         procedure doUpdate(action_code in varchar2) is
         begin
-	    debugMsg('insertPartInfo.doUpdate: ' 
-		|| insertPartInfo.part_no, pError_location => 65) ;
+        debugMsg('insertPartInfo.doUpdate: ' 
+        || insertPartInfo.part_no, pError_location => 65) ;
         end doUpdate ;
         
         procedure insertTmpA2A(action_code in varchar2) is
         begin
             debugMsg('insertTmpA2A: ' 
-		|| action_code || ' ' 
-		|| part_no || ' ' 
-		|| nsn_fsc || ' '
-		|| nsn_niin, pError_location => 70) ;
+        || action_code || ' ' 
+        || part_no || ' ' 
+        || nsn_fsc || ' '
+        || nsn_niin, pError_location => 70) ;
 /*
-		insert into tmp_a2a_part_info
-		(part_no,noun,action_code,last_update_dt)
-		values(part_no, nomenclature,action_code,sysdate) ;
-		doUpdate(action_code) ;
+        insert into tmp_a2a_part_info
+        (part_no,noun,action_code,last_update_dt)
+        values(part_no, nomenclature,action_code,sysdate) ;
+        doUpdate(action_code) ;
         */
-		
-		
+        
+        
         exception when standard.DUP_VAL_ON_INDEX then
             doUpdate(action_code) ;
         end insertTmpA2A ;
@@ -445,9 +447,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
             thePlannerCode := planner_code ;
         end if ;                        
     
-	select is_spo_part into insertPartInfo.is_spo_part 
-	from amd_spare_parts 
-	where part_no = insertPartInfo.part_no ;
+    select is_spo_part into insertPartInfo.is_spo_part 
+    from amd_spare_parts 
+    where part_no = insertPartInfo.part_no ;
         if is_spo_part = 'Y' then
                         
             indenture := getIndenture(smr_code) ;
@@ -455,11 +457,11 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
             if length(smr_code) >= 6 then
                 rcm_ind := repairables_pkg.getValidRcmInd(SUBSTR(smr_code,6,1)) ; -- ToDo: make sure this works for consumables
             end if ;
-	    debugMsg('insertPartInfo: ' || action_code,pError_location => 83) ;
+        debugMsg('insertPartInfo: ' || action_code,pError_location => 83) ;
             insertTmpA2A(action_code) ;
         else
             if repairables_pkg.isPartSent(part_no) then
-		debugMsg('insertPartInfo: D',pError_location => 85) ;
+        debugMsg('insertPartInfo: D',pError_location => 85) ;
                 insertTmpA2A(amd_defaults.DELETE_ACTION ); -- make sure the part_no is deleted    
             else
                 return ;    
@@ -496,3 +498,13 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.consumables_Pkg AS
 
 end consumables_pkg ;
 /
+
+
+DROP PUBLIC SYNONYM CONSUMABLES_PKG;
+
+CREATE PUBLIC SYNONYM CONSUMABLES_PKG FOR AMD_OWNER.CONSUMABLES_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.CONSUMABLES_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.CONSUMABLES_PKG TO AMD_WRITER_ROLE;

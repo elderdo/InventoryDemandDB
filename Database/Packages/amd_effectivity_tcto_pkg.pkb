@@ -1,4 +1,6 @@
-CREATE OR REPLACE package body amd_effectivity_tcto_pkg
+DROP PACKAGE BODY AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_effectivity_tcto_pkg
 is
 /*
       $Author:   zf297a  $
@@ -6,10 +8,10 @@ is
 	    $Date:   Nov 30 2005 12:24:06  $
     $Workfile:   amd_effectivity_tcto_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_effectivity_tcto_pkg.pkb-arc  $
-/*   
+/*
 /*      Rev 1.1   Nov 30 2005 12:24:06   zf297a
 /*   added PVCS keywords
-*/	
+*/
   DECREMENT_BY_1 CONSTANT integer := -1;
   INCREMENT_BY_1 CONSTANT integer := 1;
   e_updateAsFlyAsCapable EXCEPTION;
@@ -203,3 +205,13 @@ is
   end;
 end amd_effectivity_tcto_pkg;
 /
+
+
+DROP PUBLIC SYNONYM AMD_EFFECTIVITY_TCTO_PKG;
+
+CREATE PUBLIC SYNONYM AMD_EFFECTIVITY_TCTO_PKG FOR AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG TO AMD_WRITER_ROLE;

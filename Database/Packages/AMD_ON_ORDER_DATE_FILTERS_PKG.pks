@@ -1,14 +1,16 @@
-CREATE OR REPLACE PACKAGE amd_on_order_date_filters_pkg AS
+DROP PACKAGE AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_on_order_date_filters_pkg AS
 /******************************************************************************
        $Author:   zf297a  $
      $Revision:   1.4  $
          $Date:   Jun 09 2006 12:34:00  $
      $Workfile:   AMD_ON_ORDER_DATE_FILTERS_PKG.pks  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\AMD_ON_ORDER_DATE_FILTERS_PKG.pks.-arc  $
-/*   
+/*
 /*      Rev 1.4   Jun 09 2006 12:34:00   zf297a
 /*   added interface version
-/*   
+/*
 /*      Rev 1.3   May 17 2006 14:58:36   zf297a
 /*   removed start_date - not needed
 /*
@@ -67,9 +69,20 @@ CREATE OR REPLACE PACKAGE amd_on_order_date_filters_pkg AS
 	FUNCTION numberOfOnOrderParams(filter_name in amd_on_order_date_filters.FILTER_NAME%type) RETURN NUMBER ;
 	TYPE ref_cursor IS REF CURSOR ;
 	FUNCTION getVouchers RETURN ref_cursor ;
-	
+
 	-- added 6/9/2006 by dse
 	procedure version ;
 
 END amd_on_order_date_filters_pkg;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+CREATE PUBLIC SYNONYM AMD_ON_ORDER_DATE_FILTERS_PKG FOR AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG TO AMD_WRITER_ROLE;

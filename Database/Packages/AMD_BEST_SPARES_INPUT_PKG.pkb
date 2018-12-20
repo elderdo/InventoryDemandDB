@@ -1,14 +1,16 @@
-CREATE OR REPLACE package body amd_best_spares_input_pkg as
+DROP PACKAGE BODY AMD_OWNER.AMD_BEST_SPARES_INPUT_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_best_spares_input_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.1  $
 	    $Date:   Nov 30 2005 12:20:50  $
     $Workfile:   AMD_BEST_SPARES_INPUT_PKG.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\AMD_BEST_SPARES_INPUT_PKG.pkb-arc  $
-/*   
+/*
 /*      Rev 1.1   Nov 30 2005 12:20:50   zf297a
 /*   added PVCS keywords
-*/	
+*/
 	procedure getBliss
 	is
 		cursor bliss is
@@ -79,3 +81,13 @@ CREATE OR REPLACE package body amd_best_spares_input_pkg as
 	end getUpgradeable;
 end amd_best_spares_input_pkg;
 /
+
+
+DROP PUBLIC SYNONYM AMD_BEST_SPARES_INPUT_PKG;
+
+CREATE PUBLIC SYNONYM AMD_BEST_SPARES_INPUT_PKG FOR AMD_OWNER.AMD_BEST_SPARES_INPUT_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_BEST_SPARES_INPUT_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_BEST_SPARES_INPUT_PKG TO AMD_WRITER_ROLE;

@@ -1,3 +1,5 @@
+DROP PACKAGE AMD_OWNER.AMD_PREFERRED_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.amd_preferred_pkg
 is
     /*
@@ -8,10 +10,10 @@ is
          $Date:   12 Aug 2008 08:49:44  $
      $Workfile:   amd_preferred_pkg.pks  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_preferred_pkg.pks-arc  $
-   
+
       Rev 1.11   12 Aug 2008 08:49:44   zf297a
    Added interfaces for function getVersion and procedure version.
-   
+
       Rev 1.10   31 Jul 2008 11:21:56   zf297a
    Added interface for getPlannerCodeByPart
 
@@ -114,4 +116,13 @@ is
       PROCEDURE version ; -- added 8/12/2008 by dse
 
 end amd_preferred_pkg ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_PREFERRED_PKG;
+
+CREATE PUBLIC SYNONYM AMD_PREFERRED_PKG FOR AMD_OWNER.AMD_PREFERRED_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_PREFERRED_PKG TO AMD_WRITER_ROLE;

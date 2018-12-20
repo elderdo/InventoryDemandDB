@@ -1,3 +1,5 @@
+DROP PACKAGE AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
  /*
       $Author:   zf297a  $
@@ -5,19 +7,19 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         $Date:   14 Jul 2009 10:52:30  $
     $Workfile:   AMD_LP_OVERRIDE_CONSUMABL_PKG.pks  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\AMD_LP_OVERRIDE_CONSUMABL_PKG.pks.-arc  $
-/*   
+/*
 /*      Rev 1.19   14 Jul 2009 10:52:30   zf297a
 /*   Updated spo type literals
-/*   
+/*
 /*      Rev 1.18   10 Jun 2009 13:45:20   zf297a
 /*   Change rop_type and roq_type from constants to variables so they can be initialized from amd_spo_types_v.
-/*   
+/*
 /*      Rev 1.17   24 Feb 2009 13:20:22   zf297a
 /*   Removed a2a code.
-/*   
+/*
 /*      Rev 1.16   05 Dec 2008 12:43:54   zf297a
 /*   Added interfaces getTslOverrideUser, setUseLoadWhseX, and getUseLoadWhseX.
-/*   
+/*
 /*      Rev 1.15   10 Oct 2008 00:53:40   zf297a
 /*   Changed interface for isTestPart and isTestPartYorN .. use amd_test_parts instead of amd_sent_to_a2a
 /*
@@ -159,13 +161,24 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
     function isValidTslDataYorN(
         override_type in amd_locpart_overid_consumables.tsl_OVERRIDE_TYPE%type,
         override_quantity in amd_locpart_overid_consumables.tsl_OVERRIDE_qty%type) return varchar2 ;
-        
-    function getTslOverrideUser(spo_prime_part_no in amd_spare_parts.spo_prime_part_no%type) 
+
+    function getTslOverrideUser(spo_prime_part_no in amd_spare_parts.spo_prime_part_no%type)
         return AMD_LOCPART_OVERID_CONSUMABLES.TSL_OVERRIDE_USER%type ; -- added 12/5/2008 by dse
 
     procedure setUseLoadWhseX(value in varchar2) ; -- added 12/5/2008 by dse
     function getUseLoadWhseX return varchar2 ; -- added 12/5/2008 by dse
-    
+
 
 end Amd_lp_override_consumabl_Pkg ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
+CREATE PUBLIC SYNONYM AMD_LP_OVERRIDE_CONSUMABL_PKG FOR AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG TO AMD_WRITER_ROLE;

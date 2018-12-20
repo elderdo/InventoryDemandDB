@@ -1,25 +1,27 @@
+DROP PACKAGE BODY AMD_OWNER.AMD_PREFERRED_PKG;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_PREFERRED_PKG"  is
 
-    /*   				
+    /*
 	    PVCS Keywords
-		
+
        $Author:   zf297a  $
      $Revision:   1.12  $
          $Date:   12 Aug 2008 08:52:06  $
      $Workfile:   amd_preferred_pkg.pkb  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_preferred_pkg.pkb-arc  $
-   
+
       Rev 1.12   12 Aug 2008 08:52:06   zf297a
    Added writeMsg to be used by procedure version.  Implemented the public function getVersion and public procedure version.
-   
+
       Rev 1.11   31 Jul 2008 11:26:06   zf297a
    Changed the implementation of getPlannerCode(nsi_sid) so that it also may return the default planner code based on part_no (consumable or repairable).
-   
-   Add new function getPlannerCodeByPart 
-   
+
+   Add new function getPlannerCodeByPart
+
       Rev 1.10   May 06 2005 08:07:42   c970183
    changed dla_warehouse_stock and dla_warehouse_stock_cleaned to current_backorder and current_backorder_cleaned.  added pvcs keywords
-   	  */	  
+   	  */
 	function GetPreferredValue(pPreferred1 in varchar2, pPreferred2 in varchar2) return varchar2 is
 	begin
 		if pPreferred1 is not null then
@@ -445,7 +447,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_PREFERRED_PKG"  is
 	begin
 		return GetPlannerCode(amd_utils.GetNsiSid(pNsn => pNsn)) ;
 	end GetPlannerCode ;
-    
+
     function getPlannerCodeByPart(part_no in amd_spare_parts.part_no%type) return amd_national_stock_items.planner_code%type is
     begin
         return getPlannerCode(pNsi_sid => amd_utils.GetNsiSid(pNsn => amd_utils.GETNSN(part_no))) ;
@@ -659,7 +661,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_PREFERRED_PKG"  is
                 pComments IN VARCHAR2 := '')  IS
     BEGIN
         Amd_Utils.writeMsg (
-                pSourceName => 'amd_preferred_pkg',    
+                pSourceName => 'amd_preferred_pkg',
                 pTableName  => pTableName,
                 pError_location => pError_location,
                 pKey1 => pKey1,
@@ -672,13 +674,13 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_PREFERRED_PKG"  is
         --  ignoretrying to rollback or commit from trigger
         if sqlcode <> -4092 then
             raise_application_error(-20010,
-                substr('amd_preferred_pkg ' 
+                substr('amd_preferred_pkg '
                     || sqlcode || ' '
-                    || pError_Location || ' ' 
-                    || pTableName || ' ' 
-                    || pKey1 || ' ' 
-                    || pKey2 || ' ' 
-                    || pKey3 || ' ' 
+                    || pError_Location || ' '
+                    || pTableName || ' '
+                    || pKey1 || ' '
+                    || pKey2 || ' '
+                    || pKey3 || ' '
                     || pKey4 || ' '
                     || pData, 1,2000)) ;
         end if ;
@@ -692,10 +694,18 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_PREFERRED_PKG"  is
 
         PROCEDURE version IS
         BEGIN
-             writeMsg(pTableName => 'amd_preferred_pkg', 
+             writeMsg(pTableName => 'amd_preferred_pkg',
                      pError_location => 10, pKey1 => 'amd_preferred_pkg', pKey2 => '$Revision:   1.12  $') ;
               dbms_output.put_line('amd_preferred_pkg: $Revision:   1.12  $') ;
         END version ;
 
 end amd_preferred_pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_PREFERRED_PKG;
+
+CREATE PUBLIC SYNONYM AMD_PREFERRED_PKG FOR AMD_OWNER.AMD_PREFERRED_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_PREFERRED_PKG TO AMD_WRITER_ROLE;

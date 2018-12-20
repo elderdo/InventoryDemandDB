@@ -1,68 +1,53 @@
-/* Formatted on 1/25/2017 2:47:24 PM (QP5 v5.287) */
-CREATE OR REPLACE PACKAGE AMD_OWNER.AMD_FROM_BSSM_PKG
-AS
-   /*
-         $Author:   Douglas S Elder
-       $Revision:   1.9
-        $Date:      25 Jan 2017
-       $Workfile:   amd_from_bssm_pkg.pks  $
+DROP PACKAGE AMD_OWNER.AMD_FROM_BSSM_PKG;
 
-         Rev 1.9   25 Jan 2017 DSE reformatted code
-      Added interface for getVersion
+CREATE OR REPLACE PACKAGE AMD_OWNER.AMD_FROM_BSSM_PKG AS
+/*
+      $Author:   zf297a  $
+    $Revision:   1.7  $
+	    $Date:   Jun 09 2006 10:46:00  $
+    $Workfile:   amd_from_bssm_pkg.pks  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_from_bssm_pkg.pks-arc  $
 
-         Rev 1.8   Sep 2, 2015   zf297a
-      Added interface for getVersion
+      Rev 1.7   Jun 09 2006 10:46:00   zf297a
+   Added interface for version
 
-         Rev 1.7   Jun 09 2006 10:46:00   zf297a
-      Added interface for version
+      Rev 1.6   Nov 30 2005 12:26:02   zf297a
+   added pvcs keywords
+*/
 
-         Rev 1.6   Nov 30 2005 12:26:02   zf297a
-      added pvcs keywords
-   */
-
-
-   -------------------------------------------------------------------
-   --  Date       By   History
-   --  ----     --   -------
-   --  10/10/01    ks   initial implementation
-   --  04/02/02    ks   mic_code_lowest will not come from bssm anymore
-   -------------------------------------------------------------------
+   	   -------------------------------------------------------------------
+	   --  Date	  		  By			History
+	   --  ----			  --			-------
+	   --  10/10/01		  ks			initial implementation
+	   --  04/02/02		  ks			mic_code_lowest will not come from bssm anymore
+	   -------------------------------------------------------------------
 
 
-   -- those values where bssm is currently the only source
-   PROCEDURE LoadAmdPartFromBssmRaw;
-
-   PROCEDURE LoadAmdBaseFromBssmRaw;
-
-   PROCEDURE LoadAmdPartFromBssmRaw (pNsn bssm_parts.nsn%TYPE);
-
-   PROCEDURE LoadAmdBaseFromBssmRaw (pNsn     bssm_base_parts.nsn%TYPE,
-                                     pSran    bssm_base_parts.sran%TYPE);
-
-   PROCEDURE LoadAmdPartLocTimePeriods;
-
-   PROCEDURE UpdateAmdNsi (pBssmPartsRec bssm_parts%ROWTYPE);
-
-   PROCEDURE UpdateAmdPartLocs (pBssmBaseRec bssm_base_parts%ROWTYPE);
-
-   FUNCTION GetCurrentBssmNsn (pNsn bssm_parts.nsn%TYPE)
-      RETURN bssm_parts.nsn%TYPE;
-
-   FUNCTION ConvertCriticality (pCriticality bssm_parts.criticality%TYPE)
-      RETURN VARCHAR2;
-
-   FUNCTION ConvertItemType (pItemType bssm_parts.item_type%TYPE)
-      RETURN amd_national_stock_items.item_type%TYPE;
-
-   FUNCTION GetLocSid (pLocId amd_spare_networks.loc_id%TYPE)
-      RETURN amd_spare_networks.loc_sid%TYPE;
-
-   PROCEDURE version;
-
-   FUNCTION getVersion
-      RETURN VARCHAR2;
-
-   AMD_WAREHOUSE_LOCID   CONSTANT VARCHAR2 (30) := 'CTLATL';
-   BSSM_WAREHOUSE_SRAN   CONSTANT VARCHAR2 (1) := 'W';
+ 	   	 -- those values where bssm is currently the only source
+	   procedure LoadAmdPartFromBssmRaw;
+	   procedure LoadAmdBaseFromBssmRaw;
+	   procedure LoadAmdPartFromBssmRaw(pNsn bssm_parts.nsn%type);
+   	   procedure LoadAmdBaseFromBssmRaw(pNsn bssm_base_parts.nsn%type,pSran bssm_base_parts.sran%type);
+	   procedure LoadAmdPartLocTimePeriods;
+	   procedure UpdateAmdNsi(pBssmPartsRec bssm_parts%rowtype);
+	   procedure UpdateAmdPartLocs (pBssmBaseRec bssm_base_parts%rowtype);
+	   function GetCurrentBssmNsn(pNsn bssm_parts.nsn%type) return bssm_parts.nsn%type;
+       function ConvertCriticality(pCriticality bssm_parts.criticality%type) return varchar2;
+	   function ConvertItemType(pItemType bssm_parts.item_type%type) return amd_national_stock_items.item_type%type;
+	   function GetLocSid(pLocId amd_spare_networks.loc_id%type) return amd_spare_networks.loc_sid%type;
+	   procedure version ;
+	   AMD_WAREHOUSE_LOCID constant varchar2(30) := 'CTLATL';
+	   BSSM_WAREHOUSE_SRAN constant varchar2(1) := 'W';
 END AMD_FROM_BSSM_PKG;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_FROM_BSSM_PKG;
+
+CREATE PUBLIC SYNONYM AMD_FROM_BSSM_PKG FOR AMD_OWNER.AMD_FROM_BSSM_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_FROM_BSSM_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_FROM_BSSM_PKG TO AMD_WRITER_ROLE;

@@ -1,14 +1,16 @@
-CREATE OR REPLACE PACKAGE amd_effectivity_pkg as
+DROP PACKAGE AMD_OWNER.AMD_EFFECTIVITY_PKG;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_effectivity_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.1  $
 	    $Date:   Nov 30 2005 12:24:06  $
     $Workfile:   amd_effectivity_pkg.pks  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_effectivity_pkg.pks-arc  $
-/*   
+/*
 /*      Rev 1.1   Nov 30 2005 12:24:06   zf297a
 /*   added PVCS keywords
-*/	
+*/
 	--
 	-- SCCSID: amd_effectivity_pkg.sql  1.15  Modified: 09/04/02 14:55:03
 	--
@@ -65,4 +67,15 @@ CREATE OR REPLACE PACKAGE amd_effectivity_pkg as
 							pGroupSid number);
 	procedure batchProcess;
 end;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_EFFECTIVITY_PKG;
+
+CREATE PUBLIC SYNONYM AMD_EFFECTIVITY_PKG FOR AMD_OWNER.AMD_EFFECTIVITY_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_PKG TO AMD_WRITER_ROLE;

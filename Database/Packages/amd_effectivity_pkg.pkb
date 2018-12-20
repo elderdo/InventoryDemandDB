@@ -1,14 +1,16 @@
-CREATE OR REPLACE package body amd_effectivity_pkg as
+DROP PACKAGE BODY AMD_OWNER.AMD_EFFECTIVITY_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_effectivity_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.1  $
 	    $Date:   Nov 30 2005 12:24:06  $
     $Workfile:   amd_effectivity_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_effectivity_pkg.pkb-arc  $
-/*   
+/*
 /*      Rev 1.1   Nov 30 2005 12:24:06   zf297a
 /*   added PVCS keywords
-*/	
+*/
 
 	NUM_TIME_PERIODS   constant number:=60;
 	FOREVER            constant date  :=add_months(sysdate,NUM_TIME_PERIODS);
@@ -1032,3 +1034,13 @@ CREATE OR REPLACE package body amd_effectivity_pkg as
 
 end;
 /
+
+
+DROP PUBLIC SYNONYM AMD_EFFECTIVITY_PKG;
+
+CREATE PUBLIC SYNONYM AMD_EFFECTIVITY_PKG FOR AMD_OWNER.AMD_EFFECTIVITY_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_PKG TO AMD_WRITER_ROLE;

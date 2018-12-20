@@ -1,26 +1,28 @@
-CREATE OR REPLACE package body AMD_OWNER.amd_nsl_sequence_pkg as
+DROP PACKAGE BODY AMD_OWNER.AMD_NSL_SEQUENCE_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_nsl_sequence_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.13  $
      $Date:   16 Oct 2007 11:24:38  $
     $Workfile:   amd_nsl_sequence_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_nsl_sequence_pkg.pkb-arc  $
-   
+
       Rev 1.13   16 Oct 2007 11:24:38   zf297a
    Fixed writeMsg literal
-   
+
       Rev 1.13   16 Oct 2007 11:21:50   zf297a
    Fixed literals in writeMsg
-   
+
       Rev 1.12   16 Oct 2007 10:08:40   zf297a
    Fixed writeMsg in version procedure
-   
+
       Rev 1.11   16 Oct 2007 10:05:52   zf297a
    implemented version interface
-   
+
       Rev 1.10   25 Aug 2007 21:54:52   zf297a
    Added hint to sql statement in function getNslFromAmd to make sure Oracle uses the correct index in its execution plan.  This nested function's parent function, sequenceThsNsl, is invoked by amd_load.loadGold.
-   
+
       Rev 1.9   Dec 01 2005 09:36:48   zf297a
    added pvcs keywords
 */
@@ -121,7 +123,7 @@ CREATE OR REPLACE package body AMD_OWNER.amd_nsl_sequence_pkg as
                 pComments IN VARCHAR2 := '')  IS
     BEGIN
         Amd_Utils.writeMsg (
-                pSourceName => 'amd_nsl_sequence_pkg',    
+                pSourceName => 'amd_nsl_sequence_pkg',
                 pTableName  => pTableName,
                 pError_location => pError_location,
                 pKey1 => pKey1,
@@ -134,23 +136,23 @@ CREATE OR REPLACE package body AMD_OWNER.amd_nsl_sequence_pkg as
         -- trying to rollback or commit from trigger
         if sqlcode = 4092 then
             raise_application_error(-20010,
-                substr('amd_nsl_sequence_pkg ' 
+                substr('amd_nsl_sequence_pkg '
                     || sqlcode || ' '
-                    || pError_Location || ' ' 
-                    || pTableName || ' ' 
-                    || pKey1 || ' ' 
-                    || pKey2 || ' ' 
-                    || pKey3 || ' ' 
+                    || pError_Location || ' '
+                    || pTableName || ' '
+                    || pKey1 || ' '
+                    || pKey2 || ' '
+                    || pKey3 || ' '
                     || pKey4 || ' '
                     || pData, 1,2000)) ;
         else
             raise ;
         end if ;
     end writeMsg ;
-    
+
     procedure version IS -- added 10/16/2007 by dse
     begin
-        writeMsg(pTableName => 'amd_nsl_sequence_pkg', 
+        writeMsg(pTableName => 'amd_nsl_sequence_pkg',
              pError_location => 10, pKey1 => 'amd_nsl_sequence_pkg', pKey2 => '$Revision:   1.13  $') ;
         dbms_output.put_line('amd_nsl_sequence_pkg: $Revision:   1.13  $') ;
     end version ;
@@ -158,3 +160,13 @@ CREATE OR REPLACE package body AMD_OWNER.amd_nsl_sequence_pkg as
 
 end amd_nsl_sequence_pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_NSL_SEQUENCE_PKG;
+
+CREATE PUBLIC SYNONYM AMD_NSL_SEQUENCE_PKG FOR AMD_OWNER.AMD_NSL_SEQUENCE_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_NSL_SEQUENCE_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_NSL_SEQUENCE_PKG TO AMD_WRITER_ROLE;

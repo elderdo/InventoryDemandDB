@@ -1,3 +1,5 @@
+DROP PACKAGE AMD_OWNER.AMD_UTILS;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Utils AS
 /*
        $Author:   zf297a  $
@@ -5,77 +7,77 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Utils AS
          $Date:   24 Jun 2009 09:30:50  $
      $Workfile:   amd_utils.pks  $
 	 $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_utils.pks-arc  $
-   
+
       Rev 1.43   24 Jun 2009 09:30:50   zf297a
    Added interface for convertToBase and groupPriority.
-   
+
       Rev 1.42   24 Mar 2009 15:37:06   zf297a
    Changed the interface for getSpoPrimePartNo and added interface for isSpoPartYorN.
-   
+
       Rev 1.41   24 Mar 2009 15:20:56   zf297a
    Added interfaces for getDebug, setDebug, getDebugCnt, setDebugCnt, getDebugThreshold, setDebugThreshold, getLastLoadDetail, and emptyTraceTables.
-   
+
       Rev 1.40   09 Sep 2008 15:21:28   zf297a
-   added interfaces:    
-   function isDiffYorN(oldText in varchar2, newText in varchar2) return varchar2 ; 
+   added interfaces:
+   function isDiffYorN(oldText in varchar2, newText in varchar2) return varchar2 ;
    function isDiffYorN(oldNum in number, newNum in number) return varchar2 ;
    function isDiffYorN(oldDate in date, newDate in Date) return varchar2 ;
-   
-   
+
+
       Rev 1.39   23 May 2008 13:12:34   zf297a
    Added interface for function validatePlannerCode.
-   
+
       Rev 1.38   22 May 2008 16:44:26   zf297a
    Added interface for getVersion.
-   
+
       Rev 1.37   22 May 2008 09:03:36   zf297a
    Defined interfaces for isForeignMilitarySale and isForeignMilitarySaleYorN
-   
+
       Rev 1.36   19 Sep 2007 16:57:26   zf297a
    Added new interfaces for isPartConsumable and isPartConsumablesYorN.  Added new interfaces IsRepairableSmrCode and isRepairSmrCodeYorN.
-   
+
       Rev 1.35   19 Jul 2007 13:28:02   zf297a
    Added the following interfaces:
    isWesmPart(part_no)
    isWesmPartYorN(part_no)
    getPrimePartNo(nsn) returns the prime_part_no from amd_national_stock_items
-   
+
       Rev 1.34   25 May 2007 14:21:56   zf297a
-   Added transformNsn 
-   
+   Added transformNsn
+
       Rev 1.33   24 May 2007 14:44:56   zf297a
    Added interfaces isPartConsumable and isPartConsumableYorN
-   
+
       Rev 1.32   03 Apr 2007 14:36:48   zf297a
    Define interface cleanTraceTables
-   
+
       Rev 1.31   22 Mar 2007 10:14:48   zf297a
    Added interface for isSpoPrimePart
-   
+
       Rev 1.30   21 Mar 2007 11:39:24   zf297a
    Defined interfaces for functions:
    isPartActiveYorN
    isPartActive
    isNsnActiveYorN
    isNsnActive
-   
-   
+
+
       Rev 1.29   Nov 09 2006 08:45:52   zf297a
    Added interface rank
-   
+
       Rev 1.27   Sep 25 2006 15:16:06   zf297a
    added interface for isDiff with date parameters
-   
+
       Rev 1.26   Sep 18 2006 13:14:18   zf297a
    added overloaded boolean functions isDiff
-   
+
       Rev 1.25   Sep 12 2006 10:56:32   zf297a
    added interface for isNumber and isNumberYorN
-   
+
       Rev 1.24   Aug 23 2006 09:43:48   zf297a
    Defined interface for boolean function isPartRepairable and
    the interface for varchar2 function isPartRepairableYorN.
-   
+
       Rev 1.23   Jul 13 2006 12:12:42   zf297a
    Added interface for getSpoPrimePartNo.
 
@@ -254,7 +256,7 @@ PROCEDURE InsertErrorMsg (
 
 	-- added 7/13/2006 by DSE
 	FUNCTION getSpoPrimePartNo(part_no AMD_spare_parts.part_no%TYPE) RETURN AMD_spare_parts.SPO_PRIME_PART_NO%TYPE ;
-	
+
 	-- add 8/22/2006 by DSE
 	function isPartRepairable(part_no amd_spare_parts.part_no%type) return boolean ;
 	function isPartRepairableYorN(part_no amd_spare_parts.part_no%type) return varchar2 ;
@@ -264,37 +266,37 @@ PROCEDURE InsertErrorMsg (
 	-- added 9/12/2006 by DSE
 	function isNumberYorN( p_string in varchar2) return varchar2 ;
 
-	
+
 	-- added 9/18/2006 by DSE
 	function isDiff(oldText in varchar2, newText in varchar2) return boolean ;
 	-- added 9/18/2006 by DSE
 	function isDiff(oldNum in number, newNum in number) return boolean ;
 	-- added 9/25/2006 by DSE
 	function isDiff(oldDate in date, newDate in Date) return boolean ;
-	
+
 	-- added 10/13/2006 by DSE
 	function getNsn(part_no in amd_spare_parts.part_no%type) return amd_spare_parts.nsn%type ;
-	
+
 	-- added 11/09/2006
 	function rank(orderOfUsage in varchar2) return number ;
-	
+
 	-- added 11/22/2006
 	function isOneWay(orderOfUse in orderOfUsages) return boolean ;
 	function isOneWayYorN(orderOfUse in orderOfUsages) return varchar2 ;
-    
+
     -- added 3/21/2007
     function isPartActiveYorN(part_no in amd_spare_parts.PART_NO%type) return varchar2 ;
     function isPartActive(part_no in amd_spare_parts.part_no%type) return boolean ;
     function isNsnActiveYorN(nsn in amd_nsns.NSN%type) return varchar2 ;
     function isNsnActive(nsn in amd_nsns.NSN%type) return boolean ;
-    
+
     -- added 3/22/2007
     function isSpoPrimePart(part_no in amd_spare_parts.part_no%type) return boolean ;
 	function isSpoPrimePartYorN(part_no in amd_spare_parts.part_no%type) return varchar2 ;
-    
+
     -- added 4/3/2007 by dse
     procedure cleanTraceTables ;
-    
+
     -- added 9/19/2007 by dse
    function isPartConsumable(preferred_smr_code amd_national_stock_items.smr_code%type,
         preferred_planner_code amd_national_stock_items.planner_code%type,
@@ -302,58 +304,69 @@ PROCEDURE InsertErrorMsg (
    function isPartConsumableYorN(preferred_smr_code amd_national_stock_items.smr_code%type,
         preferred_planner_code amd_national_stock_items.planner_code%type,
         nsn amd_national_stock_items.nsn%type) return varchar2 deterministic ;
-        
+
     -- this was written to be used by a trigger to avoid ora-04091 - table name is mutating
    	function isRepairableSmrCode(preferred_smr_code amd_national_stock_items.smr_code%type) return boolean ;
-   	function isRepairableSmrCodeYorN(preferred_smr_code amd_national_stock_items.smr_code%type) 
+   	function isRepairableSmrCodeYorN(preferred_smr_code amd_national_stock_items.smr_code%type)
                 return varchar2 deterministic ;
-        
+
     -- added 5/24/2007 by dse
-        
+
     function isPartConsumable(part_no amd_spare_parts.part_no%type) return boolean ;
     function isPartConsumableYorN(part_no amd_spare_parts.part_no%type) return varchar2 ;
-    
+
     -- added 7/13/2007 by tp
     function isWesmPart(part_no in amd_national_stock_items.prime_part_no%type) return boolean;
     function isWesmPartYorN(part_no in amd_national_stock_items.prime_part_no%type) return varchar2;
-    
-    
+
+
     function transformNsn(nsn in varchar2) return varchar2  ;
-    
+
     function getPrimePartNo(nsn in varchar2) return varchar2 ;
- 
+
     -- added 5/22/2008 by dse
     function isForeignMilitarySale(segment_code in varchar2) return boolean ;
     function isForeignMilitarySaleYorN(segment_code in varchar2) return varchar2 ;
 
     function getVersion return varchar2 ;
-    
-    function validatePlannerCode(planner_code in amd_planners.planner_code%type) 
+
+    function validatePlannerCode(planner_code in amd_planners.planner_code%type)
         return amd_planners.PLANNER_CODE%type ; -- added 5/23/2008 by dse
-    
-    function isDiffYorN(oldText in varchar2, newText in varchar2) return varchar2 ; 
+
+    function isDiffYorN(oldText in varchar2, newText in varchar2) return varchar2 ;
     function isDiffYorN(oldNum in number, newNum in number) return varchar2 ;
     function isDiffYorN(oldDate in date, newDate in Date) return varchar2 ;
 
     function getDebugYorN return varchar2 ;
     procedure setDebug(value in varchar2) ;
-    
+
     function getDebugCnt return number ;
     procedure setDebugCnt(value in number) ;
-    
+
     function getDebugThreshold return number ;
     procedure setDebugThreshold(value in number) ;
-    
+
     function getLastLoadDetail return number ;
-    
+
     procedure emptyTraceTables ;
-    
+
     function isSpoPartYorN(part_no in amd_spare_parts.part_no%type) return amd_spare_parts.is_spo_part%type ;
-    
+
     function convertToBase(value in number, base in number) return varchar2 ;
  	function groupPriority(rank in number) return varchar2 ;
 
 
 
 END Amd_Utils;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_UTILS;
+
+CREATE PUBLIC SYNONYM AMD_UTILS FOR AMD_OWNER.AMD_UTILS;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_UTILS TO AMD_WRITER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_UTILS TO BSSM_OWNER WITH GRANT OPTION;

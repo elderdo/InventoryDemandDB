@@ -1,13 +1,15 @@
-CREATE OR REPLACE package amd_maint_task_distribs_pkg
+DROP PACKAGE AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_maint_task_distribs_pkg
 as
-    /*   				
-		
+    /*
+
        $Author:   c970183  $
      $Revision:   1.6  $
          $Date:   Jun 13 2005 09:02:46  $
      $Workfile:   amd_maint_task_distribs_pkg.pks  $
 	      $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\Packages\amd_maint_task_distribs_pkg.pks-arc  $
-   
+
       Rev 1.6   Jun 13 2005 09:02:46   c970183
    Added PVCS keywords
 */
@@ -36,4 +38,15 @@ as
 
 
 end amd_maint_task_distribs_pkg;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_MAINT_TASK_DISTRIBS_PKG;
+
+CREATE PUBLIC SYNONYM AMD_MAINT_TASK_DISTRIBS_PKG FOR AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG TO AMD_WRITER_ROLE;

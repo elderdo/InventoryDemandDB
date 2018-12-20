@@ -1,4 +1,6 @@
-CREATE OR REPLACE PACKAGE amd_asCapableFlying_pkg
+DROP PACKAGE AMD_OWNER.AMD_ASCAPABLEFLYING_PKG;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_asCapableFlying_pkg
 as
 /*
       $Author:   zf297a  $
@@ -6,7 +8,7 @@ as
      $Date:   Dec 01 2005 09:53:36  $
     $Workfile:   amd_asCapableFlying_pkg.pks  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_asCapableFlying_pkg.pks-arc  $
-/*   
+/*
 /*      Rev 1.1   Dec 01 2005 09:53:36   zf297a
 /*   added pvcs keywords
 */
@@ -42,4 +44,15 @@ as
 
 
 end amd_asCapableFlying_pkg;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_ASCAPABLEFLYING_PKG;
+
+CREATE PUBLIC SYNONYM AMD_ASCAPABLEFLYING_PKG FOR AMD_OWNER.AMD_ASCAPABLEFLYING_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ASCAPABLEFLYING_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ASCAPABLEFLYING_PKG TO AMD_WRITER_ROLE;

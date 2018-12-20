@@ -1,13 +1,13 @@
+DROP PACKAGE BODY AMD_OWNER.REPAIRABLES_PKG;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.repairables_Pkg AS
  --
  -- SCCSID:   %M%   %I%   Modified: %G%  %U%
  --
  /*
       $Author:   zf297a  $
-    $Revision:   1.237
-     $Date:   13 Feb 2015
-           rev 1.237 commented out datasys related code ( spo )
-            
+    $Revision:   1.236 $
+     $Date:   26 Jul 2013 
            rev 1.236 got rid of all a2a dependencies
            
            rev 1.235 got rid of references to tmp_a2a_backorder_info
@@ -1529,13 +1529,13 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       partInfoError EXCEPTION ;
      BEGIN
        if amd_utils.ispartConsumable(part_no) then
-	        debugMsg('InsertPartInfo: consumable', pError_location => 140) ;
+            debugMsg('InsertPartInfo: consumable', pError_location => 140) ;
             consumables_pkg.insertPartInfo(part_no, action_code) ;
             result := SUCCESS ;
        else
            CASE action_code
               WHEN Amd_Defaults.INSERT_ACTION THEN
-	        debugMsg('InsertPartInfo: insert', pError_location => 150) ;
+            debugMsg('InsertPartInfo: insert', pError_location => 150) ;
                  result := insertPartInfo(
                 mfgr,
                part_no,
@@ -1550,7 +1550,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
                price) ;
         
               WHEN Amd_Defaults.UPDATE_ACTION THEN
-	        debugMsg('InsertPartInfo: update', pError_location => 160) ;
+            debugMsg('InsertPartInfo: update', pError_location => 160) ;
                  result := updatePartInfo(
                 mfgr,
                part_no,
@@ -1565,7 +1565,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
                price) ;
         
               WHEN Amd_Defaults.DELETE_ACTION THEN
-	        debugMsg('InsertPartInfo: delete', pError_location => 170) ;
+            debugMsg('InsertPartInfo: delete', pError_location => 170) ;
                  if isPartSent(part_no) then
                     result := deletePartInfo(part_no, nomenclature) ;
                  end if ;
@@ -1661,7 +1661,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
                     cnt := cnt + 1 ;
                 exception when standard.no_data_found then
                     null ; -- do nothing
-                end ;	
+                end ;    
             end if ;
         end loop ;
         dbms_output.put_line('cnt=' || cnt) ;
@@ -3771,7 +3771,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       price NUMBER := unit_cost ;
      BEGIN
        debugMsg('InsertPartPricing(' || part_no || ', ' || price_type || ', ' || unit_cost || ')' ,
-	 pError_location => 1155) ;
+     pError_location => 1155) ;
        IF isPartValid(part_no) and wasPartSent(part_no) THEN
         IF price IS NULL THEN
          price := 4999.99 ;
@@ -3804,7 +3804,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       result NUMBER ;
      BEGIN
        debugMsg('UpdatePartPricing(' || part_no || ', ' || price_type || ', ' || unit_cost || ')' ,
-	 pError_location => 1165) ;
+     pError_location => 1165) ;
        
        RETURN SUCCESS ;
     
@@ -3812,7 +3812,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
     
      EXCEPTION
          WHEN standard.DUP_VAL_ON_INDEX THEN
-        	RETURN SUCCESS ;
+            RETURN SUCCESS ;
     
       WHEN OTHERS THEN
        ErrorMsg(pSqlfunction => 'update',
@@ -3834,7 +3834,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
     
      BEGIN
        debugMsg('DeletePartPricing(' || part_no || ')' ,
-	 pError_location => 1185) ;
+     pError_location => 1185) ;
     
        RETURN SUCCESS ;
     
@@ -3860,7 +3860,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
           result NUMBER ;
      BEGIN
        debugMsg('updateA2AlocPartLeadTime: ' || part_no,
-	pError_location => 1195) ;
+    pError_location => 1195) ;
     
      EXCEPTION WHEN OTHERS THEN
        ErrorMsg(pSqlfunction => 'insert',
@@ -3881,7 +3881,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       result NUMBER ;
      BEGIN
           debugMsg('InsertLocPartLeadTime(' || part_no || ', ' || loc_sid || ', ' || location_name || ', ' || lead_time_type || ', ' || time_to_repair || ')' ,
-		pError_location => 1205) ;
+        pError_location => 1205) ;
        RETURN SUCCESS ;
     
      EXCEPTION
@@ -3910,7 +3910,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       result NUMBER ;
      BEGIN
           debugMsg('UpdateLocPartLeadTime(' || part_no || ', ' || loc_sid || ', ' || location_name || ', ' || lead_time_type || ', ' || time_to_repair || ')' ,
-		pError_location => 1215) ;
+        pError_location => 1215) ;
        RETURN SUCCESS ;
     
      EXCEPTION
@@ -3939,7 +3939,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
       result NUMBER ;
      BEGIN
           debugMsg('DeleteLocPartLeadTime(' || part_no || ', ' || loc_sid || ', ' || location_name || ')' ,
-		pError_location => 1235) ;
+        pError_location => 1235) ;
        RETURN SUCCESS ;
     
      EXCEPTION WHEN OTHERS THEN
@@ -4708,13 +4708,13 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
         PROCEDURE version IS
         BEGIN
              writeMsg(pTableName => 'a2a_pkg', 
-                     pError_location => 1790, pKey1 => 'a2a_pkg', pKey2 => '$Revision:   1.237  $') ;
-              dbms_output.put_line('a2a_pkg: $Revision:   1.237  $') ;
+                     pError_location => 1790, pKey1 => 'a2a_pkg', pKey2 => '$Revision:   1.236  $') ;
+              dbms_output.put_line('a2a_pkg: $Revision:   1.236  $') ;
         END version ;
 
         function getVersion return varchar2 is
         begin
-            return '$Revision:   1.237  $' ;
+            return '$Revision:   1.236  $' ;
         end getVersion ;
         
         procedure setInsertAddUpdRepairInfoCnt (value in number) is
@@ -4852,7 +4852,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
              commit ;
         
         end deleteSentToA2AChildren ;
-/*
+
         function lpOverrideExists(part_no in datasys_lp_override_v.PART%type, site_location in datasys_lp_override_v.SITE_LOCATION%type) return boolean is
             result number ;
         begin
@@ -4913,7 +4913,7 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
             end if ;
             return 'N' ;
         end isDataSysPartMarkedDeletedYorN ;
-  */      
+        
         -- added 9/27/07
         procedure initA2APartAlt is
             cursor sentParts is
@@ -4946,3 +4946,13 @@ Info.  Checked sched_receipt_date and if it is null compute a new due_date based
             
 END repairables_Pkg ;
 /
+
+
+DROP PUBLIC SYNONYM REPAIRABLES_PKG;
+
+CREATE PUBLIC SYNONYM REPAIRABLES_PKG FOR AMD_OWNER.REPAIRABLES_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.REPAIRABLES_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.REPAIRABLES_PKG TO AMD_WRITER_ROLE;

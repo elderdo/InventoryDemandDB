@@ -1,4 +1,6 @@
-CREATE OR REPLACE PACKAGE amd_clean_data as
+DROP PACKAGE AMD_OWNER.AMD_CLEAN_DATA;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_clean_data as
     /*
 	    PVCS Keywords
 
@@ -7,7 +9,7 @@ CREATE OR REPLACE PACKAGE amd_clean_data as
          $Date:   Jun 09 2006 12:42:42  $
      $Workfile:   amd_clean_data.pks  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_clean_data.pks-arc  $
-   
+
       Rev 1.5   Jun 09 2006 12:42:42   zf297a
    added interface version
 
@@ -53,9 +55,20 @@ CREATE OR REPLACE PACKAGE amd_clean_data as
 	function GetPrimeInd(pNsn in varchar2, pPart_no in varchar2, pMfgr in varchar2) return amd_nsi_parts.prime_ind_cleaned%type ;
 	function GetRuInd(pNsn in varchar2) return amd_national_stock_items.ru_ind_cleaned%type ;
 	function GetTimeToRepairOnBaseAvg(pNsn in varchar2) return amd_national_stock_items.time_to_repair_on_base_avg_cl%type ;
-	
+
 	-- added 6/9/2006 by dse
 	procedure version ;
-	
+
 end amd_clean_data ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_CLEAN_DATA;
+
+CREATE PUBLIC SYNONYM AMD_CLEAN_DATA FOR AMD_OWNER.AMD_CLEAN_DATA;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_CLEAN_DATA TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_CLEAN_DATA TO AMD_WRITER_ROLE;

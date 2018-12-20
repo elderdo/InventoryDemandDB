@@ -1,3 +1,5 @@
+DROP PACKAGE AMD_OWNER.CONSUMABLES_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.consumables_Pkg AS
     
 /*
@@ -54,9 +56,9 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.consumables_Pkg AS
         
     procedure insertPartInfo(part_no in varchar2, action_code in varchar2) ;
     
-	procedure insertPartInfo(action_code in varchar2, part_no in varchar2, nomenclature in varchar2,
+    procedure insertPartInfo(action_code in varchar2, part_no in varchar2, nomenclature in varchar2,
            mfgr in varchar2,  unit_issue in varchar2, smr_code in varchar2, nsn in varchar2, planner_code in varchar2,
-	       third_party_flag in varchar2, mtbdr in number, price in number) ;
+           third_party_flag in varchar2, mtbdr in number, price in number) ;
     
     function isPlannerCodeValid(plannerCode in amd_national_stock_items.planner_code%type) return boolean ;
     function isPlannerCodeValidYorN(plannerCode in amd_national_stock_items.planner_code%type) return varchar2 ;
@@ -67,4 +69,15 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.consumables_Pkg AS
     procedure setDebug(switch in varchar2) ; -- added 10/11/2008 by dse
     
 end consumables_pkg ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM CONSUMABLES_PKG;
+
+CREATE PUBLIC SYNONYM CONSUMABLES_PKG FOR AMD_OWNER.CONSUMABLES_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.CONSUMABLES_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.CONSUMABLES_PKG TO AMD_WRITER_ROLE;

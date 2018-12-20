@@ -1,16 +1,15 @@
-CREATE OR REPLACE package body amd_maint_task_distribs_pkg
+DROP PACKAGE BODY AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_maint_task_distribs_pkg
 is
-    /*   				
-		
-       $Author:   zf297a  $
-     $Revision:   1.7  $
-         $Date:   Dec 06 2005 09:57:58  $
+    /*
+
+       $Author:   c970183  $
+     $Revision:   1.6  $
+         $Date:   Jun 13 2005 09:02:46  $
      $Workfile:   amd_maint_task_distribs_pkg.pkb  $
-	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_maint_task_distribs_pkg.pkb-arc  $
-   
-      Rev 1.7   Dec 06 2005 09:57:58   zf297a
-   Fixed display of sysdate in errorMsg - changed to MM/DD/YYYY HH:MM:SS
-   
+	      $Log:   \\www-amssc-01\pds\archives\SDS-AMD\Database\Packages\amd_maint_task_distribs_pkg.pkb-arc  $
+
       Rev 1.6   Jun 13 2005 09:02:46   c970183
    Added PVCS keywords
 */
@@ -23,8 +22,8 @@ is
    --  06/01/05		  ks			change reference to rampData
    -------------------------------------------------------------------
 
-	   
-	   
+
+
     -- ks: below comments lifted from previous package --
 
     /* ------------------------------------------------------------------- */
@@ -368,7 +367,7 @@ is
   exception
   		   -- should not occur
   	   when dup_val_on_index then
-	   		amd_utils.InsertErrorMsg(amd_utils.GetLoadNo(ERRSOURCE, 'AMD_MAINT_TASK_DISTRIBS'),pRec.nsi_sid, pRec.loc_sid, null, null, to_char(sysdate,'MM/DD/YYYY HH:MM:SS'), 'dup val on index');
+	   		amd_utils.InsertErrorMsg(amd_utils.GetLoadNo(ERRSOURCE, 'AMD_MAINT_TASK_DISTRIBS'),pRec.nsi_sid, pRec.loc_sid, null, null, null, 'dup val on index');
 
   end InsertIntoAmdMtd;
 
@@ -393,7 +392,7 @@ is
 
 	 amdMtdRec amd_maint_task_distribs%rowtype;
 	 smrCode amd_national_stock_items.smr_code%type;
-	 /* kcs change 06/01/05 
+	 /* kcs change 06/01/05
 	 rampData amd_part_locs_load_pkg.rampData_rec;
 	 */
 	 rampData ramp%ROWTYPE ;
@@ -490,7 +489,7 @@ is
 					 	  -- can be thrown when smr_code is null
 						  null;
 					 when others then
-					 	  amd_utils.InsertErrorMsg(amd_utils.GetLoadNo(ERRSOURCE, 'loadamdmtd'),mtdpartloc.nsi_sid, mtdpartloc.loc_sid, null, null, to_char(sysdate,'MM/DD/YYYY HH:MM:SS'), substr(SQLCODE || ' ' || SQLERRM,1, 2000));
+					 	  amd_utils.InsertErrorMsg(amd_utils.GetLoadNo(ERRSOURCE, 'loadamdmtd'),mtdpartloc.nsi_sid, mtdpartloc.loc_sid, null, null, null, substr(SQLCODE || ' ' || SQLERRM,1, 2000));
 
 			end;
 	 	 end loop;
@@ -501,3 +500,13 @@ begin
 	 null;
 end amd_maint_task_distribs_pkg;
 /
+
+
+DROP PUBLIC SYNONYM AMD_MAINT_TASK_DISTRIBS_PKG;
+
+CREATE PUBLIC SYNONYM AMD_MAINT_TASK_DISTRIBS_PKG FOR AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_MAINT_TASK_DISTRIBS_PKG TO AMD_WRITER_ROLE;

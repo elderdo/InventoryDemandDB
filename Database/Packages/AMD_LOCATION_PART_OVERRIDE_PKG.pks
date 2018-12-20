@@ -1,7 +1,9 @@
+DROP PACKAGE AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Location_Part_Override_Pkg AS
  /*
       $Author:   zf297a  $
-	$Revision:   1.32  $
+    $Revision:   1.32  $
         $Date:   13 Feb 2015
     $Workfile:   AMD_LOCATION_PART_OVERRIDE_PKG.pks  $
         Rev 1.32 commented out spo references
@@ -109,107 +111,107 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Location_Part_Override_Pkg AS
 /*
 /*      Rev 1.0   Oct 18 2005 19:12:48   c394547
 /*   Initial revision.
-		 */
+         */
 
---	TSL_OVERRIDE_TYPE 	  	 amd_spo_types_v.tsl_fixed_override%type := 'TSL-FIXED' ;
---	OVERRIDE_REASON 		 amd_spo_types_v.fixed_tsl_load_override_reason%type := 'Fixed TSL Load' ;
-	THE_WAREHOUSE 			 CONSTANT amd_spare_networks.spo_location%type := 'FD2090' ;
-	THE_WAREHOUSE_LOC_SID 	 CONSTANT amd_spare_networks.LOC_SID%type := 256 ;
-	
-	BULKLIMIT CONSTANT NUMBER := 100000 ;
-	COMMITAFTER CONSTANT NUMBER := 100000 ;
-	SUCCESS							CONSTANT NUMBER := 0 ;
-	FAILURE							CONSTANT NUMBER := 4 ;
+--    TSL_OVERRIDE_TYPE            amd_spo_types_v.tsl_fixed_override%type := 'TSL-FIXED' ;
+--    OVERRIDE_REASON          amd_spo_types_v.fixed_tsl_load_override_reason%type := 'Fixed TSL Load' ;
+    THE_WAREHOUSE              CONSTANT amd_spare_networks.spo_location%type := 'FD2090' ;
+    THE_WAREHOUSE_LOC_SID      CONSTANT amd_spare_networks.LOC_SID%type := 256 ;
+    
+    BULKLIMIT CONSTANT NUMBER := 100000 ;
+    COMMITAFTER CONSTANT NUMBER := 100000 ;
+    SUCCESS                            CONSTANT NUMBER := 0 ;
+    FAILURE                            CONSTANT NUMBER := 4 ;
     debug boolean := true ; -- set via param changes: key is debugLocPartOverride value of 1 is TRUE 
                             -- otherwise gets set to FALSE
     ignoreStLouis   boolean := false ;
     function ignoreStLouisYorN return varchar2 ;
-	
-	
-	TYPE locPartOverrideRec IS RECORD (
-		 part_no AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-		 site_location AMD_SPARE_NETWORKS.SPO_LOCATION%TYPE,
-		 override_type VARCHAR2(32),
-	     override_quantity AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_QTY%TYPE,
-		 override_reason VARCHAR2(64),
-		 tsl_override_user AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_USER%TYPE,
-		 begin_date DATE,
-		 end_date DATE,
-		 action_code AMD_LOCATION_PART_OVERRIDE.ACTION_CODE%TYPE,
-		 last_update_dt AMD_LOCATION_PART_OVERRIDE.LAST_UPDATE_DT%TYPE
-	) ;
+    
+    
+    TYPE locPartOverrideRec IS RECORD (
+         part_no AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+         site_location AMD_SPARE_NETWORKS.SPO_LOCATION%TYPE,
+         override_type VARCHAR2(32),
+         override_quantity AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_QTY%TYPE,
+         override_reason VARCHAR2(64),
+         tsl_override_user AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_USER%TYPE,
+         begin_date DATE,
+         end_date DATE,
+         action_code AMD_LOCATION_PART_OVERRIDE.ACTION_CODE%TYPE,
+         last_update_dt AMD_LOCATION_PART_OVERRIDE.LAST_UPDATE_DT%TYPE
+    ) ;
     type locPartOverrideTab is table of locPartOverrideRec ;
-	
-	
-	PROCEDURE LoadInitial ;
-	PROCEDURE LoadTmpAmdLocPartOverride( startStep in number := 1, endStep in number := 7) ;
-	
-	
-	FUNCTION InsertRow(
-			pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			pTslOverrideQty				 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
-			pTslOverrideUser			 AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
-			RETURN NUMBER ;
-	
-	FUNCTION Updaterow(
-			pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			pTslOverrideQty				 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
-			pTslOverrideUser			 AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
-			RETURN NUMBER ;
-	
-	
-	
-	FUNCTION DeleteRow(
-			pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			pTslOverrideQty				 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
-			pTslOverrideUser			 AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
-			RETURN NUMBER ;
-	
-			-- return Y or N
-	FUNCTION IsNumeric(pString VARCHAR2) RETURN VARCHAR2 ;
-	--PRAGMA RESTRICT_REFERENCES(IsNumeric, WNDS) ;
-	
-	-- testing
-	FUNCTION GetFirstLogonIdForPart(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE) RETURN AMD_PLANNER_LOGONS.logon_id%TYPE ;
+    
+    
+    PROCEDURE LoadInitial ;
+    PROCEDURE LoadTmpAmdLocPartOverride( startStep in number := 1, endStep in number := 7) ;
+    
+    
+    FUNCTION InsertRow(
+            pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+            pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+            pTslOverrideQty                 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
+            pTslOverrideUser             AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
+            RETURN NUMBER ;
+    
+    FUNCTION Updaterow(
+            pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+            pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+            pTslOverrideQty                 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
+            pTslOverrideUser             AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
+            RETURN NUMBER ;
+    
+    
+    
+    FUNCTION DeleteRow(
+            pPartNo                      AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+            pLocSid                      AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+            pTslOverrideQty                 AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE ,
+            pTslOverrideUser             AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE )
+            RETURN NUMBER ;
+    
+            -- return Y or N
+    FUNCTION IsNumeric(pString VARCHAR2) RETURN VARCHAR2 ;
+    --PRAGMA RESTRICT_REFERENCES(IsNumeric, WNDS) ;
+    
+    -- testing
+    FUNCTION GetFirstLogonIdForPart(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE) RETURN AMD_PLANNER_LOGONS.logon_id%TYPE ;
 
-	-- added 02/13/09 by dse
-	function getGtZeroCnt return number ;
-	procedure setGtZeroCnt(value in number) ;
-	function getTmpInsertCnt return number ;
-	procedure setTmpInsertCnt(value in number) ;
-	function getTmpUpdateCnt return number ;
-	procedure setTmpUpdateCnt(value in number) ;
-	
-	procedure setUpdateCnt(value in number) ;
-	procedure setDeleteCnt(value in number) ;
-	procedure setInsertCnt(value in number) ;
+    -- added 02/13/09 by dse
+    function getGtZeroCnt return number ;
+    procedure setGtZeroCnt(value in number) ;
+    function getTmpInsertCnt return number ;
+    procedure setTmpInsertCnt(value in number) ;
+    function getTmpUpdateCnt return number ;
+    procedure setTmpUpdateCnt(value in number) ;
+    
+    procedure setUpdateCnt(value in number) ;
+    procedure setDeleteCnt(value in number) ;
+    procedure setInsertCnt(value in number) ;
 
-	-- added 11/7/05 dse
-	FUNCTION getInsertCnt RETURN NUMBER ;
-	FUNCTION getUpdateCnt RETURN NUMBER ;
-	FUNCTION getDeleteCnt RETURN NUMBER ;
-	
-	-- added 02/23/2006 dse
-	-- these functions allow  stand alone SQL to use the package constants
---	FUNCTION getTSL_OVERRIDE_TYPE RETURN VARCHAR2 ;
---	FUNCTION getOVERRIDE_REASON RETURN VARCHAR2 ;
-	FUNCTION getBULKLIMIT RETURN NUMBER ;
-	FUNCTION getCOMMITAFTER RETURN NUMBER ;
-	FUNCTION getSUCCESS RETURN NUMBER ;
-	FUNCTION getFAILURE RETURN NUMBER ;
-	FUNCTION getTHE_WAREHOUSE RETURN VARCHAR2 ;
-	 
-		
-	
-	-- added 6/9/2006 by dse
-	procedure version ;
-	
-	-- added 9/1/2006 by dse		
-	procedure LoadOverrideUsers ;
-	
+    -- added 11/7/05 dse
+    FUNCTION getInsertCnt RETURN NUMBER ;
+    FUNCTION getUpdateCnt RETURN NUMBER ;
+    FUNCTION getDeleteCnt RETURN NUMBER ;
+    
+    -- added 02/23/2006 dse
+    -- these functions allow  stand alone SQL to use the package constants
+--    FUNCTION getTSL_OVERRIDE_TYPE RETURN VARCHAR2 ;
+--    FUNCTION getOVERRIDE_REASON RETURN VARCHAR2 ;
+    FUNCTION getBULKLIMIT RETURN NUMBER ;
+    FUNCTION getCOMMITAFTER RETURN NUMBER ;
+    FUNCTION getSUCCESS RETURN NUMBER ;
+    FUNCTION getFAILURE RETURN NUMBER ;
+    FUNCTION getTHE_WAREHOUSE RETURN VARCHAR2 ;
+     
+        
+    
+    -- added 6/9/2006 by dse
+    procedure version ;
+    
+    -- added 9/1/2006 by dse        
+    procedure LoadOverrideUsers ;
+    
 
 
     procedure loadRampData ; -- added 2/14/09 by dse
@@ -221,7 +223,7 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     procedure LoadBasc ;
     procedure loadCAN ; -- added 10/11/2007 by dse
 
-	PROCEDURE LoadWhse(startStep in number := 1, endStep in number := 4) ;
+    PROCEDURE LoadWhse(startStep in number := 1, endStep in number := 4) ;
 
 
     -- added 3/13/2008 by dse
@@ -232,6 +234,16 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     procedure setLoadFMSdata(value in varchar2) ;
         
     function getLoadFMSdata return varchar2 ;
-       	
+           
 END Amd_Location_Part_Override_Pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_LOCATION_PART_OVERRIDE_PKG;
+
+CREATE PUBLIC SYNONYM AMD_LOCATION_PART_OVERRIDE_PKG FOR AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG TO AMD_WRITER_ROLE;

@@ -1,15 +1,13 @@
+DROP PACKAGE BODY AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
 
  /*
       $Author:   zf297a  $
-	$Revision:   1.106.1
-        $Date:   23 Sep 2015
+    $Revision:   1.105
+        $Date:   23 Feb 2015
     $Workfile:   AMD_LOCATION_PART_OVERRIDE_PKG.pkb  $
 
-        Rev 1.106.1 9/23/15 added START_LOC_ID
-        
-        Rev 1.106 9/21/15 added amd_defaults.getProgramId
-        
         Rev 1.105 2/23/15 added amd_defaults.getStartLocId
         
         Rev 1.104 2/13/15 commented out spo references
@@ -417,68 +415,64 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
 /*
 /*      Rev 1.0   Oct 18 2005 13:07:22   zf297a
 /*   Initial revision.
-		 */
-    PROGRAM_ID constant varchar2(30)  := amd_defaults.getProgramId ;
-    PROGRAM_ID_LL constant number := length(PROGRAM_ID) ;
-    START_LOC_ID constant number := amd_defaults.getStartLocId;
+         */
 
+    type candiateRec is record (
+        part_no amd_spare_parts.part_no%type,
+        loc_sid amd_spare_networks.loc_sid%type
+    ) ;
+    type candidateTab is table of candiateRec ;
+    candidateRecs candidateTab ;
 
-	type candiateRec is record (
-		part_no amd_spare_parts.part_no%type,
-		loc_sid amd_spare_networks.loc_sid%type
-	) ;
-	type candidateTab is table of candiateRec ;
-	candidateRecs candidateTab ;
+    type stockRec is record (
+        part_no amd_spare_parts.part_no%type,
+        tsl_override_qty number
+    ) ;
+    type stockTab is table of stockRec ;
+    stockRecs stockTab ;
 
-	type stockRec is record (
-		part_no amd_spare_parts.part_no%type,
-		tsl_override_qty number
-	) ;
-	type stockTab is table of stockRec ;
-	stockRecs stockTab ;
+    type partSumRec is record (
+        part_no amd_spare_parts.part_no%type,
+        qty number
+    ) ;
+    type partSumTab is table of partSumRec ;
+    partSumRecs partSumTab ;
 
-	type partSumRec is record (
-		part_no amd_spare_parts.part_no%type,
-		qty number
-	) ;
-	type partSumTab is table of partSumRec ;
-	partSumRecs partSumTab ;
-
-	type fslMobTab is table of amd_location_part_override%rowtype ;
+    type fslMobTab is table of amd_location_part_override%rowtype ;
     
     loadFMSdata varchar2(1) := 'N' ;
 
-	PKGNAME CONSTANT VARCHAR2(30) := 'AMD_LOCATION_PART_OVERRIDE_PKG' ;
+    PKGNAME CONSTANT VARCHAR2(30) := 'AMD_LOCATION_PART_OVERRIDE_PKG' ;
 
-	gtZeroCnt NUMBER := 0 ;
-	tmpInsertCnt NUMBER := 0 ;
-	tmpUpdateCnt NUMBER := 0 ;
-	insertCnt NUMBER := 0 ;
-	updateCnt NUMBER := 0 ;
-	deleteCnt NUMBER := 0 ;
+    gtZeroCnt NUMBER := 0 ;
+    tmpInsertCnt NUMBER := 0 ;
+    tmpUpdateCnt NUMBER := 0 ;
+    insertCnt NUMBER := 0 ;
+    updateCnt NUMBER := 0 ;
+    deleteCnt NUMBER := 0 ;
 
-	procedure writeMsg(
-				pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
-				pError_location IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
-				pKey1 IN VARCHAR2 := '',
-				pKey2 IN VARCHAR2 := '',
-				pKey3 IN VARCHAR2 := '',
-				pKey4 in varchar2 := '',
-				pData IN VARCHAR2 := '',
-				pComments IN VARCHAR2 := '')  IS
+    procedure writeMsg(
+                pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
+                pError_location IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
+                pKey1 IN VARCHAR2 := '',
+                pKey2 IN VARCHAR2 := '',
+                pKey3 IN VARCHAR2 := '',
+                pKey4 in varchar2 := '',
+                pData IN VARCHAR2 := '',
+                pComments IN VARCHAR2 := '')  IS
                  pragma autonomous_transaction ;
-	BEGIN
-		Amd_Utils.writeMsg (
-				pSourceName => 'amd_location_part_override_pkg',
-				pTableName  => pTableName,
-				pError_location => pError_location,
-				pKey1 => pKey1,
-				pKey2 => pKey2,
-				pKey3 => pKey3,
-				pKey4 => pKey4,
-				pData    => pData,
-				pComments => pComments);
-		commit ;
+    BEGIN
+        Amd_Utils.writeMsg (
+                pSourceName => 'amd_location_part_override_pkg',
+                pTableName  => pTableName,
+                pError_location => pError_location,
+                pKey1 => pKey1,
+                pKey2 => pKey2,
+                pKey3 => pKey3,
+                pKey4 => pKey4,
+                pData    => pData,
+                pComments => pComments);
+        commit ;
     exception when others then
         -- trying to rollback or commit from trigger
         if sqlcode = 4092 then
@@ -495,73 +489,73 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
         else
             raise ;
         end if ;
-	end writeMsg ;
+    end writeMsg ;
 
-	PROCEDURE ErrorMsg(
-	    pSqlfunction IN AMD_LOAD_STATUS.SOURCE%TYPE,
-	    pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
-	    pError_location AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
-	    pKey1 IN AMD_LOAD_DETAILS.KEY_1%TYPE := '',
-	    pKey2 IN AMD_LOAD_DETAILS.KEY_2%TYPE := '',
-	    pKey3 IN AMD_LOAD_DETAILS.KEY_3%TYPE := '',
-	    pKey4 IN AMD_LOAD_DETAILS.KEY_4%TYPE := '',
-	    pComments IN VARCHAR2 := '') IS
+    PROCEDURE ErrorMsg(
+        pSqlfunction IN AMD_LOAD_STATUS.SOURCE%TYPE,
+        pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
+        pError_location AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
+        pKey1 IN AMD_LOAD_DETAILS.KEY_1%TYPE := '',
+        pKey2 IN AMD_LOAD_DETAILS.KEY_2%TYPE := '',
+        pKey3 IN AMD_LOAD_DETAILS.KEY_3%TYPE := '',
+        pKey4 IN AMD_LOAD_DETAILS.KEY_4%TYPE := '',
+        pComments IN VARCHAR2 := '') IS
 
         pragma AUTONOMOUS_TRANSACTION ;
 
-	    key5 AMD_LOAD_DETAILS.KEY_5%TYPE := pComments ;
-		error_location number ;
+        key5 AMD_LOAD_DETAILS.KEY_5%TYPE := pComments ;
+        error_location number ;
         load_no number ;
 
-	BEGIN
-	  IF key5 = '' THEN
-	     key5 := pSqlFunction || '/' || pTableName ;
-	  ELSE
-	   key5 := key5 || ' ' || pSqlFunction || '/' || pTableName ;
-	  END IF ;
+    BEGIN
+      IF key5 = '' THEN
+         key5 := pSqlFunction || '/' || pTableName ;
+      ELSE
+       key5 := key5 || ' ' || pSqlFunction || '/' || pTableName ;
+      END IF ;
 
       if pError_location is null then
         error_location := -9998 ;
       else
-    	  if amd_utils.isNumber(pError_location) then
-    	  	 error_location := pError_location ;
-    	  else
-    	  	 error_location := -9999 ;
-    	  end if ;
+          if amd_utils.isNumber(pError_location) then
+               error_location := pError_location ;
+          else
+               error_location := -9999 ;
+          end if ;
      end if ;
 
-	  -- use substr's to make sure that the input parameters for InsertErrorMsg and GetLoadNo
-	  -- do not exceed the length of the column's that the data gets inserted into
-	  -- This is for debugging and logging, so efforts to make it not be the source of more
-	  -- errors is VERY important
+      -- use substr's to make sure that the input parameters for InsertErrorMsg and GetLoadNo
+      -- do not exceed the length of the column's that the data gets inserted into
+      -- This is for debugging and logging, so efforts to make it not be the source of more
+      -- errors is VERY important
       begin
         load_no := amd_utils.getLoadNo(pSourceName => substr(pSqlfunction,1,20), pTableName  => SUBSTR(pTableName,1,20)) ;
       exception when others then
         load_no := -1 ;  -- this should not happen
       end ;
 
-	  Amd_Utils.InsertErrorMsg (
-	    pLoad_no => load_no,
-	    pData_line_no => error_location,
-	    pData_line    => 'amd_location_part_override_pkg',
-	    pKey_1 => SUBSTR(pKey1,1,50),
-	    pKey_2 => SUBSTR(pKey2,1,50),
-	    pKey_3 => SUBSTR(pKey3,1,50),
-	    pKey_4 => SUBSTR(pKey4,1,50),
-	    pKey_5 => TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS') ||
-	         ' ' || substr(key5,1,50),
-	    pComments => SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||')',1,2000));
-	    COMMIT;
+      Amd_Utils.InsertErrorMsg (
+        pLoad_no => load_no,
+        pData_line_no => error_location,
+        pData_line    => 'amd_location_part_override_pkg',
+        pKey_1 => SUBSTR(pKey1,1,50),
+        pKey_2 => SUBSTR(pKey2,1,50),
+        pKey_3 => SUBSTR(pKey3,1,50),
+        pKey_4 => SUBSTR(pKey4,1,50),
+        pKey_5 => TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS') ||
+             ' ' || substr(key5,1,50),
+        pComments => SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||')',1,2000));
+        COMMIT;
 
-	EXCEPTION WHEN OTHERS THEN
-	  if pSqlFunction is not null then dbms_output.put_line('pSqlFunction=' || pSqlfunction) ; end if ;
-	  if pTableName is not null then dbms_output.put_line('pTableName=' || pTableName) ; end if ;
-	  if pError_location is not null then dbms_output.put_line('pError_location=' || pError_location) ; end if ;
-	  if pKey1 is not null then dbms_output.put_line('key1=' || pKey1) ; end if ;
-	  if pkey2 is not null then dbms_output.put_line('key2=' || pKey2) ; end if ;
-	  if pKey3 is not null then dbms_output.put_line('key3=' || pKey3) ; end if ;
-	  if pKey4 is not null then dbms_output.put_line('key4=' || pKey4) ; end if ;
-	  if pComments is not null then dbms_output.put_line('pComments=' || pComments) ; end if ;
+    EXCEPTION WHEN OTHERS THEN
+      if pSqlFunction is not null then dbms_output.put_line('pSqlFunction=' || pSqlfunction) ; end if ;
+      if pTableName is not null then dbms_output.put_line('pTableName=' || pTableName) ; end if ;
+      if pError_location is not null then dbms_output.put_line('pError_location=' || pError_location) ; end if ;
+      if pKey1 is not null then dbms_output.put_line('key1=' || pKey1) ; end if ;
+      if pkey2 is not null then dbms_output.put_line('key2=' || pKey2) ; end if ;
+      if pKey3 is not null then dbms_output.put_line('key3=' || pKey3) ; end if ;
+      if pKey4 is not null then dbms_output.put_line('key4=' || pKey4) ; end if ;
+      if pComments is not null then dbms_output.put_line('pComments=' || pComments) ; end if ;
       dbms_output.put_line('sqlcode(' || SQLCODE || ') sqlerrm(' ||SQLERRM|| ')' ) ;
        raise_application_error(-20030,
             substr('amd_location_part_override_pkg '
@@ -574,69 +568,69 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                 || pKey3 || ' '
                 || pKey4 || ' '
                 || pComments,1, 2000)) ;
-	END ErrorMsg;
+    END ErrorMsg;
 
 
-	PROCEDURE UpdateAmdLocPartOverride (
-	  		  pPartNo 			   		AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			  pLocSid 					AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			  pTslOverrideQty			AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
-			  pTslOverrideUser			AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
-			  pActionCode				AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
-			  pLastUpdateDt				AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
-	BEGIN
-		 	  UPDATE AMD_LOCATION_PART_OVERRIDE
-			  SET
-			  	  tsl_override_qty 			= pTslOverrideQty,
-				  tsl_override_user  		= pTslOverrideUser,
-				  action_code				= pActionCode,
-				  last_update_dt			= pLastUpdateDt
-			  WHERE
-			  	  part_no = pPartNo AND
-				  loc_sid = pLocSid ;
-	exception when others then
-		 ErrorMsg(
-				   pSqlfunction 	  => 'UpdateAmdLocPartOverride',
-				   pTableName  	  	  => 'amd_location_part_override',
-				   pError_location => 10) ;
-		 raise ;
-	END UpdateAmdLocPartOverride ;
+    PROCEDURE UpdateAmdLocPartOverride (
+                pPartNo                        AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+              pLocSid                     AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+              pTslOverrideQty            AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
+              pTslOverrideUser            AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
+              pActionCode                AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
+              pLastUpdateDt                AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
+    BEGIN
+               UPDATE AMD_LOCATION_PART_OVERRIDE
+              SET
+                    tsl_override_qty             = pTslOverrideQty,
+                  tsl_override_user          = pTslOverrideUser,
+                  action_code                = pActionCode,
+                  last_update_dt            = pLastUpdateDt
+              WHERE
+                    part_no = pPartNo AND
+                  loc_sid = pLocSid ;
+    exception when others then
+         ErrorMsg(
+                   pSqlfunction       => 'UpdateAmdLocPartOverride',
+                   pTableName              => 'amd_location_part_override',
+                   pError_location => 10) ;
+         raise ;
+    END UpdateAmdLocPartOverride ;
 
-	PROCEDURE UpdateTmpAmdLocPartOverride (
-	  		  pPartNo 			   		AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			  pLocSid 					AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			  pTslOverrideQty			AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
-			  pTslOverrideUser			AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
-			  pActionCode				AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
-			  pLastUpdateDt				AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
-	BEGIN
-		 	  UPDATE TMP_AMD_LOCATION_PART_OVERRIDE
-			  SET
-			  	  tsl_override_qty 			= pTslOverrideQty,
-				  tsl_override_user  		= pTslOverrideUser,
-				  action_code				= pActionCode,
-				  last_update_dt			= pLastUpdateDt
-			  WHERE
-			  	  part_no = pPartNo AND
-				  loc_sid = pLocSid ;
-			  tmpUpdateCnt := tmpUpdateCnt + 1 ;
-		 exception when others then
-		 ErrorMsg(
-				   pSqlfunction 	  => 'UpdateTmpAmdLocPartOverride',
-				   pTableName  	  	  => 'tmp_amd_location_part_override',
-				   pError_location => 20) ;
-		 raise ;
-		 END UpdateTmpAmdLocPartOverride ;
+    PROCEDURE UpdateTmpAmdLocPartOverride (
+                pPartNo                        AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+              pLocSid                     AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+              pTslOverrideQty            AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
+              pTslOverrideUser            AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
+              pActionCode                AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
+              pLastUpdateDt                AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
+    BEGIN
+               UPDATE TMP_AMD_LOCATION_PART_OVERRIDE
+              SET
+                    tsl_override_qty             = pTslOverrideQty,
+                  tsl_override_user          = pTslOverrideUser,
+                  action_code                = pActionCode,
+                  last_update_dt            = pLastUpdateDt
+              WHERE
+                    part_no = pPartNo AND
+                  loc_sid = pLocSid ;
+              tmpUpdateCnt := tmpUpdateCnt + 1 ;
+         exception when others then
+         ErrorMsg(
+                   pSqlfunction       => 'UpdateTmpAmdLocPartOverride',
+                   pTableName              => 'tmp_amd_location_part_override',
+                   pError_location => 20) ;
+         raise ;
+         END UpdateTmpAmdLocPartOverride ;
 
 
-	PROCEDURE InsertTmpAmdLocPartOverride (
-			  pPartNo 			   		AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			  pLocSid 					AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
-			  pTslOverrideQty			AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
-			  pTslOverrideUser			AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
-			  pActionCode				AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
-			  pLastUpdateDt				AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
-	BEGIN
+    PROCEDURE InsertTmpAmdLocPartOverride (
+              pPartNo                        AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+              pLocSid                     AMD_LOCATION_PART_OVERRIDE.loc_sid%TYPE,
+              pTslOverrideQty            AMD_LOCATION_PART_OVERRIDE.tsl_override_qty%TYPE,
+              pTslOverrideUser            AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE,
+              pActionCode                AMD_LOCATION_PART_OVERRIDE.action_code%TYPE,
+              pLastUpdateDt                AMD_LOCATION_PART_OVERRIDE.last_update_dt%TYPE) IS
+    BEGIN
         if pTslOverrideUser is null then
             dbms_output.put_line('pPartNo=' 
                 || pPartNo 
@@ -663,32 +657,32 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                     pActionCode,
                     pLastUpdateDt
              ) ;
-	     tmpInsertCnt := tmpInsertCnt + 1 ;
+         tmpInsertCnt := tmpInsertCnt + 1 ;
         end if ;
-	EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
-		 	  UpdateTmpAmdLocPartOverride (
-		   		  pPartNo,
-		 		  pLocSid,
-		 		  pTslOverrideQty,
-		 		  pTslOverrideUser,
-		 		  pActionCode,
-		 		  SYSDATE ) ;
-	  when others then
-		 ErrorMsg(
-				   pSqlfunction 	  => 'InsertTmpAmdLocPartOverride',
-				   pTableName  	  	  => 'tmp_amd_location_part_override',
-				   pError_location => 30) ;
-		raise ;
-	END InsertTmpAmdLocPartOverride ;
+    EXCEPTION WHEN DUP_VAL_ON_INDEX THEN
+               UpdateTmpAmdLocPartOverride (
+                     pPartNo,
+                   pLocSid,
+                   pTslOverrideQty,
+                   pTslOverrideUser,
+                   pActionCode,
+                   SYSDATE ) ;
+      when others then
+         ErrorMsg(
+                   pSqlfunction       => 'InsertTmpAmdLocPartOverride',
+                   pTableName              => 'tmp_amd_location_part_override',
+                   pError_location => 30) ;
+        raise ;
+    END InsertTmpAmdLocPartOverride ;
 
-	PROCEDURE InsertAmdLocPartOverride (
-			  pPartNo 			   		AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
-			  pLocSid 					AMD_SPARE_NETWORKS.loc_sid%TYPE,
-			  pTslOverrideQty			NUMBER,
-			  pTslOverrideUser			VARCHAR2,
-			  pActionCode				VARCHAR2,
-			  pLastUpdateDt				DATE) IS
-	BEGIN
+    PROCEDURE InsertAmdLocPartOverride (
+              pPartNo                        AMD_LOCATION_PART_OVERRIDE.part_no%TYPE,
+              pLocSid                     AMD_SPARE_NETWORKS.loc_sid%TYPE,
+              pTslOverrideQty            NUMBER,
+              pTslOverrideUser            VARCHAR2,
+              pActionCode                VARCHAR2,
+              pLastUpdateDt                DATE) IS
+    BEGIN
          if pTslOverrideQty > 0  then
              INSERT INTO AMD_LOCATION_PART_OVERRIDE
              (
@@ -709,722 +703,722 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                     pLastUpdateDt
              ) ;
         end if ;
-	exception
-		when dup_val_on_index then
-			UpdateAmdLocPartOverride (pPartNo,
-				pLocSid,
-				pTslOverrideQty,
-				pTslOverrideUser,
-				pActionCode,
-				sysdate ) ;
+    exception
+        when dup_val_on_index then
+            UpdateAmdLocPartOverride (pPartNo,
+                pLocSid,
+                pTslOverrideQty,
+                pTslOverrideUser,
+                pActionCode,
+                sysdate ) ;
 
-		when others then
-			ErrorMsg(pSqlfunction => 'InsertAmdLocPartOverride',
-				pTableName => 'amd_location_part_override',
-				pError_location => 40) ;
-			raise ;
+        when others then
+            ErrorMsg(pSqlfunction => 'InsertAmdLocPartOverride',
+                pTableName => 'amd_location_part_override',
+                pError_location => 40) ;
+            raise ;
 
-	END InsertAmdLocPartOverride ;
-
-
+    END InsertAmdLocPartOverride ;
 
 
 
-	FUNCTION InsertRow(pPartNo amd_location_part_override.PART_NO%type,
-		pLocSid amd_location_part_override.LOC_SID%type,
-		pTslOverrideQty amd_location_part_override.TSL_OVERRIDE_QTY%type ,
-		pTslOverrideUser amd_location_part_override.TSL_OVERRIDE_USER%type )
-	return number is
-
-	begin
-
-	    InsertAmdLocPartOverride(pPartNo,
-		pLocSid, pTslOverrideQty,
-		pTslOverrideUser, Amd_Defaults.INSERT_ACTION,
-		sysdate ) ;
-
-		return success ;
-
-	exception when others then
-		errorMsg(pSqlfunction => 'insertAmd',
-			pTableName => 'amd_location_part_override',
-			pError_location => 170,
-			pKey1 => pPartNo, pKey2 => pLocSid) ;
-		raise ;
-	end insertRow ;
 
 
-	function updateRow(pPartNo amd_location_part_override.part_no%type,
-		pLocSid amd_location_part_override.loc_sid%type,
-		pTslOverrideQty	amd_location_part_override.tsl_override_qty%type ,
-		pTslOverrideUser amd_location_part_override.tsl_override_user%type )
-	return number is
-	begin
-		updateAmdLocPartOverride (pPartNo,
-			pLocSid,
-			pTslOverrideQty,
-			pTslOverrideUser,
-			Amd_Defaults.UPDATE_ACTION,
-			sysdate ) ;
-		 return success ;
+    FUNCTION InsertRow(pPartNo amd_location_part_override.PART_NO%type,
+        pLocSid amd_location_part_override.LOC_SID%type,
+        pTslOverrideQty amd_location_part_override.TSL_OVERRIDE_QTY%type ,
+        pTslOverrideUser amd_location_part_override.TSL_OVERRIDE_USER%type )
+    return number is
 
-	 exception when others then
-		errorMsg(pSqlfunction => 'updateRow',
-			pTableName => 'amd_location_part_override',
-                	pError_location => 190,
-			pKey1 => pPartNo, pKey2 => pLocSid) ;
-		raise ;
-	end updateRow ;
+    begin
+
+        InsertAmdLocPartOverride(pPartNo,
+        pLocSid, pTslOverrideQty,
+        pTslOverrideUser, Amd_Defaults.INSERT_ACTION,
+        sysdate ) ;
+
+        return success ;
+
+    exception when others then
+        errorMsg(pSqlfunction => 'insertAmd',
+            pTableName => 'amd_location_part_override',
+            pError_location => 170,
+            pKey1 => pPartNo, pKey2 => pLocSid) ;
+        raise ;
+    end insertRow ;
+
+
+    function updateRow(pPartNo amd_location_part_override.part_no%type,
+        pLocSid amd_location_part_override.loc_sid%type,
+        pTslOverrideQty    amd_location_part_override.tsl_override_qty%type ,
+        pTslOverrideUser amd_location_part_override.tsl_override_user%type )
+    return number is
+    begin
+        updateAmdLocPartOverride (pPartNo,
+            pLocSid,
+            pTslOverrideQty,
+            pTslOverrideUser,
+            Amd_Defaults.UPDATE_ACTION,
+            sysdate ) ;
+         return success ;
+
+     exception when others then
+        errorMsg(pSqlfunction => 'updateRow',
+            pTableName => 'amd_location_part_override',
+                    pError_location => 190,
+            pKey1 => pPartNo, pKey2 => pLocSid) ;
+        raise ;
+    end updateRow ;
 
 
 
-	function deleteRow(pPartNo amd_location_part_override.part_no%TYPE,
-		pLocSid amd_location_part_override.loc_sid%type,
-		pTslOverrideQty	amd_location_part_override.tsl_override_qty%type ,
-		pTslOverrideUser amd_location_part_override.tsl_override_user%type )
-	return number is
-	begin
-		updateAmdLocPartOverride (
-			pPartNo,
-			pLocSid,
-			pTslOverrideQty,
-			pTslOverrideUser,
-			Amd_Defaults.DELETE_ACTION,
-			sysdate ) ;
-	  	return success ;
+    function deleteRow(pPartNo amd_location_part_override.part_no%TYPE,
+        pLocSid amd_location_part_override.loc_sid%type,
+        pTslOverrideQty    amd_location_part_override.tsl_override_qty%type ,
+        pTslOverrideUser amd_location_part_override.tsl_override_user%type )
+    return number is
+    begin
+        updateAmdLocPartOverride (
+            pPartNo,
+            pLocSid,
+            pTslOverrideQty,
+            pTslOverrideUser,
+            Amd_Defaults.DELETE_ACTION,
+            sysdate ) ;
+          return success ;
 
-	 exception when others then
-		errorMsg(pSqlfunction => 'DeleteRow',
-			pTableName => 'amd_location_part_override',
-			pError_location => 210,
-			pKey1 => pPartNo, pKey2 => pLocSid) ;
-		 raise ;
-	end deleteRow ;
+     exception when others then
+        errorMsg(pSqlfunction => 'DeleteRow',
+            pTableName => 'amd_location_part_override',
+            pError_location => 210,
+            pKey1 => pPartNo, pKey2 => pLocSid) ;
+         raise ;
+    end deleteRow ;
 
-	function isNumeric(pString varchar2) return varchar2 is
-			 ret varchar2(1) ;
-			 I number ;
-	begin
-		begin
-			if pString is null then
-				ret := 'N' ;
-			else
-				I := to_number(pString) ;
-				ret := 'Y' ;
-			end if ;
-		exception when others then
-			ret := 'N' ;
-		end ;
+    function isNumeric(pString varchar2) return varchar2 is
+             ret varchar2(1) ;
+             I number ;
+    begin
+        begin
+            if pString is null then
+                ret := 'N' ;
+            else
+                I := to_number(pString) ;
+                ret := 'Y' ;
+            end if ;
+        exception when others then
+            ret := 'N' ;
+        end ;
 
-		return ret ;
+        return ret ;
 
-	end isNumeric ;
+    end isNumeric ;
 
-	procedure loadUk IS
+    procedure loadUk IS
 
-        	candidateRecs candidateTab ;
+            candidateRecs candidateTab ;
 
-		cursor spoPrimePartsForTheUK IS
-			select spo_prime_part_no, loc_sid
-			from amd_spare_parts parts, amd_spare_networks ntwks
-			where parts.is_repairable = 'Y'
-			and parts.is_spo_part = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and ntwks.loc_id = Amd_Defaults.AMD_UK_LOC_ID ;
+        cursor spoPrimePartsForTheUK IS
+            select spo_prime_part_no, loc_sid
+            from amd_spare_parts parts, amd_spare_networks ntwks
+            where parts.is_repairable = 'Y'
+            and parts.is_spo_part = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and ntwks.loc_id = Amd_Defaults.AMD_UK_LOC_ID ;
 
-		stockRecs stockTab ;
+        stockRecs stockTab ;
 
-	 	cursor stockFromWhse IS
-			select parts.spo_prime_part_no part_no,
-				sum(nvl(stock_level, 0)) tsl_override_qty
-			from whse w, amd_spare_parts parts
-			where parts.part_no = parts.spo_prime_part_no
-			and parts.is_spo_part = 'Y'
-			and parts.is_repairable = 'Y'
-			and w.part = parts.part_no
-			and w.sc like PROGRAM_ID ||'%CODUKBG'
-			group by spo_prime_part_no ;
+         cursor stockFromWhse IS
+            select parts.spo_prime_part_no part_no,
+                sum(nvl(stock_level, 0)) tsl_override_qty
+            from whse w, amd_spare_parts parts
+            where parts.part_no = parts.spo_prime_part_no
+            and parts.is_spo_part = 'Y'
+            and parts.is_repairable = 'Y'
+            and w.part = parts.part_no
+            and w.sc like 'C17%CODUKBG'
+            group by spo_prime_part_no ;
 
-		returnCode number ;
+        returnCode number ;
 
-		type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
-		partNo_stockLevel partNo_stock ;
+        type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
+        partNo_stockLevel partNo_stock ;
 
-		tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
-		stock_cnt number := 0 ;
-		candidateRecCnt number := 0 ;
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 230,
-			pKey1 => 'LoadUk',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
+        stock_cnt number := 0 ;
+        candidateRecCnt number := 0 ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 230,
+            pKey1 => 'LoadUk',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-		open stockFromWhse ;
-		fetch stockFromWhse bulk collect into stockRecs ;
-		close stockFromWhse ;
+        open stockFromWhse ;
+        fetch stockFromWhse bulk collect into stockRecs ;
+        close stockFromWhse ;
 
-		if stockRecs.first is not null then
-			for indx in stockRecs.first .. stockRecs.last loop
-				<<saveQty>>
-				begin
-					if ( stockRecs(indx).part_no is not null ) then
-						partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
-					end if ;
+        if stockRecs.first is not null then
+            for indx in stockRecs.first .. stockRecs.last loop
+                <<saveQty>>
+                begin
+                    if ( stockRecs(indx).part_no is not null ) then
+                        partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
+                    end if ;
 
-				exception when others then
-					errorMsg(pSqlfunction => 'LoadUk',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 240,
-						pKey1 => 'partNo: ' || stockRecs(indx).part_no,
-						pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
-					raise ;
-				end saveQty ;
+                exception when others then
+                    errorMsg(pSqlfunction => 'LoadUk',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 240,
+                        pKey1 => 'partNo: ' || stockRecs(indx).part_no,
+                        pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
+                    raise ;
+                end saveQty ;
 
-				stock_cnt := stock_cnt + 1 ;
-			end loop ;
-		end if ;
+                stock_cnt := stock_cnt + 1 ;
+            end loop ;
+        end if ;
 
-		open spoPrimePartsForTheUK ;
-		fetch spoPrimePartsForTheUK bulk collect into candidateRecs ;
-		close spoPrimePartsForTheUK ;
+        open spoPrimePartsForTheUK ;
+        fetch spoPrimePartsForTheUK bulk collect into candidateRecs ;
+        close spoPrimePartsForTheUK ;
 
-		if candidateRecs.first is not null then
-			for indx in candidateRecs.first .. candidateRecs.last loop
+        if candidateRecs.first is not null then
+            for indx in candidateRecs.first .. candidateRecs.last loop
 
-				tslOverrideQty := 0 ;
-				<<tslQty>>
-				begin
-					tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
-				exception when no_data_found then
-					tslOverrideQty := 0 ;
-				end tslQty ;
+                tslOverrideQty := 0 ;
+                <<tslQty>>
+                begin
+                    tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
+                exception when no_data_found then
+                    tslOverrideQty := 0 ;
+                end tslQty ;
 
-				if tslOverrideQty > 0 then
-					gtZeroCnt := gtZeroCnt + 1 ;
-				end if ;
+                if tslOverrideQty > 0 then
+                    gtZeroCnt := gtZeroCnt + 1 ;
+                end if ;
 
-				<<insertTemp>>
-				begin
+                <<insertTemp>>
+                begin
                     if (candidateRecs(indx).part_no = '008-877') then
                         dbms_output.put_line(getfirstlogonidforpart
                             (amd_utils.getnsisidfrompartno (candidateRecs(indx).part_no))) ;
                     end if ;                            
-					insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
-						candidateRecs(indx).loc_sid,
-						tslOverrideQty,
+                    insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
+                        candidateRecs(indx).loc_sid,
+                        tslOverrideQty,
                         getfirstlogonidforpart
                             (amd_utils.getnsisidfrompartno (candidateRecs(indx).part_no)),
-						Amd_Defaults.INSERT_ACTION,
-						sysdate) ;
-				exception when others then
-					errorMsg(pSqlfunction	=> 'LoadUk',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 250,
-						pKey1 => 'partNo: ' || candidateRecs(indx).part_no,
-						pKey2 => 'locSid: ' || candidateRecs(indx).loc_sid) ;
-					raise ;
-				end insertTemp ;
+                        Amd_Defaults.INSERT_ACTION,
+                        sysdate) ;
+                exception when others then
+                    errorMsg(pSqlfunction    => 'LoadUk',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 250,
+                        pKey1 => 'partNo: ' || candidateRecs(indx).part_no,
+                        pKey2 => 'locSid: ' || candidateRecs(indx).loc_sid) ;
+                    raise ;
+                end insertTemp ;
 
-				candidateRecCnt := candidateRecCnt + 1 ;
+                candidateRecCnt := candidateRecCnt + 1 ;
 
-			end loop ;
-		end if ;
-
-
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 260,
-			pKey1 => 'LoadUk',
-			pKey2 => 'ended at ' || to_char(sysdate,'MM/DD/YYYY HH:MI:SS AM'),
-			pKey3 => 'stock_cnt=' || stock_cnt,
-			pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
-		commit ;
-	exception when others then
-		 errorMsg(pSqlfunction => 'LoadUk',
-			pTableName => 'tmp_amd_location_part_override',
-			pError_location => 270,
-			pKey1 => 'stock_cnt=' || to_char(stock_cnt),
-			pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
-		raise ;
-	end loadUk ;
-
-	procedure loadAUS IS
-   		cursor spoPrimePartsForAUS IS
-			select spo_prime_part_no, loc_sid
-			from amd_spare_parts parts, amd_spare_networks ntwks
-			where parts.is_repairable = 'Y'
-			and parts.is_spo_part = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and ntwks.loc_id = Amd_Defaults.AMD_AUS_LOC_ID ;
+            end loop ;
+        end if ;
 
 
-	 	cursor stockFromWhse is
-			select spo_prime_part_no part_no,
-				sum(nvl(stock_level, 0)) tsl_override_qty
-			from whse w, amd_spare_parts parts
-			where w.part = parts.part_no
-			and parts.is_spo_part = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and parts.is_repairable = 'Y'
-			and w.sc like PROGRAM_ID || '%CODAUSG'
-			group by spo_prime_part_no ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 260,
+            pKey1 => 'LoadUk',
+            pKey2 => 'ended at ' || to_char(sysdate,'MM/DD/YYYY HH:MI:SS AM'),
+            pKey3 => 'stock_cnt=' || stock_cnt,
+            pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
+        commit ;
+    exception when others then
+         errorMsg(pSqlfunction => 'LoadUk',
+            pTableName => 'tmp_amd_location_part_override',
+            pError_location => 270,
+            pKey1 => 'stock_cnt=' || to_char(stock_cnt),
+            pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
+        raise ;
+    end loadUk ;
 
-		returnCode NUMBER ;
+    procedure loadAUS IS
+           cursor spoPrimePartsForAUS IS
+            select spo_prime_part_no, loc_sid
+            from amd_spare_parts parts, amd_spare_networks ntwks
+            where parts.is_repairable = 'Y'
+            and parts.is_spo_part = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and ntwks.loc_id = Amd_Defaults.AMD_AUS_LOC_ID ;
 
-		type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
-		partNo_stockLevel partNo_stock ;
 
-		tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
-		stock_cnt number := 0 ;
-		candidateRecCnt number := 0 ;
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 280,
-			pKey1 => 'LoadAUS',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+         cursor stockFromWhse is
+            select spo_prime_part_no part_no,
+                sum(nvl(stock_level, 0)) tsl_override_qty
+            from whse w, amd_spare_parts parts
+            where w.part = parts.part_no
+            and parts.is_spo_part = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and parts.is_repairable = 'Y'
+            and w.sc like 'C17%CODAUSG'
+            group by spo_prime_part_no ;
 
-		open stockFromWhse ;
-		fetch stockFromWhse bulk collect into stockRecs ;
-		close stockFromWhse ;
+        returnCode NUMBER ;
 
-		if stockRecs.first is not null then
-			for indx in stockRecs.first .. stockRecs.last loop
-			        <<getQty>>
-				begin
-					if ( stockRecs(indx).part_no is not null ) then
-						partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
-					end if ;
-				exception when others then
-					ErrorMsg(pSqlfunction => 'LoadAUS',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 290,
-						pKey1 => 'partNo: ' || stockRecs(indx).part_no,
-						pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
-					raise ;
-				end getQty ;
-				stock_cnt := stock_cnt + 1 ;
-			end loop ;
-		end if ;
+        type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
+        partNo_stockLevel partNo_stock ;
 
-		open spoPrimePartsForAUS ;
-		fetch spoPrimePartsForAUS bulk collect into candidateRecs ;
-		close spoPrimePartsForAUS ;
+        tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
+        stock_cnt number := 0 ;
+        candidateRecCnt number := 0 ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 280,
+            pKey1 => 'LoadAUS',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-		if candidateRecs.first is not null then
-			for indx in candidateRecs.first .. candidateRecs.last loop
-				tslOverrideQty := 0 ;
-				begin
-					tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
-				exception when no_data_found then
-					tslOverrideQty := 0 ;
-				end ;
+        open stockFromWhse ;
+        fetch stockFromWhse bulk collect into stockRecs ;
+        close stockFromWhse ;
 
-				<<insertTmp>>
-				begin
-					insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
-						candidateRecs(indx).loc_sid,
-						tslOverrideQty,
+        if stockRecs.first is not null then
+            for indx in stockRecs.first .. stockRecs.last loop
+                    <<getQty>>
+                begin
+                    if ( stockRecs(indx).part_no is not null ) then
+                        partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
+                    end if ;
+                exception when others then
+                    ErrorMsg(pSqlfunction => 'LoadAUS',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 290,
+                        pKey1 => 'partNo: ' || stockRecs(indx).part_no,
+                        pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
+                    raise ;
+                end getQty ;
+                stock_cnt := stock_cnt + 1 ;
+            end loop ;
+        end if ;
+
+        open spoPrimePartsForAUS ;
+        fetch spoPrimePartsForAUS bulk collect into candidateRecs ;
+        close spoPrimePartsForAUS ;
+
+        if candidateRecs.first is not null then
+            for indx in candidateRecs.first .. candidateRecs.last loop
+                tslOverrideQty := 0 ;
+                begin
+                    tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
+                exception when no_data_found then
+                    tslOverrideQty := 0 ;
+                end ;
+
+                <<insertTmp>>
+                begin
+                    insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
+                        candidateRecs(indx).loc_sid,
+                        tslOverrideQty,
                         getfirstlogonidforpart
                             (amd_utils.getnsisidfrompartno (candidateRecs(indx).part_no)),
-						Amd_Defaults.INSERT_ACTION,
-						sysdate) ;
-				exception when others then
-					errorMsg(pSqlfunction => 'insertTmp',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 300,
-						pKey1 => 'partNo: '|| candidateRecs(indx).part_no,
-						pKey2 => 'locSid: '|| candidateRecs(indx).loc_sid) ;
-					raise ;
-				end insertTmp ;
+                        Amd_Defaults.INSERT_ACTION,
+                        sysdate) ;
+                exception when others then
+                    errorMsg(pSqlfunction => 'insertTmp',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 300,
+                        pKey1 => 'partNo: '|| candidateRecs(indx).part_no,
+                        pKey2 => 'locSid: '|| candidateRecs(indx).loc_sid) ;
+                    raise ;
+                end insertTmp ;
 
-				candidateRecCnt := candidateRecCnt + 1 ;
-			end loop ;
-		end if ;
+                candidateRecCnt := candidateRecCnt + 1 ;
+            end loop ;
+        end if ;
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 310,
-			pKey1 => 'LoadAUS',
-			pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-			pKey3 => 'stock_cnt=' || stock_cnt,
-			pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
-		commit ;
-	exception when others then
-		errorMsg(pSqlfunction => 'LoadAUS',
-			pTableName => 'tmp_amd_location_part_override',
-			pError_location => 320,
-			pKey1 => 'stock_cnt=' || to_char(stock_cnt),
-			pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
-		raise ;
-	end loadAUS ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 310,
+            pKey1 => 'LoadAUS',
+            pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+            pKey3 => 'stock_cnt=' || stock_cnt,
+            pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
+        commit ;
+    exception when others then
+        errorMsg(pSqlfunction => 'LoadAUS',
+            pTableName => 'tmp_amd_location_part_override',
+            pError_location => 320,
+            pKey1 => 'stock_cnt=' || to_char(stock_cnt),
+            pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
+        raise ;
+    end loadAUS ;
 
-	procedure loadCAN IS -- added 10/11/2007 by dse
+    procedure loadCAN IS -- added 10/11/2007 by dse
 
-   		cursor spoPrimePartsForCAN IS
-			select spo_prime_part_no, loc_sid
-			from amd_spare_parts parts, amd_spare_networks ntwks
-			where parts.is_repairable = 'Y'
-			and parts.is_spo_part = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and ntwks.loc_id = Amd_Defaults.AMD_CAN_LOC_ID ;
+           cursor spoPrimePartsForCAN IS
+            select spo_prime_part_no, loc_sid
+            from amd_spare_parts parts, amd_spare_networks ntwks
+            where parts.is_repairable = 'Y'
+            and parts.is_spo_part = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and ntwks.loc_id = Amd_Defaults.AMD_CAN_LOC_ID ;
 
-	 	cursor stockFromWhse is
-			select parts.spo_prime_part_no part_no,
-				sum(nvl(stock_level, 0)) tsl_override_qty
-			from whse w, amd_spare_parts parts
-			where w.part = parts.part_no
-			and parts.is_spo_part = 'Y'
-			and parts.is_repairable = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and w.sc like PROGRAM_ID || '%CODCANG'
-			group by parts.spo_prime_part_no ;
+         cursor stockFromWhse is
+            select parts.spo_prime_part_no part_no,
+                sum(nvl(stock_level, 0)) tsl_override_qty
+            from whse w, amd_spare_parts parts
+            where w.part = parts.part_no
+            and parts.is_spo_part = 'Y'
+            and parts.is_repairable = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and w.sc like 'C17%CODCANG'
+            group by parts.spo_prime_part_no ;
 
-		returnCode NUMBER ;
-		type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
-		partNo_stockLevel partNo_stock ;
+        returnCode NUMBER ;
+        type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
+        partNo_stockLevel partNo_stock ;
 
-		tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
-		stock_cnt number := 0 ;
-		candidateRecCnt number := 0 ;
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 330,
-			pKey1 => 'LoadCAN',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        tslOverrideQty amd_location_part_override.tsl_override_qty%type ;
+        stock_cnt number := 0 ;
+        candidateRecCnt number := 0 ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 330,
+            pKey1 => 'LoadCAN',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-		open stockFromWhse;
-		fetch stockFromWhse bulk collect into stockRecs ;
-		close stockFromWhse ;
+        open stockFromWhse;
+        fetch stockFromWhse bulk collect into stockRecs ;
+        close stockFromWhse ;
 
-		if stockRecs.first is not null then
-			for indx in stockRecs.first .. stockRecs.last loop
-				begin
-					if ( stockRecs(indx).part_no is not null ) then
-						partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
-					end if ;
-				exception when others then
-					ErrorMsg(pSqlfunction => 'LoadCAN',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 340,
-						pKey1 => 'partNo: ' || stockRecs(indx).part_no,
-						pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
-					raise ;
-				end ;
+        if stockRecs.first is not null then
+            for indx in stockRecs.first .. stockRecs.last loop
+                begin
+                    if ( stockRecs(indx).part_no is not null ) then
+                        partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
+                    end if ;
+                exception when others then
+                    ErrorMsg(pSqlfunction => 'LoadCAN',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 340,
+                        pKey1 => 'partNo: ' || stockRecs(indx).part_no,
+                        pKey2 => 'qty: ' || stockRecs(indx).tsl_override_qty) ;
+                    raise ;
+                end ;
 
-				stock_cnt := stock_cnt + 1 ;
-			end loop ;
-		end if ;
+                stock_cnt := stock_cnt + 1 ;
+            end loop ;
+        end if ;
 
-		open spoPrimePartsForCAN ;
-		fetch spoPrimePartsForCAN bulk collect into candidateRecs ;
-		close spoPrimePartsForCAN ;
+        open spoPrimePartsForCAN ;
+        fetch spoPrimePartsForCAN bulk collect into candidateRecs ;
+        close spoPrimePartsForCAN ;
 
-		if candidateRecs.first is not null then
-			for indx in candidateRecs.first .. candidateRecs.last loop
-				tslOverrideQty := 0 ;
+        if candidateRecs.first is not null then
+            for indx in candidateRecs.first .. candidateRecs.last loop
+                tslOverrideQty := 0 ;
 
-				<<getTsl>>
-				begin
-					tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
-				exception when no_data_found then
-					tslOverrideQty := 0 ;
-				end getTsl ;
+                <<getTsl>>
+                begin
+                    tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
+                exception when no_data_found then
+                    tslOverrideQty := 0 ;
+                end getTsl ;
 
-				<<insertTmp>>
-				begin
-					insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
-						candidateRecs(indx).loc_sid,
-						tslOverrideQty,
+                <<insertTmp>>
+                begin
+                    insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
+                        candidateRecs(indx).loc_sid,
+                        tslOverrideQty,
                         getfirstlogonidforpart
                             (amd_utils.getnsisidfrompartno (candidateRecs(indx).part_no)),
-						Amd_Defaults.INSERT_ACTION,
-						sysdate) ;
-				exception when others then
-					errorMsg(pSqlfunction => 'LoadCAN',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 350,
-						pKey1 => 'partNo: '|| candidateRecs(indx).part_no,
-						pKey2 => 'locSid: '|| candidateRecs(indx).loc_sid) ;
-					raise ;
-				end insertTmp ;
+                        Amd_Defaults.INSERT_ACTION,
+                        sysdate) ;
+                exception when others then
+                    errorMsg(pSqlfunction => 'LoadCAN',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 350,
+                        pKey1 => 'partNo: '|| candidateRecs(indx).part_no,
+                        pKey2 => 'locSid: '|| candidateRecs(indx).loc_sid) ;
+                    raise ;
+                end insertTmp ;
 
-				candidateRecCnt := candidateRecCnt + 1 ;
-			end loop ;
-		end if ;
+                candidateRecCnt := candidateRecCnt + 1 ;
+            end loop ;
+        end if ;
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 360,
-			pKey1 => 'LoadCAN',
-			pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-			pKey3 => 'stock_cnt=' || stock_cnt,
-			pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
-		commit ;
-	exception when others then
-		errorMsg(pSqlfunction => 'LoadCAN',pTableName => 'tmp_amd_location_part_override',
-			pError_location => 370,
-			pKey1 => 'stock_cnt=' || to_char(stock_cnt),
-			pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
-		raise ;
-	end loadCAN ;
-
-
-	PROCEDURE LoadBasc IS
-   		cursor spoPrimePartsForBASC IS
-			select spo_prime_part_no, loc_sid
-			from amd_spare_parts parts, amd_spare_networks ntwks
-			where parts.is_repairable = 'Y'
-			and parts.is_spo_part = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and ntwks.loc_id = Amd_Defaults.AMD_BASC_LOC_ID ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 360,
+            pKey1 => 'LoadCAN',
+            pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+            pKey3 => 'stock_cnt=' || stock_cnt,
+            pKey4 => 'candidateRecCnt=' || candidateRecCnt ) ;
+        commit ;
+    exception when others then
+        errorMsg(pSqlfunction => 'LoadCAN',pTableName => 'tmp_amd_location_part_override',
+            pError_location => 370,
+            pKey1 => 'stock_cnt=' || to_char(stock_cnt),
+            pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt) ) ;
+        raise ;
+    end loadCAN ;
 
 
-	 	cursor stockFromWhse is
-			select spo_prime_part_no part_no,
-				sum(nvl(stock_level, 0)) tsl_override_qty
-			from whse w, amd_spare_parts parts
-			where w.part = parts.part_no
-			and parts.is_spo_part = 'Y'
-			and parts.is_repairable = 'Y'
-			and parts.part_no = parts.spo_prime_part_no
-			and sc = PROGRAM_ID || 'PCAG'
-			group by spo_prime_part_no ;
+    PROCEDURE LoadBasc IS
+           cursor spoPrimePartsForBASC IS
+            select spo_prime_part_no, loc_sid
+            from amd_spare_parts parts, amd_spare_networks ntwks
+            where parts.is_repairable = 'Y'
+            and parts.is_spo_part = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and ntwks.loc_id = Amd_Defaults.AMD_BASC_LOC_ID ;
 
-		returnCode number ;
-		type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
-		partNo_stockLevel partNo_stock ;
 
-		tslOverrideQty AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_QTY%TYPE ;
-		stock_cnt NUMBER := 0 ;
-		candidateRecCnt NUMBER := 0 ;
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 380,
-			pKey1 => 'LoadBasc',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+         cursor stockFromWhse is
+            select spo_prime_part_no part_no,
+                sum(nvl(stock_level, 0)) tsl_override_qty
+            from whse w, amd_spare_parts parts
+            where w.part = parts.part_no
+            and parts.is_spo_part = 'Y'
+            and parts.is_repairable = 'Y'
+            and parts.part_no = parts.spo_prime_part_no
+            and sc = 'C17PCAG'
+            group by spo_prime_part_no ;
 
-		open stockFromWhse;
-		fetch stockFromWhse bulk collect into stockRecs ;
-		close stockFromWhse ;
+        returnCode number ;
+        type partNo_stock is table of number index by amd_spare_parts.part_no%type  ;
+        partNo_stockLevel partNo_stock ;
 
-		if stockRecs.first is not null then
-			for indx in stockRecs.first .. stockRecs.last loop
-				begin
-					if ( stockRecs(indx).part_no is not null ) then
-						partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
-					end if ;
-				exception when others then
-					errorMsg(pSqlfunction => 'LoadBasc',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 390,
-						pKey1 => 'partNo: ' || stockRecs(indx).part_no,
-						pKey2 => 'qty: '|| stockRecs(indx).tsl_override_qty) ;
-					raise ;
-				end ;
+        tslOverrideQty AMD_LOCATION_PART_OVERRIDE.TSL_OVERRIDE_QTY%TYPE ;
+        stock_cnt NUMBER := 0 ;
+        candidateRecCnt NUMBER := 0 ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 380,
+            pKey1 => 'LoadBasc',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-				stock_cnt := stock_cnt + 1 ;
+        open stockFromWhse;
+        fetch stockFromWhse bulk collect into stockRecs ;
+        close stockFromWhse ;
 
-			end loop ;
-		end if ;
+        if stockRecs.first is not null then
+            for indx in stockRecs.first .. stockRecs.last loop
+                begin
+                    if ( stockRecs(indx).part_no is not null ) then
+                        partNo_stockLevel(stockRecs(indx).part_no) := stockRecs(indx).tsl_override_qty ;
+                    end if ;
+                exception when others then
+                    errorMsg(pSqlfunction => 'LoadBasc',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 390,
+                        pKey1 => 'partNo: ' || stockRecs(indx).part_no,
+                        pKey2 => 'qty: '|| stockRecs(indx).tsl_override_qty) ;
+                    raise ;
+                end ;
 
-		open spoPrimePartsForBASC ;
-		fetch spoPrimePartsForBASC bulk collect into candidateRecs ;
-		close spoPrimePartsForBASC ;
+                stock_cnt := stock_cnt + 1 ;
 
-		if candidateRecs.first is not null then
-			for indx in candidateRecs.first .. candidateRecs.last loop
-				tslOverrideQty := 0 ;
+            end loop ;
+        end if ;
 
-				<<getTslQty>>
-				begin
-					tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
-				exception when no_data_found then
-					tslOverrideQty := 0 ;
-				end getTslQty ;
+        open spoPrimePartsForBASC ;
+        fetch spoPrimePartsForBASC bulk collect into candidateRecs ;
+        close spoPrimePartsForBASC ;
 
-				<<insertTmp>>
-				begin
-					insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
-						candidateRecs(indx).loc_sid,
-						tslOverrideQty,
+        if candidateRecs.first is not null then
+            for indx in candidateRecs.first .. candidateRecs.last loop
+                tslOverrideQty := 0 ;
+
+                <<getTslQty>>
+                begin
+                    tslOverrideQty := partNo_stockLevel(candidateRecs(indx).part_no) ;
+                exception when no_data_found then
+                    tslOverrideQty := 0 ;
+                end getTslQty ;
+
+                <<insertTmp>>
+                begin
+                    insertTmpAmdLocPartOverride(candidateRecs(indx).part_no,
+                        candidateRecs(indx).loc_sid,
+                        tslOverrideQty,
                         getfirstlogonidforpart
                             (amd_utils.getnsisidfrompartno (candidateRecs(indx).part_no)),
-						Amd_Defaults.INSERT_ACTION,
-						sysdate) ;
-				exception when others then
-					ErrorMsg(pSqlfunction => 'LoadBasc',
-						pTableName => 'tmp_amd_location_part_override',
-						pError_location => 400,
-						pKey1 => 'partNo: ' || candidateRecs(indx).part_no,
-						pKey2 => 'locSid: ' || candidateRecs(indx).loc_sid) ;
-					raise ;
-				end insertTmp ;
+                        Amd_Defaults.INSERT_ACTION,
+                        sysdate) ;
+                exception when others then
+                    ErrorMsg(pSqlfunction => 'LoadBasc',
+                        pTableName => 'tmp_amd_location_part_override',
+                        pError_location => 400,
+                        pKey1 => 'partNo: ' || candidateRecs(indx).part_no,
+                        pKey2 => 'locSid: ' || candidateRecs(indx).loc_sid) ;
+                    raise ;
+                end insertTmp ;
 
-				candidateRecCnt := candidateRecCnt + 1 ;
-			end loop ;
-		end if ;
+                candidateRecCnt := candidateRecCnt + 1 ;
+            end loop ;
+        end if ;
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 410,
-			pKey1 => 'LoadBasc',
-			pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-			pKey3 => 'stock_cnt=' || stock_cnt,
-			pKey4 => 'candidateRecCnt=' || candidateRecCnt) ;
-		commit ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 410,
+            pKey1 => 'LoadBasc',
+            pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+            pKey3 => 'stock_cnt=' || stock_cnt,
+            pKey4 => 'candidateRecCnt=' || candidateRecCnt) ;
+        commit ;
 
-	exception when others then
-		errorMsg(pSqlfunction => 'LoadBasc',
-			pTableName => 'tmp_amd_location_part_override',
-			pError_location => 420,
-			pKey1 => 'stock_cnt=' || to_char(stock_cnt),
-			pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt)) ;
-		raise ;
-	end loadBasc ;
-
-
-	procedure loadRampData IS
-
-		rampRecs fslMobTab ;
-
-		cursor rampData is
-		select parts.spo_prime_part_no part_no,
-			loc_sid,
-			sum(nvl(r.demand_level,0)) demand_level,
-			null,
-			amd_defaults.INSERT_ACTION,
-			sysdate
-		from ramp r, amd_spare_parts parts, amd_spare_networks asn
-		where r.sc like PROGRAM_ID || '0008%'
-		and substr(r.sc, START_LOC_ID, 6) = asn.loc_id
-		and asn.loc_type in ('MOB', 'FSL')
-		and replace(r.current_stock_number, '-') = parts.nsn
-		and parts.spo_prime_part_no = parts.part_no
-		and parts.is_spo_part = 'Y'
-		and parts.is_repairable = 'Y'
-		and Amd_Location_Part_Override_Pkg.IsNumeric(parts.nsn) = 'Y'
-		and asn.action_code != Amd_Defaults.DELETE_ACTION
-		group by  spo_prime_part_no , loc_sid
-		having sum(nvl(r.demand_level,0))  > 0 ;
-
-		type array is table of tmp_amd_location_part_override%rowtype;
-		l_data array;
-		returnCode number ;
-		cur_cnt NUMBER := 0 ;
-		req_cnt NUMBER := 0 ;
-
-	BEGIN
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 430,
-			pKey1 => 'loadRampData',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+    exception when others then
+        errorMsg(pSqlfunction => 'LoadBasc',
+            pTableName => 'tmp_amd_location_part_override',
+            pError_location => 420,
+            pKey1 => 'stock_cnt=' || to_char(stock_cnt),
+            pKey2 => 'candidateRecCnt=' || to_char(candidateRecCnt)) ;
+        raise ;
+    end loadBasc ;
 
 
-		open rampData ;
-		fetch rampData bulk collect into rampRecs ;
-		close rampData ;
+    procedure loadRampData IS
 
-		if rampRecs.first is not null then
-			forall indx in rampRecs.first .. rampRecs.last
-				insert into tmp_amd_location_part_override values rampRecs(indx) ;
+        rampRecs fslMobTab ;
 
-			tmpInsertCnt := tmpInsertCnt + rampRecs.count ;
-		end if ;
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 460,
-			pKey1 => 'loadRampData',
-			pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-			pKey3 => 'cur_cnt=' || cur_cnt,
-			pKey4 => 'req_cnt=' || req_cnt) ;
-        	commit ;
-	exception when others then
-		ErrorMsg(pSqlfunction => 'loadRampData',
-			pTableName => 'tmp_amd_location_part_override',
-			pError_location => 470,
-			pKey1 => 'cur_cnt=' || to_char(cur_cnt),
-			pKey2 => 'req_cnt=' || to_char(req_cnt)) ;
-		 raise ;
-	end loadRampData ;
+        cursor rampData is
+        select parts.spo_prime_part_no part_no,
+            loc_sid,
+            sum(nvl(r.demand_level,0)) demand_level,
+            null,
+            amd_defaults.INSERT_ACTION,
+            sysdate
+        from ramp r, amd_spare_parts parts, amd_spare_networks asn
+        where r.sc like 'C170008%'
+        and substr(r.sc, amd_defaults.getStartLocId, 6) = asn.loc_id
+        and asn.loc_type in ('MOB', 'FSL')
+        and replace(r.current_stock_number, '-') = parts.nsn
+        and parts.spo_prime_part_no = parts.part_no
+        and parts.is_spo_part = 'Y'
+        and parts.is_repairable = 'Y'
+        and Amd_Location_Part_Override_Pkg.IsNumeric(parts.nsn) = 'Y'
+        and asn.action_code != Amd_Defaults.DELETE_ACTION
+        group by  spo_prime_part_no , loc_sid
+        having sum(nvl(r.demand_level,0))  > 0 ;
 
+        type array is table of tmp_amd_location_part_override%rowtype;
+        l_data array;
+        returnCode number ;
+        cur_cnt NUMBER := 0 ;
+        req_cnt NUMBER := 0 ;
 
-	procedure loadWhse(startStep in number := 1, endStep in number := 4) is
-
-        	type whseTab is table of tmp_amd_location_part_override%rowtype ;
-	        whseRecs whseTab ;
-
-		cursor cursor_warehouse_parts is
-			select parts.spo_prime_part_no part_no,
-				loc_sid,
-				0 tsl_override_qty,
-				null tsl_override_user,
-				amd_defaults.INSERT_ACTION action_code,
-				sysdate last_update_dt
-			from amd_spare_parts parts, amd_spare_networks asn
-			where parts.spo_prime_part_no = parts.part_no
-			and parts.is_spo_part = 'Y'
-			and parts.is_repairable = 'Y'
-			and asn.loc_id = amd_defaults.amd_warehouse_locid
-			and asn.action_code != Amd_Defaults.DELETE_ACTION
-			and asn.spo_location is not null
-			and spo_prime_part_no is not null ;
-
-			 -- get all those whse where the rbl run had 0 value for and
-			 --	1) sum all the tsls where FSL, MOB, UAB
-			 --	2) from Total Spo Inventory, subtract out those from 1)
+    BEGIN
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 430,
+            pKey1 => 'loadRampData',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
 
-			-- tmp_amd_location_part_override is already by spo prime, no need to determine
-		cursor cursor_peacetimeBasesSum IS
-			  select part_no, sum(nvl(tsl_override_qty,0)) qty
-			  	   from tmp_amd_location_part_override t, amd_spare_networks asn
-				   where t.loc_sid = asn.loc_sid
-				   and t.action_code != Amd_Defaults.DELETE_ACTION
-				   and asn.action_code != Amd_Defaults.DELETE_ACTION
-				   and ( loc_type in ('MOB', 'FSL', 'UAB', 'COD')
-				   	     or
-						 loc_id in (Amd_Defaults.AMD_BASC_LOC_ID, Amd_Defaults.AMD_UK_LOC_ID,
+        open rampData ;
+        fetch rampData bulk collect into rampRecs ;
+        close rampData ;
+
+        if rampRecs.first is not null then
+            forall indx in rampRecs.first .. rampRecs.last
+                insert into tmp_amd_location_part_override values rampRecs(indx) ;
+
+            tmpInsertCnt := tmpInsertCnt + rampRecs.count ;
+        end if ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 460,
+            pKey1 => 'loadRampData',
+            pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+            pKey3 => 'cur_cnt=' || cur_cnt,
+            pKey4 => 'req_cnt=' || req_cnt) ;
+            commit ;
+    exception when others then
+        ErrorMsg(pSqlfunction => 'loadRampData',
+            pTableName => 'tmp_amd_location_part_override',
+            pError_location => 470,
+            pKey1 => 'cur_cnt=' || to_char(cur_cnt),
+            pKey2 => 'req_cnt=' || to_char(req_cnt)) ;
+         raise ;
+    end loadRampData ;
+
+
+    procedure loadWhse(startStep in number := 1, endStep in number := 4) is
+
+            type whseTab is table of tmp_amd_location_part_override%rowtype ;
+            whseRecs whseTab ;
+
+        cursor cursor_warehouse_parts is
+            select parts.spo_prime_part_no part_no,
+                loc_sid,
+                0 tsl_override_qty,
+                null tsl_override_user,
+                amd_defaults.INSERT_ACTION action_code,
+                sysdate last_update_dt
+            from amd_spare_parts parts, amd_spare_networks asn
+            where parts.spo_prime_part_no = parts.part_no
+            and parts.is_spo_part = 'Y'
+            and parts.is_repairable = 'Y'
+            and asn.loc_id = amd_defaults.amd_warehouse_locid
+            and asn.action_code != Amd_Defaults.DELETE_ACTION
+            and asn.spo_location is not null
+            and spo_prime_part_no is not null ;
+
+             -- get all those whse where the rbl run had 0 value for and
+             --    1) sum all the tsls where FSL, MOB, UAB
+             --    2) from Total Spo Inventory, subtract out those from 1)
+
+
+            -- tmp_amd_location_part_override is already by spo prime, no need to determine
+        cursor cursor_peacetimeBasesSum IS
+              select part_no, sum(nvl(tsl_override_qty,0)) qty
+                     from tmp_amd_location_part_override t, amd_spare_networks asn
+                   where t.loc_sid = asn.loc_sid
+                   and t.action_code != Amd_Defaults.DELETE_ACTION
+                   and asn.action_code != Amd_Defaults.DELETE_ACTION
+                   and ( loc_type in ('MOB', 'FSL', 'UAB', 'COD')
+                            or
+                         loc_id in (Amd_Defaults.AMD_BASC_LOC_ID, Amd_Defaults.AMD_UK_LOC_ID,
                                     amd_defaults.AMD_AUS_LOC_ID )
-					   )
-				   and asn.spo_location is not null
+                       )
+                   and asn.spo_location is not null
                    and part_no is not null
-				   group by part_no ;
+                   group by part_no ;
 
-		cursor cursor_wartimeRspSum is
-			   select part_no, sum(nvl(rsp_level,0)) qty
-			   from amd_rsp_sum
+        cursor cursor_wartimeRspSum is
+               select part_no, sum(nvl(rsp_level,0)) qty
+               from amd_rsp_sum
                where part_no is not null
-			   group by part_no ;
+               group by part_no ;
 
-		cursor cursor_peacetimeBO_Spo_Sum is
-			   select spo_prime_part_no,  qty
-			   from amd_backorder_spo_sum
+        cursor cursor_peacetimeBO_Spo_Sum is
+               select spo_prime_part_no,  qty
+               from amd_backorder_spo_sum
                where spo_prime_part_no is not null
-			   order by spo_prime_part_no ;
+               order by spo_prime_part_no ;
 
-				  -- get the whole list and the sum to spo prime
-		cursor cursor_peacetimeSpoInv IS
-			select spo_prime_part_no part_no,
-			sum(nvl(spo_total_inventory,0)) qty
-			from amd_spare_parts parts, amd_national_stock_items items
-			where parts.part_no = parts.spo_prime_part_no
-			and parts.is_spo_part = 'Y'
-			and parts.is_repairable = 'Y'
-			and parts.nsn = items.nsn
-			and items.action_code <> 'D'
-			and parts.spo_prime_part_no is not null
-			group by spo_prime_part_no ;
+                  -- get the whole list and the sum to spo prime
+        cursor cursor_peacetimeSpoInv IS
+            select spo_prime_part_no part_no,
+            sum(nvl(spo_total_inventory,0)) qty
+            from amd_spare_parts parts, amd_national_stock_items items
+            where parts.part_no = parts.spo_prime_part_no
+            and parts.is_spo_part = 'Y'
+            and parts.is_repairable = 'Y'
+            and parts.nsn = items.nsn
+            and items.action_code <> 'D'
+            and parts.spo_prime_part_no is not null
+            group by spo_prime_part_no ;
 
-		type partno_sum is table of number index by amd_spare_parts.part_no%type  ;
-		-- arrays where index is nsi_sid, and the values are the sums
-		partNoCandidates_sum partNo_sum ;
-		partNoBases_sum partNo_sum ;
-		partNoSpoInv_sum partNo_sum ;
-		wareHouseLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE ;
-		basesTsl_Rsp_Backorder_sum number ;
-		sumOfSpoTotalInv number ;
-		AtlantaWarehouseQty number ;
-		returnCode NUMBER ;
-		cur_cnt NUMBER := 0 ;
-		baseSum_cnt NUMBER := 0 ;
-		spoInv_cnt NUMBER := 0 ;
-		rsp_cnt number := 0 ;
-		spoSum_cnt number := 0 ;
-		curStep number := 0 ;
-			-- Calculation WareHouse TSLs
+        type partno_sum is table of number index by amd_spare_parts.part_no%type  ;
+        -- arrays where index is nsi_sid, and the values are the sums
+        partNoCandidates_sum partNo_sum ;
+        partNoBases_sum partNo_sum ;
+        partNoSpoInv_sum partNo_sum ;
+        wareHouseLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE ;
+        basesTsl_Rsp_Backorder_sum number ;
+        sumOfSpoTotalInv number ;
+        AtlantaWarehouseQty number ;
+        returnCode NUMBER ;
+        cur_cnt NUMBER := 0 ;
+        baseSum_cnt NUMBER := 0 ;
+        spoInv_cnt NUMBER := 0 ;
+        rsp_cnt number := 0 ;
+        spoSum_cnt number := 0 ;
+        curStep number := 0 ;
+            -- Calculation WareHouse TSLs
 
             procedure loadPeaceTimeBasesSum is
             begin
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 480,
-        				pKey1 => 'loadPeaceTimeBasesSum',
-        				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 480,
+                        pKey1 => 'loadPeaceTimeBasesSum',
+                        pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-			    -- load partNoBases_sum array where each partNo index has the sum for the bases
+                -- load partNoBases_sum array where each partNo index has the sum for the bases
                 open cursor_peacetimeBasesSum ;
                 fetch cursor_peacetimeBasesSum bulk collect into partSumRecs ;
                 close cursor_peacetimeBasesSum ;
@@ -1436,20 +1430,20 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                     end loop ;
                 end if ;
 
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 490,
-        				pKey1 => 'loadPeaceTimeBasesSum',
-        				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-		    exception when others then
-			    errorMsg(pSqlfunction => 'loadPeaceTimeBasesSum',pTableName => 'tmp_amd_location_part_override',
-				   pError_location => 500) ;
-				   raise ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 490,
+                        pKey1 => 'loadPeaceTimeBasesSum',
+                        pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+            exception when others then
+                errorMsg(pSqlfunction => 'loadPeaceTimeBasesSum',pTableName => 'tmp_amd_location_part_override',
+                   pError_location => 500) ;
+                   raise ;
             end loadPeaceTimeBasesSum ;
 
             procedure loadWarTimeRspSum is
             begin
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 510,
-        				pKey1 => 'loadWarTimeRspSum',
-        				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 510,
+                        pKey1 => 'loadWarTimeRspSum',
+                        pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
                 open cursor_wartimeRspSum ;
                 fetch cursor_wartimeRspSum bulk collect into partSumRecs ;
@@ -1466,20 +1460,20 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                     end loop ;
                 end if ;
 
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 520,
-        				pKey1 => 'loadWarTimeRspSum',
-        				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-		    EXCEPTION WHEN OTHERS THEN
-			    ErrorMsg(pSqlfunction => 'loadWarTimeRspSum', pTableName => 'tmp_amd_location_part_override',
-				   pError_location => 530) ;
-				   raise ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 520,
+                        pKey1 => 'loadWarTimeRspSum',
+                        pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+            EXCEPTION WHEN OTHERS THEN
+                ErrorMsg(pSqlfunction => 'loadWarTimeRspSum', pTableName => 'tmp_amd_location_part_override',
+                   pError_location => 530) ;
+                   raise ;
             end loadWarTimeRspSum ;
 
             procedure loadPeaceTimeBO_Spo_Sum is
             begin
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 540,
-    				pKey1 => 'loadPeaceTimeBO_Spo_Sum',
-    				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 540,
+                    pKey1 => 'loadPeaceTimeBO_Spo_Sum',
+                    pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
                 open cursor_peacetimeBO_Spo_Sum ;
                 fetch cursor_peacetimeBO_Spo_Sum bulk collect into partSumRecs ;
@@ -1496,23 +1490,23 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                     end loop ;
                 end if ;
 
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 550,
-        				pKey1 => 'loadPeaceTimeBO_Spo_Sum',
-        				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-		    exception when others then
-			    errorMsg(pSqlfunction => 'loadPeaceTimeBO_Spo_Sum',pTableName => 'tmp_amd_location_part_override',
-				   pError_location => 560) ;
-				   raise ;
-	        end loadPeaceTimeBO_Spo_Sum ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 550,
+                        pKey1 => 'loadPeaceTimeBO_Spo_Sum',
+                        pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+            exception when others then
+                errorMsg(pSqlfunction => 'loadPeaceTimeBO_Spo_Sum',pTableName => 'tmp_amd_location_part_override',
+                   pError_location => 560) ;
+                   raise ;
+            end loadPeaceTimeBO_Spo_Sum ;
 
             procedure loadPeaceTimeSpoInv is
                 lineNo number := 0 ;
                 part_no amd_spare_parts.part_no%type ;
             begin
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 570,
-        				pKey1 => 'loadPeaceTimeSpoInv',
-        				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-    			 -- load partNoSpoInv_sum array where each partNo index has the total_spo_inventory
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 570,
+                        pKey1 => 'loadPeaceTimeSpoInv',
+                        pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+                 -- load partNoSpoInv_sum array where each partNo index has the total_spo_inventory
 
                 open cursor_peacetimeSpoInv ;
                 fetch cursor_peacetimeSpoInv bulk collect into partSumRecs ;
@@ -1535,28 +1529,28 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                 end if ;
 
                 lineNo := 4 ;
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 590,
-        				pKey1 => 'loadPeaceTimeSpoInv',
-        				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-		    exception when others then
-			    errorMsg(pSqlfunction => 'loadPeaceTimeSpoInv', pTableName => 'tmp_amd_location_part_override',
-				   pError_location => 600,pKey1 => to_char(lineNo),pKey2 => part_no) ;
-				   raise ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 590,
+                        pKey1 => 'loadPeaceTimeSpoInv',
+                        pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+            exception when others then
+                errorMsg(pSqlfunction => 'loadPeaceTimeSpoInv', pTableName => 'tmp_amd_location_part_override',
+                   pError_location => 600,pKey1 => to_char(lineNo),pKey2 => part_no) ;
+                   raise ;
             end loadPeaceTimeSpoInv ;
 
             procedure loadWareHouseParts is
                 insert_cnt number := 0 ;
             begin
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 610,
-        				pKey1 => 'loadWareHouseParts',
-        				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
-    	--		wareHouseLocSid := amd_utils.GetLocSid(amd_defaults.AMD_WAREHOUSE_LOCID) ;
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 610,
+                        pKey1 => 'loadWareHouseParts',
+                        pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        --        wareHouseLocSid := amd_utils.GetLocSid(amd_defaults.AMD_WAREHOUSE_LOCID) ;
 
-    			-- cycle thru each of the zero candidates
-    			-- line up the partNo and do the necessary calculation.
-    			-- per each partNo
-    			-- 	   total_spo_inventory minus bases sum
-    			-- 	   if result negative, make result zero
+                -- cycle thru each of the zero candidates
+                -- line up the partNo and do the necessary calculation.
+                -- per each partNo
+                --        total_spo_inventory minus bases sum
+                --        if result negative, make result zero
 
                 open cursor_warehouse_parts ;
                 fetch cursor_warehouse_parts bulk collect into whseRecs ;
@@ -1617,145 +1611,145 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                         cur_cnt := cur_cnt + 1 ;
                     end loop ;
                 end if ;
-        		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 630,
-        				pKey1 => 'loadWareHouseParts',
+                writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 630,
+                        pKey1 => 'loadWareHouseParts',
                         pKey2 => 'insert_cnt=' || insert_cnt,
-        				pKey3 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+                        pKey3 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
                 commit ;
-		    exception when others then
-			    errorMsg(pSqlfunction => 'loadWareHouseParts',pTableName => 'tmp_amd_location_part_override',
-				   pError_location => 640) ;
-				   raise ;
+            exception when others then
+                errorMsg(pSqlfunction => 'loadWareHouseParts',pTableName => 'tmp_amd_location_part_override',
+                   pError_location => 640) ;
+                   raise ;
             end loadWareHouseParts ;
 
 
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 650,
-			pKey1 => 'LoadWhse',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 650,
+            pKey1 => 'LoadWhse',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
 
-		begin
+        begin
 
-			for i in startStep..endStep loop
-				curStep := i ;
-				case i
-					when 1 then loadPeaceTimeBasesSum ;
-					when 2 then loadWarTimeRspSum;
-					when 3 then loadPeaceTimeBO_Spo_Sum ;
-					when 4 then loadPeaceTimeSpoInv ;
-					-- don't need this to load zero tsl's when 5 then loadWareHouseParts ;
-				end case ;
-			end loop ;
+            for i in startStep..endStep loop
+                curStep := i ;
+                case i
+                    when 1 then loadPeaceTimeBasesSum ;
+                    when 2 then loadWarTimeRspSum;
+                    when 3 then loadPeaceTimeBO_Spo_Sum ;
+                    when 4 then loadPeaceTimeSpoInv ;
+                    -- don't need this to load zero tsl's when 5 then loadWareHouseParts ;
+                end case ;
+            end loop ;
 
-		exception when others then
-			errorMsg(pSqlfunction => 'LoadWhse',pTableName => 'tmp_amd_location_part_override',
-				pError_location => 660) ;
-			raise ;
-		end ;
+        exception when others then
+            errorMsg(pSqlfunction => 'LoadWhse',pTableName => 'tmp_amd_location_part_override',
+                pError_location => 660) ;
+            raise ;
+        end ;
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 670,
-				pKey1 => 'LoadWhse',
-				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-				pKey3 => 'cur_cnt=' || to_char(cur_cnt),
-				pKey4 => 'baseSum_cnt=' || to_char(baseSum_cnt),
-				pData => 'spoInv_cnt=' || to_char(spoInv_cnt)
-					|| ' rsp_cnt=' || to_char(rsp_cnt)
-					|| ' spoSum_cnt=' || to_char(spoSum_cnt)) ;
-		commit ;
-	exception when others then
-		errorMsg(pSqlfunction => 'LoadWhse',pTableName => 'tmp_amd_location_part_override',
-			pError_location => 680,
-			pKey1 => 'curStep=' || curStep,
-			pkey2 => 'cur_cnt=' || to_char(cur_cnt),
-			pKey3 => 'baseSum_cnt=' || to_char(baseSum_cnt),
-			pKey4 => 'spoInv_cnt=' || to_char(spoInv_cnt) ) ;
-		raise ;
-	end loadWhse ;
-
-
-	function getFirstLogonIdForPart(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE)
-		RETURN AMD_PLANNER_LOGONS.logon_id%TYPE IS
-
-		cursor cur( pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE ) IS
-			select apl.*
-			from amd_planner_logons apl, amd_planners ap, amd_national_stock_items ansi
-			where ansi.nsi_sid = pNsiSid
-			and amd_Preferred_Pkg.GetPreferredValue(ansi.planner_code_cleaned, ansi.planner_code)
-					= ap.planner_code
-			and ap.planner_code = apl.planner_code
-			and ap.action_code != Amd_Defaults.DELETE_ACTION
-			and apl.action_code != Amd_Defaults.DELETE_ACTION
-			order by apl.planner_code, data_source, logon_id ;
-		 retLogonId amd_planner_logons%rowtype := null ;
-
-		procedure getLogonIdViaPart is
-			part_no amd_spare_parts.part_no%type ;
-		begin
-			part_no := amd_utils.getPartNo(pNsiSid) ;
-			if part_no is not null then
-				if amd_utils.isPartConsumable(part_no) then
-					retLogonId.logon_id := amd_defaults.CONSUMABLE_LOGON_ID ;
-				elsif amd_utils.isPartRepairable(part_no) then
-					retLogonId.logon_id := amd_defaults.REPAIRABLE_LOGON_ID ;
-				end if ;
-			end if ;
-		exception
-			when standard.no_data_found then
-				null ; -- do nothing it cannot be found
-			when others then
-				errorMsg(pSqlfunction => 'getLogonIdViaPart',pTableName => 'amd_spare_parts',
-					pError_location => 685) ;
-			raise ;
-		end getLogonIdViaPart ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 670,
+                pKey1 => 'LoadWhse',
+                pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+                pKey3 => 'cur_cnt=' || to_char(cur_cnt),
+                pKey4 => 'baseSum_cnt=' || to_char(baseSum_cnt),
+                pData => 'spoInv_cnt=' || to_char(spoInv_cnt)
+                    || ' rsp_cnt=' || to_char(rsp_cnt)
+                    || ' spoSum_cnt=' || to_char(spoSum_cnt)) ;
+        commit ;
+    exception when others then
+        errorMsg(pSqlfunction => 'LoadWhse',pTableName => 'tmp_amd_location_part_override',
+            pError_location => 680,
+            pKey1 => 'curStep=' || curStep,
+            pkey2 => 'cur_cnt=' || to_char(cur_cnt),
+            pKey3 => 'baseSum_cnt=' || to_char(baseSum_cnt),
+            pKey4 => 'spoInv_cnt=' || to_char(spoInv_cnt) ) ;
+        raise ;
+    end loadWhse ;
 
 
-	begin
-		if not cur%isopen then
-			open cur(pNsiSid) ;
-		end if ;
-		fetch cur into retLogonId ;
-		if cur%notfound then
-			getLogonIdViaPart ;
-		end if ;
-		close cur ;
-		return retLogonId.logon_id ;
-	exception
-		when standard.no_data_found then
-			getLogonIdViaPart ;
-			return retLogonId.logon_id ;
-		when others then
-			errorMsg(pSqlfunction => 'GetFirstLogonIdForPart',pTableName => 'amd_planner_logons',
-				pError_location => 690) ;
-			raise ;
-	end getFirstLogonIdForPart ;
+    function getFirstLogonIdForPart(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE)
+        RETURN AMD_PLANNER_LOGONS.logon_id%TYPE IS
 
-	procedure loadOverrideUsers IS
-		type overrideUserRec is record (
-			part_no tmp_amd_location_part_override.part_no%type,
+        cursor cur( pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE ) IS
+            select apl.*
+            from amd_planner_logons apl, amd_planners ap, amd_national_stock_items ansi
+            where ansi.nsi_sid = pNsiSid
+            and amd_Preferred_Pkg.GetPreferredValue(ansi.planner_code_cleaned, ansi.planner_code)
+                    = ap.planner_code
+            and ap.planner_code = apl.planner_code
+            and ap.action_code != Amd_Defaults.DELETE_ACTION
+            and apl.action_code != Amd_Defaults.DELETE_ACTION
+            order by apl.planner_code, data_source, logon_id ;
+         retLogonId amd_planner_logons%rowtype := null ;
+
+        procedure getLogonIdViaPart is
+            part_no amd_spare_parts.part_no%type ;
+        begin
+            part_no := amd_utils.getPartNo(pNsiSid) ;
+            if part_no is not null then
+                if amd_utils.isPartConsumable(part_no) then
+                    retLogonId.logon_id := amd_defaults.CONSUMABLE_LOGON_ID ;
+                elsif amd_utils.isPartRepairable(part_no) then
+                    retLogonId.logon_id := amd_defaults.REPAIRABLE_LOGON_ID ;
+                end if ;
+            end if ;
+        exception
+            when standard.no_data_found then
+                null ; -- do nothing it cannot be found
+            when others then
+                errorMsg(pSqlfunction => 'getLogonIdViaPart',pTableName => 'amd_spare_parts',
+                    pError_location => 685) ;
+            raise ;
+        end getLogonIdViaPart ;
+
+
+    begin
+        if not cur%isopen then
+            open cur(pNsiSid) ;
+        end if ;
+        fetch cur into retLogonId ;
+        if cur%notfound then
+            getLogonIdViaPart ;
+        end if ;
+        close cur ;
+        return retLogonId.logon_id ;
+    exception
+        when standard.no_data_found then
+            getLogonIdViaPart ;
+            return retLogonId.logon_id ;
+        when others then
+            errorMsg(pSqlfunction => 'GetFirstLogonIdForPart',pTableName => 'amd_planner_logons',
+                pError_location => 690) ;
+            raise ;
+    end getFirstLogonIdForPart ;
+
+    procedure loadOverrideUsers IS
+        type overrideUserRec is record (
+            part_no tmp_amd_location_part_override.part_no%type,
             loc_sid tmp_amd_location_part_override.LOC_SID%type
-		) ;
+        ) ;
 
-		type overrideUserTab is table of overrideUserRec ;
-		overrideUserRecs overrideUserTab  ;
+        type overrideUserTab is table of overrideUserRec ;
+        overrideUserRecs overrideUserTab  ;
 
-		cursor overrideUserscur is
-			 select part_no, loc_sid
-			 from tmp_amd_location_part_override 
-			 where tsl_override_user is null ; 
+        cursor overrideUserscur is
+             select part_no, loc_sid
+             from tmp_amd_location_part_override 
+             where tsl_override_user is null ; 
 
-		tslOverrideUser AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE ;
-		cur_cnt NUMBER := 0 ;
+        tslOverrideUser AMD_LOCATION_PART_OVERRIDE.tsl_override_user%TYPE ;
+        cur_cnt NUMBER := 0 ;
         update_cnt number := 0 ;
 
-	begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 700,
-			pKey1 => 'LoadOverrideUsers',
-			pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+    begin
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 700,
+            pKey1 => 'LoadOverrideUsers',
+            pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-		open overrideUserscur ;
-		fetch overrideUserscur bulk collect into overrideUserRecs ;
-		close overrideUserscur ;
+        open overrideUserscur ;
+        fetch overrideUserscur bulk collect into overrideUserRecs ;
+        close overrideUserscur ;
 
          if overrideUserRecs.first is not null then
              for indx in overrideUserRecs.first .. overrideUserRecs.last loop
@@ -1769,14 +1763,14 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
                             tslOverrideUser := 'SPO' ;
                         end if ;                            
                         update tmp_amd_location_part_override
-                           set 	tsl_override_user = tslOverrideUser
-                           where	part_no = overrideUserRecs(indx).part_no
+                           set     tsl_override_user = tslOverrideUser
+                           where    part_no = overrideUserRecs(indx).part_no
                            and loc_sid = overrideUserRecs(indx).loc_sid ;
                         update_cnt := update_cnt + 1 ;                           
                 exception when others then
                         errorMsg(pSqlfunction => 'LoadOverrideUsers',pTableName => 'tmp_amd_location_part_override',
                             pError_location => 710,
-                            pKey1	=>  'loc_sid=' || overrideUserRecs(indx).loc_sid,
+                            pKey1    =>  'loc_sid=' || overrideUserRecs(indx).loc_sid,
                             pKey2 => 'partNo=' || overrideUserRecs(indx).part_no) ;
                        raise ;
                 end ;
@@ -1784,28 +1778,28 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
              end loop ;
         end if ;
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 720,
-				pKey1 => 'LoadOverrideUsers',
-				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-				pKey3 => 'cur_cnt=' || to_char(cur_cnt),
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 720,
+                pKey1 => 'LoadOverrideUsers',
+                pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+                pKey3 => 'cur_cnt=' || to_char(cur_cnt),
                 pKey4 => 'update_cnt=' || to_char(update_cnt)) ;
-		commit ;
-	exception when others then
+        commit ;
+    exception when others then
         errorMsg(pSqlfunction => 'LoadOverrideUsers',pTableName => 'tmp_amd_location_part_override',
             pError_location => 730, pKey1 => 'cur_cnt=' || to_char(cur_cnt) ) ;
         raise ;
-	end loadOverrideUsers ;
+    end loadOverrideUsers ;
 
 
 
     PROCEDURE LoadTmpAmdLocPartOverride( startStep in number := 1, endStep in number := 7) is
         curStep number := 0 ;
     BEGIN
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 880,
-				pKey1 => 'LoadTmpAmdLocPartOverride',
-				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 880,
+                pKey1 => 'LoadTmpAmdLocPartOverride',
+                pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
-		 Mta_Truncate_Table('tmp_amd_location_part_override','reuse storage');
+         Mta_Truncate_Table('tmp_amd_location_part_override','reuse storage');
          COMMIT ;
          for i in startStep..endStep loop
             curStep := i ;
@@ -1867,32 +1861,32 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
         RAISE ;
     END LoadInitial ;
 
-	-- added 02/13/09 dse
+    -- added 02/13/09 dse
     function getGtZeroCnt return number is
     begin
-	return gtZeroCnt ;
+    return gtZeroCnt ;
     end getGtZeroCnt ;
     procedure setGtZeroCnt(value in number) is
     begin
-	gtZeroCnt := value ;
+    gtZeroCnt := value ;
     end setGtZeroCnt ;
 
     function getTmpInsertCnt return number is
     begin
-	return tmpInsertCnt ;
+    return tmpInsertCnt ;
     end getTmpInsertCnt ;
     procedure setTmpInsertCnt(value in number) is
     begin
-	tmpInsertCnt := value ;
+    tmpInsertCnt := value ;
     end setTmpInsertCnt ;
 
     function getTmpUpdateCnt return number is
     begin
-	return tmpUpdateCnt ;
+    return tmpUpdateCnt ;
     end getTmpUpdateCnt ;
     procedure setTmpUpdateCnt(value in number) is
     begin
-	tmpUpdateCnt := 0 ;
+    tmpUpdateCnt := 0 ;
     end setTmpUpdateCnt ;
 
     -- added 11/7/05 dse
@@ -1902,7 +1896,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     END getInsertCnt ;
     procedure setInsertCnt(value in number) is
     begin
-	insertCnt := value ;
+    insertCnt := value ;
     end setInsertCnt ;
 
     FUNCTION getUpdateCnt RETURN NUMBER IS
@@ -1911,7 +1905,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     END getUpdateCnt ;
     procedure setUpdateCnt(value in number) is
     begin
-	updateCnt := value ;
+    updateCnt := value ;
     end setUpdateCnt ;
 
     FUNCTION getDeleteCnt RETURN NUMBER IS
@@ -1920,7 +1914,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     END getDeleteCnt ;
     procedure setDeleteCnt(value in number) is
     begin
-	deleteCnt := value ;
+    deleteCnt := value ;
     end setDeleteCnt ;
 /*
     FUNCTION getTSL_OVERRIDE_TYPE RETURN VARCHAR2 IS
@@ -1961,13 +1955,13 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Location_Part_Override_Pkg AS
     procedure version is
     begin
          writeMsg(pTableName => 'amd_location_part_override_pkg',
-                 pError_location => 1360, pKey1 => 'amd_location_part_override_pkg', pKey2 => '$Revision:   1.106.1  $') ;
-         dbms_output.put_line('amd_location_part_override_pkg: $Revision:   1.106.1  $') ;
+                 pError_location => 1360, pKey1 => 'amd_location_part_override_pkg', pKey2 => '$Revision:   1.105  $') ;
+         dbms_output.put_line('amd_location_part_override_pkg: $Revision:   1.105  $') ;
     end version ;
 
     function getVersion return varchar2 is
     begin
-        return '$Revision:   1.106.1  $' ;
+        return '$Revision:   1.105  $' ;
     end getVersion ;
 
 
@@ -2052,11 +2046,21 @@ BEGIN
 
       <<getTypes>>
       begin
-	    --select tsl_fixed_override into tsl_override_type from amd_spo_types_v ;
-	    --select fixed_tsl_load_override_reason into override_reason from amd_spo_types_v ;
+        --select tsl_fixed_override into tsl_override_type from amd_spo_types_v ;
+        --select fixed_tsl_load_override_reason into override_reason from amd_spo_types_v ;
         null;
       end getTypes ;
 
 
 END Amd_Location_Part_Override_Pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_LOCATION_PART_OVERRIDE_PKG;
+
+CREATE PUBLIC SYNONYM AMD_LOCATION_PART_OVERRIDE_PKG FOR AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LOCATION_PART_OVERRIDE_PKG TO AMD_WRITER_ROLE;

@@ -1,3 +1,5 @@
+DROP PACKAGE AMD_OWNER.AMD_NSL_SEQUENCE_PKG;
+
 CREATE OR REPLACE PACKAGE AMD_OWNER.amd_nsl_sequence_pkg as
 /*
       $Author:   zf297a  $
@@ -5,10 +7,10 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.amd_nsl_sequence_pkg as
      $Date:   16 Oct 2007 10:05:38  $
     $Workfile:   amd_nsl_sequence_pkg.pks  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_nsl_sequence_pkg.pks-arc  $
-   
+
       Rev 1.8   16 Oct 2007 10:05:38   zf297a
    Added version interface
-   
+
       Rev 1.7   Dec 01 2005 09:36:48   zf297a
    added pvcs keywords
 */
@@ -37,4 +39,15 @@ CREATE OR REPLACE PACKAGE AMD_OWNER.amd_nsl_sequence_pkg as
     procedure version ; -- added 10/16/2007 by dse
 
 end amd_nsl_sequence_pkg ;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_NSL_SEQUENCE_PKG;
+
+CREATE PUBLIC SYNONYM AMD_NSL_SEQUENCE_PKG FOR AMD_OWNER.AMD_NSL_SEQUENCE_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_NSL_SEQUENCE_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_NSL_SEQUENCE_PKG TO AMD_WRITER_ROLE;

@@ -1,25 +1,27 @@
-CREATE OR REPLACE package body amd_clean_data as
-    /*   				
+DROP PACKAGE BODY AMD_OWNER.AMD_CLEAN_DATA;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_clean_data as
+    /*
 	    PVCS Keywords
-		
+
        $Author:   zf297a  $
      $Revision:   1.6  $
          $Date:   Jun 09 2006 12:42:54  $
      $Workfile:   amd_clean_data.pkb  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_clean_data.pkb-arc  $
-   
+
       Rev 1.6   Jun 09 2006 12:42:54   zf297a
    implemented version
-   
+
       Rev 1.6   Aug 23 2005 12:22:38   zf297a
    Implemented interfaces using the nsn and part_no  that is retrieving cleaned data via the amd_load / diff process.  This will allow the routine to attempt to retrieve the cleaned_data via the part_no if it is not found via the nsn.
-   
+
       Rev 1.5   Aug 03 2005 10:33:58   zf297a
    Fixed CheckCache - checked if nsn is NULL
-   
+
       Rev 1.4   May 06 2005 08:15:38   c970183
    changed dla_warehouse_stock and dla_warehouse_stock_cleaned to current_backorder and current_backorder_cleaned.  added pvcs keywords
-   	  */	  
+   	  */
 
 /*
  	These routines will make it easy to retrieve cleaned data from BSSM
@@ -30,7 +32,7 @@ CREATE OR REPLACE package body amd_clean_data as
  */
 
  	cleanRec		amd_cleaned_from_bssm_pkg.partFields := null ;
-	
+
 	procedure writeMsg(
 				pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
 				pError_location IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
@@ -42,7 +44,7 @@ CREATE OR REPLACE package body amd_clean_data as
 				pComments IN VARCHAR2 := '')  IS
 	BEGIN
 		Amd_Utils.writeMsg (
-				pSourceName => 'amd_clean_data',	
+				pSourceName => 'amd_clean_data',
 				pTableName  => pTableName,
 				pError_location => pError_location,
 				pKey1 => pKey1,
@@ -52,7 +54,7 @@ CREATE OR REPLACE package body amd_clean_data as
 				pData    => pData,
 				pComments => pComments);
 	end writeMsg ;
-	
+
 	procedure CheckCache(pNsn in varchar2) is
 	begin
 		if cleanRec.nsn != pNsn or cleanRec.nsn is null then
@@ -61,7 +63,7 @@ CREATE OR REPLACE package body amd_clean_data as
 	exception when NO_DATA_FOUND then
 		cleanRec := null ;
 	end CheckCache ;
-	
+
 	procedure checkCache(pNsn in varchar2, pPartNo in varchar2) is
 	begin
 		if (cleanRec.nsn != pNsn and cleanRec.part_no != pPartNo)  or cleanRec.nsn is null then
@@ -177,7 +179,7 @@ CREATE OR REPLACE package body amd_clean_data as
 	function GetPlannerCode(pNsn in varchar2, pPartNo in varchar2) return amd_national_stock_items.planner_code_cleaned%type is
 	begin
 		--return	amd_cleaned_from_bssm_pkg.GetValues(pNsn => pNsn, pFieldName => amd_cleaned_from_bssm_pkg.PLANNER_CODE) ;
-		CheckCache(pNsn, pPartNo) ;		
+		CheckCache(pNsn, pPartNo) ;
 		return cleanRec.planner_code ; -- todo
 	end ;
 	function GetPrimeInd(pNsn in varchar2, pPart_no in varchar2, pMfgr in varchar2) return amd_nsi_parts.prime_ind_cleaned%type is
@@ -218,9 +220,19 @@ CREATE OR REPLACE package body amd_clean_data as
 
 	procedure version is
 	begin
-		 writeMsg(pTableName => 'amd_clean_data', 
+		 writeMsg(pTableName => 'amd_clean_data',
 		 		pError_location => 10, pKey1 => 'amd_clean_data', pKey2 => '$Revision:   1.6  $') ;
 	end version ;
-	
+
 end amd_clean_data ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_CLEAN_DATA;
+
+CREATE PUBLIC SYNONYM AMD_CLEAN_DATA FOR AMD_OWNER.AMD_CLEAN_DATA;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_CLEAN_DATA TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_CLEAN_DATA TO AMD_WRITER_ROLE;

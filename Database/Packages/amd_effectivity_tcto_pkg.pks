@@ -1,4 +1,6 @@
-CREATE OR REPLACE PACKAGE amd_effectivity_tcto_pkg
+DROP PACKAGE AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG;
+
+CREATE OR REPLACE PACKAGE AMD_OWNER.amd_effectivity_tcto_pkg
 as
 /*
       $Author:   zf297a  $
@@ -6,10 +8,10 @@ as
 	    $Date:   Nov 30 2005 12:24:06  $
     $Workfile:   amd_effectivity_tcto_pkg.pks  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_effectivity_tcto_pkg.pks-arc  $
-/*   
+/*
 /*      Rev 1.1   Nov 30 2005 12:24:06   zf297a
 /*   added PVCS keywords
-*/	
+*/
   --
 	-- SCCSID: amd_effectivity_tcto_pkg.sql  1.3  Modified: 08/28/02 16:08:38
 	--
@@ -26,4 +28,15 @@ as
   function getNsiLocDistribs(pNsiSid integer) return ref_cursor;
   pragma restrict_references(getAcAssignLocsid, WNDS);
 end amd_effectivity_tcto_pkg;
+ 
 /
+
+
+DROP PUBLIC SYNONYM AMD_EFFECTIVITY_TCTO_PKG;
+
+CREATE PUBLIC SYNONYM AMD_EFFECTIVITY_TCTO_PKG FOR AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_EFFECTIVITY_TCTO_PKG TO AMD_WRITER_ROLE;

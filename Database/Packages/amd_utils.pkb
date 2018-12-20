@@ -1,10 +1,12 @@
+DROP PACKAGE BODY AMD_OWNER.AMD_UTILS;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Utils AS
 /*
        $Author:   zf297a  $
      $Revision:   1.66  $
          $Date:   19 Oct 2015
      $Workfile:   amd_utils.pkb  $
-	 $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_utils.pkb-arc  $
+     $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_utils.pkb-arc  $
 
       Rev 1.66   25 Jul 2011 15:33:33  Douglas Elder
      commented out dbms_output for rank 
@@ -180,137 +182,137 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Utils AS
 
       Rev 1.10   05 Sep 2002 10:16:34   c970183
    Added $Log$ keyword and changed variable name from sendorAddress to senderAddress
-	-- 09/05/02 dse		added sendMail procedure
+    -- 09/05/02 dse        added sendMail procedure
 
-	--06/07/05 KS		added GetSpoLocation, GetLocationInfo, GetPartNo
+    --06/07/05 KS        added GetSpoLocation, GetLocationInfo, GetPartNo
 */
 
-	debugCnt NUMBER := 0 ;
+    debugCnt NUMBER := 0 ;
     debug boolean := false ;
     type FmsSegCodeTab is table of amd_param_changes.PARAM_VALUE%type ;
     FmsSegCodes FmsSegCodeTab ;
 
 
     -- use this function  to make sure a field never exceeds its max length
-	FUNCTION trimToMax(str IN VARCHAR2, maxLen IN NUMBER) RETURN VARCHAR2 IS
-	BEGIN
-		 IF LENGTH(str) >maxLen THEN
-		 	RETURN SUBSTR(str,1,maxLen) ;
-		 ELSE
-		 	 RETURN str ;
-		 END IF ;
-	END trimToMax ;
+    FUNCTION trimToMax(str IN VARCHAR2, maxLen IN NUMBER) RETURN VARCHAR2 IS
+    BEGIN
+         IF LENGTH(str) >maxLen THEN
+             RETURN SUBSTR(str,1,maxLen) ;
+         ELSE
+              RETURN str ;
+         END IF ;
+    END trimToMax ;
 
-	FUNCTION GetLoadNo(
-							pSourceName AMD_LOAD_STATUS.SOURCE%TYPE,
-							pTableName AMD_LOAD_STATUS.TABLE_NAME%TYPE) RETURN NUMBER IS
-		loadNo   NUMBER;
-		sourceName AMD_LOAD_STATUS.SOURCE%TYPE := trimToMax(pSourceName,20) ;
-		tableName AMD_LOAD_STATUS.TABLE_NAME%TYPE := trimToMax(pTableName,30) ;
-	BEGIN
-		SELECT
-			amd_load_status_seq.NEXTVAL
-		INTO loadNo
-		FROM dual;
-		INSERT INTO AMD_LOAD_STATUS
-		(
-			load_no,
-			source,
-			load_date,
-			table_name
-		)
-		VALUES
-		(
-			loadNo,
-			sourceName,
-			SYSDATE,
-			tableName
-		);
-		RETURN loadNo;
-	END GetLoadNo;
-	FUNCTION FormatNsn(
-							pNsn VARCHAR2,
-							pType VARCHAR2 DEFAULT 'AMD') RETURN VARCHAR2 IS
-		RetVal	VARCHAR2(50);
-	BEGIN
-		--
-		-- AMD uses NSN w/o dashes. GOLD uses NSN w/dashes.
-		--
-		IF (pType = 'AMD') THEN
-			RetVal := REPLACE(pNsn,'-');
-		ELSE
-			RetVal := SUBSTR(pNsn,1,4)||'-'||SUBSTR(pNsn,5,2)||'-'||
-							SUBSTR(pNsn,7,3)||'-'||SUBSTR(pNsn,10,4);
-		END IF;
-		RETURN RetVal;
-	END;
+    FUNCTION GetLoadNo(
+                            pSourceName AMD_LOAD_STATUS.SOURCE%TYPE,
+                            pTableName AMD_LOAD_STATUS.TABLE_NAME%TYPE) RETURN NUMBER IS
+        loadNo   NUMBER;
+        sourceName AMD_LOAD_STATUS.SOURCE%TYPE := trimToMax(pSourceName,20) ;
+        tableName AMD_LOAD_STATUS.TABLE_NAME%TYPE := trimToMax(pTableName,30) ;
+    BEGIN
+        SELECT
+            amd_load_status_seq.NEXTVAL
+        INTO loadNo
+        FROM dual;
+        INSERT INTO AMD_LOAD_STATUS
+        (
+            load_no,
+            source,
+            load_date,
+            table_name
+        )
+        VALUES
+        (
+            loadNo,
+            sourceName,
+            SYSDATE,
+            tableName
+        );
+        RETURN loadNo;
+    END GetLoadNo;
+    FUNCTION FormatNsn(
+                            pNsn VARCHAR2,
+                            pType VARCHAR2 DEFAULT 'AMD') RETURN VARCHAR2 IS
+        RetVal    VARCHAR2(50);
+    BEGIN
+        --
+        -- AMD uses NSN w/o dashes. GOLD uses NSN w/dashes.
+        --
+        IF (pType = 'AMD') THEN
+            RetVal := REPLACE(pNsn,'-');
+        ELSE
+            RetVal := SUBSTR(pNsn,1,4)||'-'||SUBSTR(pNsn,5,2)||'-'||
+                            SUBSTR(pNsn,7,3)||'-'||SUBSTR(pNsn,10,4);
+        END IF;
+        RETURN RetVal;
+    END;
 
 
-	PROCEDURE InsertErrorMsg (
-							pLoad_no IN AMD_LOAD_DETAILS.load_no%TYPE := NULL,
-							pData_line_no IN AMD_LOAD_DETAILS.data_line_no%TYPE := NULL,
-							pData_line IN AMD_LOAD_DETAILS.data_line%TYPE := NULL,
-							pKey_1 IN AMD_LOAD_DETAILS.key_1%TYPE := NULL,
-							pKey_2 IN AMD_LOAD_DETAILS.key_2%TYPE := NULL,
-							pKey_3 IN AMD_LOAD_DETAILS.key_3%TYPE := NULL,
-							pKey_4 IN AMD_LOAD_DETAILS.key_4%TYPE := NULL,
-							pKey_5 IN AMD_LOAD_DETAILS.key_5%TYPE := NULL,
-							pComments IN AMD_LOAD_DETAILS.comments%TYPE := NULL ) IS
+    PROCEDURE InsertErrorMsg (
+                            pLoad_no IN AMD_LOAD_DETAILS.load_no%TYPE := NULL,
+                            pData_line_no IN AMD_LOAD_DETAILS.data_line_no%TYPE := NULL,
+                            pData_line IN AMD_LOAD_DETAILS.data_line%TYPE := NULL,
+                            pKey_1 IN AMD_LOAD_DETAILS.key_1%TYPE := NULL,
+                            pKey_2 IN AMD_LOAD_DETAILS.key_2%TYPE := NULL,
+                            pKey_3 IN AMD_LOAD_DETAILS.key_3%TYPE := NULL,
+                            pKey_4 IN AMD_LOAD_DETAILS.key_4%TYPE := NULL,
+                            pKey_5 IN AMD_LOAD_DETAILS.key_5%TYPE := NULL,
+                            pComments IN AMD_LOAD_DETAILS.comments%TYPE := NULL ) IS
 
-		loadNo NUMBER := pLoad_no ;
-		dataLine AMD_LOAD_DETAILS.data_line%TYPE := trimToMax(pData_line,2000) ;
-		k1 AMD_LOAD_DETAILS.KEY_1%TYPE := trimToMax(pKey_1,50) ;
-		k2 AMD_LOAD_DETAILS.KEY_2%TYPE := trimToMax(pKey_2, 50) ;
-		k3 AMD_LOAD_DETAILS.KEY_3%TYPE := trimToMax(pKey_3, 50) ;
-		k4 AMD_LOAD_DETAILS.KEY_4%TYPE := trimToMax(pKey_4, 40) ;
-		k5 AMD_LOAD_DETAILS.KEY_5%TYPE := trimToMax(pKey_5, 50) ;
-		msg AMD_LOAD_DETAILS.COMMENTS%TYPE := trimToMax(pComments, 2000) ;
+        loadNo NUMBER := pLoad_no ;
+        dataLine AMD_LOAD_DETAILS.data_line%TYPE := trimToMax(pData_line,2000) ;
+        k1 AMD_LOAD_DETAILS.KEY_1%TYPE := trimToMax(pKey_1,50) ;
+        k2 AMD_LOAD_DETAILS.KEY_2%TYPE := trimToMax(pKey_2, 50) ;
+        k3 AMD_LOAD_DETAILS.KEY_3%TYPE := trimToMax(pKey_3, 50) ;
+        k4 AMD_LOAD_DETAILS.KEY_4%TYPE := trimToMax(pKey_4, 40) ;
+        k5 AMD_LOAD_DETAILS.KEY_5%TYPE := trimToMax(pKey_5, 50) ;
+        msg AMD_LOAD_DETAILS.COMMENTS%TYPE := trimToMax(pComments, 2000) ;
 
-	BEGIN
-		 IF loadNo IS NULL THEN
-		 	loadNo := getLoadNo('amd_utils','amd_load_details') ;
-		 END IF ;
-		 IF msg IS NULL THEN
-		 	msg := SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||')',1,2000) ;
-		 END IF ;
-		INSERT INTO AMD_LOAD_DETAILS
-		(
-			load_no,
-			data_line_no,
-			data_line,
-			key_1,
-			key_2,
-			key_3,
-			key_4,
-			key_5,
-			comments
-		)
-		VALUES
-		(
-			pLoad_no,
-			pData_line_no,
-			dataLine,
-			k1,
-			k2,
-			k3,
-			k4,
-			k5,
-			msg
-		);
-	exception when others then
-		  dbms_output.enable(100000) ;
-		  if not isNumber(to_char(pLoad_no)) then
-		  	 dbms_output.put_line('pLoad_no is not a number') ;
-		  end if ;
-		  if not isNumber(to_char(dataLine)) then
-		  	 dbms_output.put_line('dataLine is not a number') ;
-		  end if ;
-		  dbms_output.put_line('k1=' || k1) ;			  
-		  dbms_output.put_line('k2=' || k2) ;
-		  dbms_output.put_line('k3=' || k3) ;
-		  dbms_output.put_line('k4=' || k4) ;
-		  dbms_output.put_line('k5=' || k5) ;
-		  dbms_output.put_line('msg=' || msg) ;
+    BEGIN
+         IF loadNo IS NULL THEN
+             loadNo := getLoadNo('amd_utils','amd_load_details') ;
+         END IF ;
+         IF msg IS NULL THEN
+             msg := SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||')',1,2000) ;
+         END IF ;
+        INSERT INTO AMD_LOAD_DETAILS
+        (
+            load_no,
+            data_line_no,
+            data_line,
+            key_1,
+            key_2,
+            key_3,
+            key_4,
+            key_5,
+            comments
+        )
+        VALUES
+        (
+            pLoad_no,
+            pData_line_no,
+            dataLine,
+            k1,
+            k2,
+            k3,
+            k4,
+            k5,
+            msg
+        );
+    exception when others then
+          dbms_output.enable(100000) ;
+          if not isNumber(to_char(pLoad_no)) then
+               dbms_output.put_line('pLoad_no is not a number') ;
+          end if ;
+          if not isNumber(to_char(dataLine)) then
+               dbms_output.put_line('dataLine is not a number') ;
+          end if ;
+          dbms_output.put_line('k1=' || k1) ;              
+          dbms_output.put_line('k2=' || k2) ;
+          dbms_output.put_line('k3=' || k3) ;
+          dbms_output.put_line('k4=' || k4) ;
+          dbms_output.put_line('k5=' || k5) ;
+          dbms_output.put_line('msg=' || msg) ;
           
           raise_application_error(-20010,
                 substr('amd_utils ' 
@@ -324,284 +326,284 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Utils AS
                     || k5 || ' '
                     || msg, 1,2000)) ;
                     
-	END InsertErrorMsg;
+    END InsertErrorMsg;
 
-	FUNCTION GetNsiSid(pNsn IN AMD_NSNS.nsn%TYPE) RETURN AMD_NSNS.nsi_sid%TYPE IS
-		nsi_sid AMD_NSNS.nsi_sid%TYPE := NULL ;
-	BEGIN
-		SELECT nsi_sid INTO nsi_sid
-		FROM AMD_NSNS
-		WHERE nsn = pNsn ;
-		RETURN nsi_sid ;
-	END GetNsiSid ;
+    FUNCTION GetNsiSid(pNsn IN AMD_NSNS.nsn%TYPE) RETURN AMD_NSNS.nsi_sid%TYPE IS
+        nsi_sid AMD_NSNS.nsi_sid%TYPE := NULL ;
+    BEGIN
+        SELECT nsi_sid INTO nsi_sid
+        FROM AMD_NSNS
+        WHERE nsn = pNsn ;
+        RETURN nsi_sid ;
+    END GetNsiSid ;
 
-	FUNCTION GetNsiSid(pPart_no IN AMD_NSI_PARTS.part_no%TYPE) RETURN AMD_NSI_PARTS.nsi_sid%TYPE IS
-		nsi_sid AMD_NSI_PARTS.nsi_sid%TYPE := NULL ;
-	BEGIN
-		SELECT nsi_sid INTO nsi_sid
-		FROM AMD_NSI_PARTS
-		WHERE part_no = pPart_no
-		AND unassignment_date IS NULL ;
-		RETURN nsi_sid ;
-	END GetNsiSid ;
+    FUNCTION GetNsiSid(pPart_no IN AMD_NSI_PARTS.part_no%TYPE) RETURN AMD_NSI_PARTS.nsi_sid%TYPE IS
+        nsi_sid AMD_NSI_PARTS.nsi_sid%TYPE := NULL ;
+    BEGIN
+        SELECT nsi_sid INTO nsi_sid
+        FROM AMD_NSI_PARTS
+        WHERE part_no = pPart_no
+        AND unassignment_date IS NULL ;
+        RETURN nsi_sid ;
+    END GetNsiSid ;
 
-	FUNCTION GetLocSid(pLocId AMD_SPARE_NETWORKS.loc_id%TYPE) RETURN AMD_SPARE_NETWORKS.loc_sid%TYPE IS
-		locSid AMD_SPARE_NETWORKS.loc_sid%TYPE := NULL;
-		-- locId amd_spare_networks.loc_id%type := null;
-	BEGIN
-		 /* may not always be applicable, moved to amd_from_bssm_pkg
-		 if (pLocId = amd_from_bssm_pkg.BSSM_WAREHOUSE_SRAN) then
-	    	   locId := amd_from_bssm_pkg.AMD_WAREHOUSE_LOCID;
-		 else
-		 	   locId := pLocId;
-		 end if;
-		 */
-		 SELECT loc_sid
-		 INTO locSid
-		 FROM AMD_SPARE_NETWORKS
-		 WHERE loc_id = pLocId;
-		 RETURN locSid;
-	EXCEPTION
-		 WHEN NO_DATA_FOUND THEN
-		 	  RETURN NULL;
-	END GetLocSid;
+    FUNCTION GetLocSid(pLocId AMD_SPARE_NETWORKS.loc_id%TYPE) RETURN AMD_SPARE_NETWORKS.loc_sid%TYPE IS
+        locSid AMD_SPARE_NETWORKS.loc_sid%TYPE := NULL;
+        -- locId amd_spare_networks.loc_id%type := null;
+    BEGIN
+         /* may not always be applicable, moved to amd_from_bssm_pkg
+         if (pLocId = amd_from_bssm_pkg.BSSM_WAREHOUSE_SRAN) then
+               locId := amd_from_bssm_pkg.AMD_WAREHOUSE_LOCID;
+         else
+                locId := pLocId;
+         end if;
+         */
+         SELECT loc_sid
+         INTO locSid
+         FROM AMD_SPARE_NETWORKS
+         WHERE loc_id = pLocId;
+         RETURN locSid;
+    EXCEPTION
+         WHEN NO_DATA_FOUND THEN
+               RETURN NULL;
+    END GetLocSid;
 
-	FUNCTION GetLocType(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_type%TYPE IS
-		locType AMD_SPARE_NETWORKS.loc_type%TYPE := NULL;
-	BEGIN
-		 SELECT loc_type
-		 INTO locType
-		 FROM AMD_SPARE_NETWORKS
-		 WHERE loc_sid = pLocSid;
-		 RETURN locType;
-	EXCEPTION
-		 WHEN NO_DATA_FOUND THEN
-		 	  RETURN NULL;
-	END GetLocType;
+    FUNCTION GetLocType(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_type%TYPE IS
+        locType AMD_SPARE_NETWORKS.loc_type%TYPE := NULL;
+    BEGIN
+         SELECT loc_type
+         INTO locType
+         FROM AMD_SPARE_NETWORKS
+         WHERE loc_sid = pLocSid;
+         RETURN locType;
+    EXCEPTION
+         WHEN NO_DATA_FOUND THEN
+               RETURN NULL;
+    END GetLocType;
 
-	FUNCTION GetLocId(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_id%TYPE IS
-		locId AMD_SPARE_NETWORKS.loc_id%TYPE := NULL;
-	BEGIN
-		 SELECT loc_id
-		 INTO locId
-		 FROM AMD_SPARE_NETWORKS
-		 WHERE loc_sid = pLocSid;
-		 RETURN locid;
-	EXCEPTION
-		 WHEN NO_DATA_FOUND THEN
-		 	  RETURN NULL;
-	END GetLocId;
+    FUNCTION GetLocId(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_id%TYPE IS
+        locId AMD_SPARE_NETWORKS.loc_id%TYPE := NULL;
+    BEGIN
+         SELECT loc_id
+         INTO locId
+         FROM AMD_SPARE_NETWORKS
+         WHERE loc_sid = pLocSid;
+         RETURN locid;
+    EXCEPTION
+         WHEN NO_DATA_FOUND THEN
+               RETURN NULL;
+    END GetLocId;
 
-	procedure writeMsg(
-			pSourceName in varchar2,
-			pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
-			pError_location IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
-			pKey1 IN VARCHAR2 := '',
-			pKey2 IN VARCHAR2 := '',
-			pKey3 IN VARCHAR2 := '',
-			pKey4 in varchar2 := '',
-			pData IN VARCHAR2 := '',
-			pComments IN VARCHAR2 := '')  IS
-	BEGIN
-		Amd_Utils.InsertErrorMsg (
-				pLoad_no => Amd_Utils.GetLoadNo(pSourceName => pSourceName,	pTableName  => pTableName),
-				pData_line_no => pError_location,
-				pData_line    => pData,
-				pKey_1 => SUBSTR(pKey1,1,50),
-				pKey_2 => SUBSTR(pKey2,1,50),
-				pKey_3 => substr(pKey3,1,50),
-				pKey_4 => substr(pKey4,1,50),
-				pKey_5 => TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
-				pComments => 'sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ' || pComments);
-	end writeMsg ;
-
-
-	-- NOTE: this routine does not do any commit's that is left up to the user of the routine
-	PROCEDURE debugMsg(pMsg IN AMD_LOAD_DETAILS.DATA_LINE%TYPE,
-			  pPackage IN AMD_LOAD_DETAILS.KEY_1%TYPE := 'amd_utils',
-			  pLocation IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE := 999,
-			  pMsg2 IN AMD_LOAD_DETAILS.KEY_2%TYPE := '',
-			  pMsg3 IN AMD_LOAD_DETAILS.key_3%TYPE := '',
-			  pMsg4 IN AMD_LOAD_DETAILS.key_4%TYPE := '') IS
-	BEGIN
-		IF debugCnt  <= mDebugThreshold or debug THEN
-
-		   -- dbms_output.put_line(pMsg);
-
-		   InsertErrorMsg (
-					pLoad_no => Amd_Utils.GetLoadNo(
-							pSourceName => 'debugMsg',
-							pTableName  => 'amd_load_details'),
-					pData_line_no => pLocation,
-					pData_line    => SUBSTR(pMsg,1,2000),
-					pKey_1 => SUBSTR(pPackage,1,50),
-					pKey_2 => SUBSTR(pMsg2,1,50),
-					pKey_3 =>  SUBSTR(pMsg3,1,50),
-					pKey_4 => SUBSTR(pMsg4,1,50),
-					pKey_5 => SUBSTR(to_char(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') || ' debugThreshold=' || TO_CHAR(mDebugThreshold),1,50),
-					pComments => SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ' || SUBSTR(pMsg,201),1,2000));
-
-		   debugCnt := debugCnt + 1 ;
-		END IF ;
-	EXCEPTION WHEN OTHERS THEN
-			  dbms_output.put_line('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ') ;
-	END;
-
-	PROCEDURE sendMail(senderAddress   VARCHAR2, receiverAddress VARCHAR2, subject VARCHAR2, mesg VARCHAR2) IS
-		 EmailServer     VARCHAR2(30) := 'mail.boeing.com';
-		 Port NUMBER  := 25;
-		 conn UTL_SMTP.CONNECTION;
-		 mesg_body VARCHAR2(32767) ;
-		 crlf VARCHAR2( 2 ):= CHR( 13 ) || CHR( 10 );
-	BEGIN
-		conn:= utl_smtp.open_connection( EmailServer, Port );
-		utl_smtp.helo( conn, EmailServer );
-		utl_smtp.mail( conn, senderAddress);
-		utl_smtp.rcpt( conn, receiverAddress );
-		mesg_body := 'Date: ' || TO_CHAR( SYSDATE, 'dd Mon yy hh24:mi:ss' )|| crlf ||
-		       'From:'  || senderAddress || crlf ||
-			   'Subject: ' || subject  || crlf ||
-			   'To: '|| receiverAddress || crlf ||
-			   '' || crlf || mesg ;
-
-		utl_smtp.data( conn, mesg_body );
-		utl_smtp.quit( conn );
-
-	END sendMail ;
-
-	 --- ks added 06/07/05 --
-
-	FUNCTION GetSpoLocation(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE)
-		RETURN AMD_SPARE_NETWORKS.spo_location%TYPE IS
-		retLocation AMD_SPARE_NETWORKS.spo_location%TYPE := NULL ;
-	BEGIN
-		 SELECT spo_location INTO retLocation
-	   	 	FROM AMD_SPARE_NETWORKS
-	   		WHERE loc_sid = pLocSid ;
-			RETURN retLocation ;
-	EXCEPTION WHEN OTHERS THEN
-		 RETURN NULL ;
-	END GetSpoLocation ;
-
-	FUNCTION GetPartNo(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE)
-		RETURN AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE IS
-		retPart AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE := NULL ;
-	BEGIN
-		 SELECT prime_part_no INTO retPart
-	   	 	FROM AMD_NATIONAL_STOCK_ITEMS
-	   		WHERE nsi_sid = pNsiSid AND action_code != 'D';
-		 RETURN retPart ;
-	EXCEPTION WHEN OTHERS THEN
-		RETURN NULL ;
-	END GetPartNo ;
-
-	FUNCTION GetLocationInfo(pLocSid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN
-		AMD_SPARE_NETWORKS%ROWTYPE IS
-		retRow AMD_SPARE_NETWORKS%ROWTYPE := NULL ;
-	BEGIN
-		SELECT * INTO retRow
-			FROM AMD_SPARE_NETWORKS
-			WHERE loc_sid = pLocSid ;
-		RETURN retRow ;
-	EXCEPTION WHEN OTHERS THEN
-		RETURN retRow ;
-	END GetLocationInfo ;
-
-	-- ks added 06/09/05 ---
-	FUNCTION GetNsiSidFromPartNo(pPart AMD_NSI_PARTS.part_no%TYPE)
-		 RETURN AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE IS
-		 retNsiSid AMD_NSI_PARTS.nsi_sid%TYPE  ;
-	BEGIN
-		SELECT nsi_sid INTO retNsiSid
-			FROM AMD_NSI_PARTS
-			WHERE part_no = pPart
-			AND unassignment_date IS NULL ;
-		RETURN retNsiSid ;
-	EXCEPTION WHEN NO_DATA_FOUND THEN
-		RETURN NULL ;
-	END GetNsiSidFromPartNo ;
-
-	 --  added 08/19/05
-	 FUNCTION bizDays2CalendarDays(bizDays IN INTEGER) RETURN INTEGER IS
-	 BEGIN
-	 	  RETURN ROUND((bizDays / 5) * 7) ;
-	 END bizDays2CalendarDays ;
+    procedure writeMsg(
+            pSourceName in varchar2,
+            pTableName IN AMD_LOAD_STATUS.TABLE_NAME%TYPE,
+            pError_location IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE,
+            pKey1 IN VARCHAR2 := '',
+            pKey2 IN VARCHAR2 := '',
+            pKey3 IN VARCHAR2 := '',
+            pKey4 in varchar2 := '',
+            pData IN VARCHAR2 := '',
+            pComments IN VARCHAR2 := '')  IS
+    BEGIN
+        Amd_Utils.InsertErrorMsg (
+                pLoad_no => Amd_Utils.GetLoadNo(pSourceName => pSourceName,    pTableName  => pTableName),
+                pData_line_no => pError_location,
+                pData_line    => pData,
+                pKey_1 => SUBSTR(pKey1,1,50),
+                pKey_2 => SUBSTR(pKey2,1,50),
+                pKey_3 => substr(pKey3,1,50),
+                pKey_4 => substr(pKey4,1,50),
+                pKey_5 => TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+                pComments => 'sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ' || pComments);
+    end writeMsg ;
 
 
-	 --  added 08/19/05
-	 FUNCTION months2CalendarDays(months IN DECIMAL) RETURN NUMBER IS
-	 BEGIN
-	 	  RETURN ROUND(months * 30) ;
-	 END months2CalendarDays ;
+    -- NOTE: this routine does not do any commit's that is left up to the user of the routine
+    PROCEDURE debugMsg(pMsg IN AMD_LOAD_DETAILS.DATA_LINE%TYPE,
+              pPackage IN AMD_LOAD_DETAILS.KEY_1%TYPE := 'amd_utils',
+              pLocation IN AMD_LOAD_DETAILS.DATA_LINE_NO%TYPE := 999,
+              pMsg2 IN AMD_LOAD_DETAILS.KEY_2%TYPE := '',
+              pMsg3 IN AMD_LOAD_DETAILS.key_3%TYPE := '',
+              pMsg4 IN AMD_LOAD_DETAILS.key_4%TYPE := '') IS
+    BEGIN
+        IF debugCnt  <= mDebugThreshold or debug THEN
 
-	 --  added 08/19/05
-	 FUNCTION getSiteLocation(loc_sid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN
-	    AMD_SPARE_NETWORKS.loc_id%TYPE IS
+           -- dbms_output.put_line(pMsg);
 
-	    loc_id AMD_SPARE_NETWORKS.loc_id%TYPE ;
-	 BEGIN
-	  SELECT loc_id INTO loc_id
-	  FROM AMD_SPARE_NETWORKS
-	  WHERE loc_sid = getsitelocation.loc_sid ;
+           InsertErrorMsg (
+                    pLoad_no => Amd_Utils.GetLoadNo(
+                            pSourceName => 'debugMsg',
+                            pTableName  => 'amd_load_details'),
+                    pData_line_no => pLocation,
+                    pData_line    => SUBSTR(pMsg,1,2000),
+                    pKey_1 => SUBSTR(pPackage,1,50),
+                    pKey_2 => SUBSTR(pMsg2,1,50),
+                    pKey_3 =>  SUBSTR(pMsg3,1,50),
+                    pKey_4 => SUBSTR(pMsg4,1,50),
+                    pKey_5 => SUBSTR(to_char(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') || ' debugThreshold=' || TO_CHAR(mDebugThreshold),1,50),
+                    pComments => SUBSTR('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ' || SUBSTR(pMsg,201),1,2000));
 
-	  RETURN loc_id ;
-	 END getSiteLocation ;
+           debugCnt := debugCnt + 1 ;
+        END IF ;
+    EXCEPTION WHEN OTHERS THEN
+              dbms_output.put_line('sqlcode('||SQLCODE||') sqlerrm('||SQLERRM||') ') ;
+    END;
 
-	 FUNCTION getLocType(loc_sid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_type%TYPE IS
-	 		  loc_type AMD_SPARE_NETWORKS.loc_type%TYPE ;
-	 BEGIN
-	 	  SELECT loc_type INTO loc_type FROM AMD_SPARE_NETWORKS WHERE loc_sid = getLocType.loc_sid ;
-		  RETURN loc_type ;
+    PROCEDURE sendMail(senderAddress   VARCHAR2, receiverAddress VARCHAR2, subject VARCHAR2, mesg VARCHAR2) IS
+         EmailServer     VARCHAR2(30) := 'mail.boeing.com';
+         Port NUMBER  := 25;
+         conn UTL_SMTP.CONNECTION;
+         mesg_body VARCHAR2(32767) ;
+         crlf VARCHAR2( 2 ):= CHR( 13 ) || CHR( 10 );
+    BEGIN
+        conn:= utl_smtp.open_connection( EmailServer, Port );
+        utl_smtp.helo( conn, EmailServer );
+        utl_smtp.mail( conn, senderAddress);
+        utl_smtp.rcpt( conn, receiverAddress );
+        mesg_body := 'Date: ' || TO_CHAR( SYSDATE, 'dd Mon yy hh24:mi:ss' )|| crlf ||
+               'From:'  || senderAddress || crlf ||
+               'Subject: ' || subject  || crlf ||
+               'To: '|| receiverAddress || crlf ||
+               '' || crlf || mesg ;
 
-	 EXCEPTION
-	 	  WHEN standard.NO_DATA_FOUND THEN
-		  	   RETURN NULL ;
-	 END getLocType ;
+        utl_smtp.data( conn, mesg_body );
+        utl_smtp.quit( conn );
 
-	 FUNCTION isPrimePart(part_no IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN IS
-	 		  prime_part_no AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE ;
-	 BEGIN
-	 	  SELECT sp.part_no INTO prime_part_no
-		  FROM AMD_SPARE_PARTS sp,
-		  AMD_NSI_PARTS np
-		  WHERE action_code != 'D'
-		  AND sp.part_no = isPrimePart.part_no
-		  AND sp.part_no = np.part_no
-		  AND np.UNASSIGNMENT_DATE IS  NULL
-		  AND np.PRIME_IND = 'Y' ;
-		  RETURN TRUE ;
-	 EXCEPTION
-	 	WHEN standard.NO_DATA_FOUND THEN
-			 RETURN FALSE ;
-	 END isPrimePart ;
+    END sendMail ;
 
-	 FUNCTION isPrimePartYorN(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 IS
-	 BEGIN
-	 	  IF isPrimePart(part_no) THEN
-		  	 RETURN 'Y' ;
-		  ELSE
-		     RETURN 'N' ;
-		  END IF ;
-	 END isPrimePartYorN ;
+     --- ks added 06/07/05 --
 
-	 FUNCTION getPrimePart(part_no AMD_NSI_PARTS.part_no%TYPE) RETURN AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE IS
-	 		  prime_part_no AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE ;
-	 BEGIN
-	 	  SELECT items.prime_part_no INTO prime_part_no
-		  FROM AMD_NATIONAL_STOCK_ITEMS items,
-		  AMD_NSI_PARTS parts
-		  WHERE items.nsi_sid = (SELECT nsi_sid FROM AMD_NSI_PARTS parts WHERE getPrimePart.part_no = parts.part_no AND parts.unassignment_date IS NULL)
-		  AND items.action_code != 'D'
-		  AND items.nsi_sid = parts.nsi_sid
-		  AND parts.prime_ind = 'Y'
-		  AND parts.UNASSIGNMENT_DATE IS NULL ;
+    FUNCTION GetSpoLocation(pLocSid AMD_SPARE_NETWORKS.loc_sid%TYPE)
+        RETURN AMD_SPARE_NETWORKS.spo_location%TYPE IS
+        retLocation AMD_SPARE_NETWORKS.spo_location%TYPE := NULL ;
+    BEGIN
+         SELECT spo_location INTO retLocation
+                FROM AMD_SPARE_NETWORKS
+               WHERE loc_sid = pLocSid ;
+            RETURN retLocation ;
+    EXCEPTION WHEN OTHERS THEN
+         RETURN NULL ;
+    END GetSpoLocation ;
 
-		  RETURN prime_part_no ;
+    FUNCTION GetPartNo(pNsiSid AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE)
+        RETURN AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE IS
+        retPart AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE := NULL ;
+    BEGIN
+         SELECT prime_part_no INTO retPart
+                FROM AMD_NATIONAL_STOCK_ITEMS
+               WHERE nsi_sid = pNsiSid AND action_code != 'D';
+         RETURN retPart ;
+    EXCEPTION WHEN OTHERS THEN
+        RETURN NULL ;
+    END GetPartNo ;
 
-	 EXCEPTION
-	 	  WHEN standard.NO_DATA_FOUND THEN
-		  	   RETURN NULL ;
-	 END getPrimePart ;
+    FUNCTION GetLocationInfo(pLocSid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN
+        AMD_SPARE_NETWORKS%ROWTYPE IS
+        retRow AMD_SPARE_NETWORKS%ROWTYPE := NULL ;
+    BEGIN
+        SELECT * INTO retRow
+            FROM AMD_SPARE_NETWORKS
+            WHERE loc_sid = pLocSid ;
+        RETURN retRow ;
+    EXCEPTION WHEN OTHERS THEN
+        RETURN retRow ;
+    END GetLocationInfo ;
+
+    -- ks added 06/09/05 ---
+    FUNCTION GetNsiSidFromPartNo(pPart AMD_NSI_PARTS.part_no%TYPE)
+         RETURN AMD_NATIONAL_STOCK_ITEMS.nsi_sid%TYPE IS
+         retNsiSid AMD_NSI_PARTS.nsi_sid%TYPE  ;
+    BEGIN
+        SELECT nsi_sid INTO retNsiSid
+            FROM AMD_NSI_PARTS
+            WHERE part_no = pPart
+            AND unassignment_date IS NULL ;
+        RETURN retNsiSid ;
+    EXCEPTION WHEN NO_DATA_FOUND THEN
+        RETURN NULL ;
+    END GetNsiSidFromPartNo ;
+
+     --  added 08/19/05
+     FUNCTION bizDays2CalendarDays(bizDays IN INTEGER) RETURN INTEGER IS
+     BEGIN
+           RETURN ROUND((bizDays / 5) * 7) ;
+     END bizDays2CalendarDays ;
+
+
+     --  added 08/19/05
+     FUNCTION months2CalendarDays(months IN DECIMAL) RETURN NUMBER IS
+     BEGIN
+           RETURN ROUND(months * 30) ;
+     END months2CalendarDays ;
+
+     --  added 08/19/05
+     FUNCTION getSiteLocation(loc_sid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN
+        AMD_SPARE_NETWORKS.loc_id%TYPE IS
+
+        loc_id AMD_SPARE_NETWORKS.loc_id%TYPE ;
+     BEGIN
+      SELECT loc_id INTO loc_id
+      FROM AMD_SPARE_NETWORKS
+      WHERE loc_sid = getsitelocation.loc_sid ;
+
+      RETURN loc_id ;
+     END getSiteLocation ;
+
+     FUNCTION getLocType(loc_sid IN AMD_SPARE_NETWORKS.loc_sid%TYPE) RETURN AMD_SPARE_NETWORKS.loc_type%TYPE IS
+               loc_type AMD_SPARE_NETWORKS.loc_type%TYPE ;
+     BEGIN
+           SELECT loc_type INTO loc_type FROM AMD_SPARE_NETWORKS WHERE loc_sid = getLocType.loc_sid ;
+          RETURN loc_type ;
+
+     EXCEPTION
+           WHEN standard.NO_DATA_FOUND THEN
+                 RETURN NULL ;
+     END getLocType ;
+
+     FUNCTION isPrimePart(part_no IN AMD_SPARE_PARTS.part_no%TYPE) RETURN BOOLEAN IS
+               prime_part_no AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE ;
+     BEGIN
+           SELECT sp.part_no INTO prime_part_no
+          FROM AMD_SPARE_PARTS sp,
+          AMD_NSI_PARTS np
+          WHERE action_code != 'D'
+          AND sp.part_no = isPrimePart.part_no
+          AND sp.part_no = np.part_no
+          AND np.UNASSIGNMENT_DATE IS  NULL
+          AND np.PRIME_IND = 'Y' ;
+          RETURN TRUE ;
+     EXCEPTION
+         WHEN standard.NO_DATA_FOUND THEN
+             RETURN FALSE ;
+     END isPrimePart ;
+
+     FUNCTION isPrimePartYorN(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN VARCHAR2 IS
+     BEGIN
+           IF isPrimePart(part_no) THEN
+               RETURN 'Y' ;
+          ELSE
+             RETURN 'N' ;
+          END IF ;
+     END isPrimePartYorN ;
+
+     FUNCTION getPrimePart(part_no AMD_NSI_PARTS.part_no%TYPE) RETURN AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE IS
+               prime_part_no AMD_NATIONAL_STOCK_ITEMS.prime_part_no%TYPE ;
+     BEGIN
+           SELECT items.prime_part_no INTO prime_part_no
+          FROM AMD_NATIONAL_STOCK_ITEMS items,
+          AMD_NSI_PARTS parts
+          WHERE items.nsi_sid = (SELECT nsi_sid FROM AMD_NSI_PARTS parts WHERE getPrimePart.part_no = parts.part_no AND parts.unassignment_date IS NULL)
+          AND items.action_code != 'D'
+          AND items.nsi_sid = parts.nsi_sid
+          AND parts.prime_ind = 'Y'
+          AND parts.UNASSIGNMENT_DATE IS NULL ;
+
+          RETURN prime_part_no ;
+
+     EXCEPTION
+           WHEN standard.NO_DATA_FOUND THEN
+                 RETURN NULL ;
+     END getPrimePart ;
      
     function isSpoPrimePart(part_no in amd_spare_parts.part_no%type) return boolean is
         result number := 0 ;
@@ -617,7 +619,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Utils AS
     exception when standard.no_data_found then
         return false ;        
     end isSpoPrimePart ;
-	
+    
 function isSpoPrimePartYorN(part_no in amd_spare_parts.part_no%type) return varchar2 is
 begin
     if isSpoPrimePart(part_no) then
@@ -626,153 +628,153 @@ begin
     return 'N' ;
 end isSpoPrimePartYorN ;
 
-	FUNCTION getEquivalentParts(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN equivalent_parts IS
-			 equivParts equivalent_parts ;
-			 rec AMD_SPARE_PARTS%ROWTYPE ;
-	 BEGIN
-	 	  OPEN equivParts FOR
-		  SELECT * FROM AMD_SPARE_PARTS parts
-		  WHERE parts.part_no IN
-		    (SELECT part_no FROM AMD_NSI_PARTS nsi
-			 WHERE nsi.nsi_sid = (
-			 	   			   SELECT nsi_sid
-							   FROM AMD_NATIONAL_STOCK_ITEMS
-							   WHERE prime_part_no = Amd_Utils.getPrimePart(getEquivalentParts.part_no)
-							   AND action_code != 'D'
-							    )
-			AND nsi.unassignment_date IS NULL
-			AND nsi.prime_ind != 'Y' );
+    FUNCTION getEquivalentParts(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN equivalent_parts IS
+             equivParts equivalent_parts ;
+             rec AMD_SPARE_PARTS%ROWTYPE ;
+     BEGIN
+           OPEN equivParts FOR
+          SELECT * FROM AMD_SPARE_PARTS parts
+          WHERE parts.part_no IN
+            (SELECT part_no FROM AMD_NSI_PARTS nsi
+             WHERE nsi.nsi_sid = (
+                                   SELECT nsi_sid
+                               FROM AMD_NATIONAL_STOCK_ITEMS
+                               WHERE prime_part_no = Amd_Utils.getPrimePart(getEquivalentParts.part_no)
+                               AND action_code != 'D'
+                                )
+            AND nsi.unassignment_date IS NULL
+            AND nsi.prime_ind != 'Y' );
 
-	 	  RETURN equivParts ;
+           RETURN equivParts ;
 
-	 END getEquivalentParts ;
+     END getEquivalentParts ;
 
-	FUNCTION equivalentParts(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN parts PIPELINED IS
-			 equivParts equivalent_parts ;
-			 rec AMD_SPARE_PARTS%ROWTYPE ;
-	 BEGIN
-	 	  OPEN equivParts FOR
-		  SELECT * FROM AMD_SPARE_PARTS parts
-		  WHERE parts.part_no IN
-		    (SELECT part_no FROM AMD_NSI_PARTS nsi
-			 WHERE nsi.nsi_sid = (
-			 	   			   SELECT nsi_sid
-							   FROM AMD_NATIONAL_STOCK_ITEMS
-							   WHERE prime_part_no = Amd_Utils.getPrimePart(equivalentParts.part_no)
-							   AND action_code != 'D'
-							    )
-			AND nsi.unassignment_date IS NULL
-			AND nsi.prime_ind != 'Y' );
-		  LOOP
-		  	  FETCH equivParts INTO rec ;
-			  EXIT WHEN equivParts%NOTFOUND ;
-	 	  	  pipe ROW(rec) ;
-		  END LOOP ;
-		  RETURN ;
-	 END equivalentParts ;
+    FUNCTION equivalentParts(part_no AMD_SPARE_PARTS.part_no%TYPE) RETURN parts PIPELINED IS
+             equivParts equivalent_parts ;
+             rec AMD_SPARE_PARTS%ROWTYPE ;
+     BEGIN
+           OPEN equivParts FOR
+          SELECT * FROM AMD_SPARE_PARTS parts
+          WHERE parts.part_no IN
+            (SELECT part_no FROM AMD_NSI_PARTS nsi
+             WHERE nsi.nsi_sid = (
+                                   SELECT nsi_sid
+                               FROM AMD_NATIONAL_STOCK_ITEMS
+                               WHERE prime_part_no = Amd_Utils.getPrimePart(equivalentParts.part_no)
+                               AND action_code != 'D'
+                                )
+            AND nsi.unassignment_date IS NULL
+            AND nsi.prime_ind != 'Y' );
+          LOOP
+                FETCH equivParts INTO rec ;
+              EXIT WHEN equivParts%NOTFOUND ;
+                 pipe ROW(rec) ;
+          END LOOP ;
+          RETURN ;
+     END equivalentParts ;
 
-	-- added 9/7/2005 dse
-	FUNCTION splitString(text IN VARCHAR2, delim IN VARCHAR2 := ',') RETURN arrayOfWords IS
-			 word VARCHAR2(512) ;
-			 words arrayOfWords := arrayOfWords() ;
-			 x NUMBER := 0 ;
-
-
-			 PROCEDURE addWord IS
-			 BEGIN
-			 	 x := x + 1 ;
-				 words.extend ;
-				 words(x) := word ;
-				 word := NULL ;
-			 END addWord ;
+    -- added 9/7/2005 dse
+    FUNCTION splitString(text IN VARCHAR2, delim IN VARCHAR2 := ',') RETURN arrayOfWords IS
+             word VARCHAR2(512) ;
+             words arrayOfWords := arrayOfWords() ;
+             x NUMBER := 0 ;
 
 
-	BEGIN
-		 IF LENGTH(text) > 0 THEN
-			 FOR i IN 1..LENGTH(text) LOOP
-			 	 IF SUBSTR(text,i,1) != delim THEN
-				 	word := word || SUBSTR(text,i,1) ;
-				 ELSE
-				 	 addWord ;
-				 END IF ;
-				 IF LENGTH(text) > 0 AND i = LENGTH(text) THEN
-				 	addWord ;
-				 END IF ;
-			 END LOOP ;
-		 END IF ;
-		 RETURN words ;
-	END splitString ;
+             PROCEDURE addWord IS
+             BEGIN
+                  x := x + 1 ;
+                 words.extend ;
+                 words(x) := word ;
+                 word := NULL ;
+             END addWord ;
 
-	FUNCTION joinString(words IN arrayOfWords, delim IN VARCHAR2 := ',') RETURN VARCHAR2 IS
-			 buf VARCHAR2(512) := '' ;
-	BEGIN
 
-		 IF words.COUNT() > 0 THEN
-			 FOR i IN words.first..words.last LOOP
-			 	 IF i != words.last THEN
-					buf := buf || words(i) || delim ;
-				 ELSE
-				 	buf := buf || words(i) ;
-				 END IF ;
-			 END LOOP ;
-		 END IF ;
-		 RETURN buf ;
-	END joinString ;
+    BEGIN
+         IF LENGTH(text) > 0 THEN
+             FOR i IN 1..LENGTH(text) LOOP
+                  IF SUBSTR(text,i,1) != delim THEN
+                     word := word || SUBSTR(text,i,1) ;
+                 ELSE
+                      addWord ;
+                 END IF ;
+                 IF LENGTH(text) > 0 AND i = LENGTH(text) THEN
+                     addWord ;
+                 END IF ;
+             END LOOP ;
+         END IF ;
+         RETURN words ;
+    END splitString ;
 
-	FUNCTION getCageCode(part_no IN VARCHAR2) RETURN VARCHAR2 IS
-			  cageCode AMD_SPARE_PARTS.mfgr%TYPE ;
-	BEGIN
-		  SELECT mfgr INTO cageCode FROM AMD_SPARE_PARTS WHERE part_no = getCageCode.part_no ;
-	  RETURN cageCode ;
-	EXCEPTION WHEN standard.NO_DATA_FOUND THEN
-		  RETURN NULL ;
-	END getCageCode ;
+    FUNCTION joinString(words IN arrayOfWords, delim IN VARCHAR2 := ',') RETURN VARCHAR2 IS
+             buf VARCHAR2(512) := '' ;
+    BEGIN
 
-	FUNCTION getUnitCostDefaulted(part_no IN VARCHAR2) RETURN AMD_SPARE_PARTS.unit_cost_defaulted%TYPE IS
-			 nsn AMD_SPARE_PARTS.nsn%TYPE ;
-			 mfgr AMD_SPARE_PARTS.mfgr%TYPE ;
-			 smr_code AMD_NATIONAL_STOCK_ITEMS.smr_code%TYPE ;
-			 planner_code AMD_NATIONAL_STOCK_ITEMS.planner_code%TYPE ;
-	BEGIN
-		 SELECT nsn, mfgr INTO nsn, mfgr
-		 FROM AMD_SPARE_PARTS
-		 WHERE part_no = getUnitCostDefaulted.part_no
-		 AND action_code != Amd_Defaults.DELETE_ACTION ;
+         IF words.COUNT() > 0 THEN
+             FOR i IN words.first..words.last LOOP
+                  IF i != words.last THEN
+                    buf := buf || words(i) || delim ;
+                 ELSE
+                     buf := buf || words(i) ;
+                 END IF ;
+             END LOOP ;
+         END IF ;
+         RETURN buf ;
+    END joinString ;
 
-		 SELECT smr_code, planner_code INTO smr_code, planner_code
-		 FROM AMD_NATIONAL_STOCK_ITEMS items,
-		 AMD_SPARE_PARTS parts
-		 WHERE parts.part_no = getUnitCostDefaulted.part_no
-		 AND parts.nsn = items.nsn
-		 AND items.action_code != Amd_Defaults.DELETE_ACTION ;
-		 RETURN Amd_Defaults.GetUnitCost(pNsn => nsn, pPart_no => part_no,pMfgr => mfgr, pSmr_code => smr_code, pPlanner_code => planner_code)  ;
-	EXCEPTION WHEN standard.NO_DATA_FOUND THEN
-			  RETURN NULL ;
-	END getUnitCostDefaulted ;
+    FUNCTION getCageCode(part_no IN VARCHAR2) RETURN VARCHAR2 IS
+              cageCode AMD_SPARE_PARTS.mfgr%TYPE ;
+    BEGIN
+          SELECT mfgr INTO cageCode FROM AMD_SPARE_PARTS WHERE part_no = getCageCode.part_no ;
+      RETURN cageCode ;
+    EXCEPTION WHEN standard.NO_DATA_FOUND THEN
+          RETURN NULL ;
+    END getCageCode ;
 
-	function boolean2Varchar2(theValue in boolean, YorN in boolean := false) return varchar2 is
-	begin
-		 if theValue then
-		 	if YorN then
-			   return 'Y' ;
-			else
-		 		return 'true' ;
-			end if ;
-		 else
-		    if YorN then
-			   return 'N' ;
-			else
-		 		 return 'false' ;
-			end if ;
-		 end if ;
-	end boolean2Varchar2 ;
+    FUNCTION getUnitCostDefaulted(part_no IN VARCHAR2) RETURN AMD_SPARE_PARTS.unit_cost_defaulted%TYPE IS
+             nsn AMD_SPARE_PARTS.nsn%TYPE ;
+             mfgr AMD_SPARE_PARTS.mfgr%TYPE ;
+             smr_code AMD_NATIONAL_STOCK_ITEMS.smr_code%TYPE ;
+             planner_code AMD_NATIONAL_STOCK_ITEMS.planner_code%TYPE ;
+    BEGIN
+         SELECT nsn, mfgr INTO nsn, mfgr
+         FROM AMD_SPARE_PARTS
+         WHERE part_no = getUnitCostDefaulted.part_no
+         AND action_code != Amd_Defaults.DELETE_ACTION ;
 
-	procedure version is
-	begin
-		 amd_utils.writeMsg(pSourceName => 'amd_utils', pTableName => 'amd_utils',
-		 		pError_location => 999, pKey1 => 'amd_utils', pKey2 => '$Revision:   1.66  $') ;
-		 dbms_output.put_line('amd_utils: $Revision:   1.66  $') ;
-	end version ;
+         SELECT smr_code, planner_code INTO smr_code, planner_code
+         FROM AMD_NATIONAL_STOCK_ITEMS items,
+         AMD_SPARE_PARTS parts
+         WHERE parts.part_no = getUnitCostDefaulted.part_no
+         AND parts.nsn = items.nsn
+         AND items.action_code != Amd_Defaults.DELETE_ACTION ;
+         RETURN Amd_Defaults.GetUnitCost(pNsn => nsn, pPart_no => part_no,pMfgr => mfgr, pSmr_code => smr_code, pPlanner_code => planner_code)  ;
+    EXCEPTION WHEN standard.NO_DATA_FOUND THEN
+              RETURN NULL ;
+    END getUnitCostDefaulted ;
+
+    function boolean2Varchar2(theValue in boolean, YorN in boolean := false) return varchar2 is
+    begin
+         if theValue then
+             if YorN then
+               return 'Y' ;
+            else
+                 return 'true' ;
+            end if ;
+         else
+            if YorN then
+               return 'N' ;
+            else
+                  return 'false' ;
+            end if ;
+         end if ;
+    end boolean2Varchar2 ;
+
+    procedure version is
+    begin
+         amd_utils.writeMsg(pSourceName => 'amd_utils', pTableName => 'amd_utils',
+                 pError_location => 999, pKey1 => 'amd_utils', pKey2 => '$Revision:   1.66  $') ;
+         dbms_output.put_line('amd_utils: $Revision:   1.66  $') ;
+    end version ;
 
     function getVersion return varchar2 is
     begin
@@ -780,13 +782,13 @@ end isSpoPrimePartYorN ;
     end getVersion ;
 
    FUNCTION getSpoPrimePartNo(part_no AMD_spare_parts.part_no%TYPE) RETURN AMD_spare_parts.SPO_PRIME_PART_NO%TYPE IS
-   			spo_prime_part_no AMD_spare_parts.SPO_PRIME_PART_NO%TYPE ;
+               spo_prime_part_no AMD_spare_parts.SPO_PRIME_PART_NO%TYPE ;
    BEGIN
-   		SELECT DISTINCT spo_prime_part_no INTO spo_prime_part_no 
-		FROM amd_spare_parts
-		WHERE part_no = getSpoPrimePartNo.part_no
+           SELECT DISTINCT spo_prime_part_no INTO spo_prime_part_no 
+        FROM amd_spare_parts
+        WHERE part_no = getSpoPrimePartNo.part_no
         and is_spo_part = 'Y' ;           
-		RETURN spo_prime_part_no ;
+        RETURN spo_prime_part_no ;
    exception when no_data_found then
         return null ;        
    END getSpoPrimePartNo ;
@@ -797,7 +799,7 @@ end isSpoPrimePartYorN ;
         nsn amd_national_stock_items.nsn%type) return boolean is
              result boolean := false ;
    begin
-	return not isRepairableSmrCode(preferred_smr_code) ;
+    return not isRepairableSmrCode(preferred_smr_code) ;
    end isPartConsumable ;
    
    function isPartConsumableYorN(preferred_smr_code amd_national_stock_items.smr_code%type,
@@ -814,17 +816,17 @@ end isSpoPrimePartYorN ;
                 
    function isPartConsumable(part_no amd_spare_parts.part_no%type) return boolean is
     
-			 preferred_smr_code amd_national_stock_items.smr_code%type ;
+             preferred_smr_code amd_national_stock_items.smr_code%type ;
              preferred_planner_code amd_national_stock_items.planner_code%type;
              nsn amd_national_stock_items.nsn%type ;
-	begin
-		return not isPartRepairable(part_no) ;
+    begin
+        return not isPartRepairable(part_no) ;
 
-	exception when standard.no_data_found then
-			  return false ;		 
-	end isPartConsumable ;
+    exception when standard.no_data_found then
+              return false ;         
+    end isPartConsumable ;
 
-   	function isPartConsumableYorN(part_no amd_spare_parts.part_no%type) return varchar2 is
+       function isPartConsumableYorN(part_no amd_spare_parts.part_no%type) return varchar2 is
     begin
         if isPartConsumable(part_no) then
             return 'Y' ;
@@ -856,19 +858,19 @@ end isSpoPrimePartYorN ;
     function isWesmPartYorN(part_no in amd_national_stock_items.prime_part_no%type) return varchar2 is
     begin
         if isWesmPart(part_no) then
-	        return 'Y';
+            return 'Y';
         end if; 
             return 'N';
     end isWesmPartYorN ;
 
     
     -- this was written to be used by a trigger to avoid ora-04091 - table name is mutating
-   	function isRepairableSmrCode(preferred_smr_code amd_national_stock_items.smr_code%type) return boolean is
+       function isRepairableSmrCode(preferred_smr_code amd_national_stock_items.smr_code%type) return boolean is
     begin
         return preferred_smr_code is not null and length(preferred_smr_code) >= 6 and upper(substr(preferred_smr_code,6,1)) = 'T' ;
     end isRepairableSmrCode ;             
 
-   	function isRepairableSmrCodeYorN(preferred_smr_code amd_national_stock_items.smr_code%type) return varchar2 is
+       function isRepairableSmrCodeYorN(preferred_smr_code amd_national_stock_items.smr_code%type) return varchar2 is
     begin
         if isRepairableSmrCode(preferred_smr_code => preferred_smr_code) then
             return 'Y' ;
@@ -878,55 +880,55 @@ end isSpoPrimePartYorN ;
     end isRepairableSmrCodeYorN ;
 
     
-   	function isPartRepairable(part_no amd_spare_parts.part_no%type) return boolean is
-			 preferred_smr_code amd_national_stock_items.smr_code%type ;
-	begin
-		 select amd_preferred_pkg.getPreferredValue(smr_code_cleaned, smr_code) into preferred_smr_code 
-		 from amd_spare_parts parts, 
-		 amd_national_stock_items items
-		 where parts.part_no = isPartRepairable.part_no
-		 and parts.nsn = items.nsn ;
+       function isPartRepairable(part_no amd_spare_parts.part_no%type) return boolean is
+             preferred_smr_code amd_national_stock_items.smr_code%type ;
+    begin
+         select amd_preferred_pkg.getPreferredValue(smr_code_cleaned, smr_code) into preferred_smr_code 
+         from amd_spare_parts parts, 
+         amd_national_stock_items items
+         where parts.part_no = isPartRepairable.part_no
+         and parts.nsn = items.nsn ;
          
          return isRepairableSmrCode(preferred_smr_code => preferred_smr_code) ;
          
-	exception when standard.no_data_found then
-			  return false ;		 
-	end isPartRepairable ;
-	
-	function isPartRepairableYorN(part_no amd_spare_parts.part_no%type) return varchar2 is
-	begin
-		 if isPartRepairable(part_no) then
-		 	return 'Y' ;
-		 else
-		 	return 'N' ;
-		 end if ;
-	end isPartRepairableYorN ;
+    exception when standard.no_data_found then
+              return false ;         
+    end isPartRepairable ;
+    
+    function isPartRepairableYorN(part_no amd_spare_parts.part_no%type) return varchar2 is
+    begin
+         if isPartRepairable(part_no) then
+             return 'Y' ;
+         else
+             return 'N' ;
+         end if ;
+    end isPartRepairableYorN ;
 
-	function isNumber( p_string in varchar2 ) return boolean
-	is
-	   l_number number;
-	begin
-	   l_number := P_string;
-	   return true;
-	exception 
-	   when others then return false;
-	end;
-	
-	function isNumberYorN( p_string in varchar2 ) return varchar2 is
-	begin
-		 if isNumber(p_string) then
-		 	return 'Y' ;
-		else
-			return 'N' ;
-		end if ;
-	end isNumberYorN ;
-		   
-	function isDiff(oldText in varchar2, newText in varchar2) return boolean is
-	begin
-		 return oldText <> newText 
-		 		or (oldText is null and newText is not null) 
-				or (oldText is not null and newText is null) ;
-	end isDiff ;
+    function isNumber( p_string in varchar2 ) return boolean
+    is
+       l_number number;
+    begin
+       l_number := P_string;
+       return true;
+    exception 
+       when others then return false;
+    end;
+    
+    function isNumberYorN( p_string in varchar2 ) return varchar2 is
+    begin
+         if isNumber(p_string) then
+             return 'Y' ;
+        else
+            return 'N' ;
+        end if ;
+    end isNumberYorN ;
+           
+    function isDiff(oldText in varchar2, newText in varchar2) return boolean is
+    begin
+         return oldText <> newText 
+                 or (oldText is null and newText is not null) 
+                or (oldText is not null and newText is null) ;
+    end isDiff ;
     
     function isDiffYorN(oldText in varchar2, newText in varchar2) return varchar2 is
     begin
@@ -936,13 +938,13 @@ end isSpoPrimePartYorN ;
             return 'N' ;
         end if ;                        
     end isDiffYorN ;
-	
-	function isDiff(oldNum in number, newNum in number) return boolean is
-	begin
-		 return (oldNum <> newNum)
-		 		or (oldNum is null and newNum is not null) 
-				or (oldNum is not null and newNum is null) ;
-	end isDiff ;
+    
+    function isDiff(oldNum in number, newNum in number) return boolean is
+    begin
+         return (oldNum <> newNum)
+                 or (oldNum is null and newNum is not null) 
+                or (oldNum is not null and newNum is null) ;
+    end isDiff ;
     
     function isDiffYorN(oldNum in number, newNum in number) return varchar2 is
     begin
@@ -953,12 +955,12 @@ end isSpoPrimePartYorN ;
         end if ;                        
     end isDiffYorN ;
 
-	function isDiff(oldDate in date, newDate in Date) return boolean is
-	begin
-		 return (oldDate <> newDate)
-		 		or (oldDate is null and newDate is not null) 
-				or (oldDate is not null and newDate is null) ;
-	end isDiff ;
+    function isDiff(oldDate in date, newDate in Date) return boolean is
+    begin
+         return (oldDate <> newDate)
+                 or (oldDate is null and newDate is not null) 
+                or (oldDate is not null and newDate is null) ;
+    end isDiff ;
     
     function isDiffYorN(oldDate in date, newDate in Date) return varchar2 is
     begin
@@ -968,75 +970,75 @@ end isSpoPrimePartYorN ;
             return 'N' ;
         end if ;                        
     end isDiffYorN ;
-	
-	function getNsn(part_no in amd_spare_parts.part_no%type) return amd_spare_parts.nsn%type is
-			 theNsn amd_spare_parts.nsn%type ;
-	begin
-		 select nsn into theNsn from amd_spare_parts where part_no = getNsn.part_no ;
-		 return theNsn ;
-	exception when standard.no_data_found then
-		 return null ;
-	end getNsn ;
-	
-	function rank(orderOfUsage in varchar2) return number is
-			 i number ;
-			 j number ;
-			 exp number := 0 ;
-			 cnt number := 0 ;
-			 countingChars varchar2(36) := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' ;
+    
+    function getNsn(part_no in amd_spare_parts.part_no%type) return amd_spare_parts.nsn%type is
+             theNsn amd_spare_parts.nsn%type ;
+    begin
+         select nsn into theNsn from amd_spare_parts where part_no = getNsn.part_no ;
+         return theNsn ;
+    exception when standard.no_data_found then
+         return null ;
+    end getNsn ;
+    
+    function rank(orderOfUsage in varchar2) return number is
+             i number ;
+             j number ;
+             exp number := 0 ;
+             cnt number := 0 ;
+             countingChars varchar2(36) := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' ;
  
-	begin
-		 
-		 for i in reverse  1..length(orderOfUsage) loop
-		 	 --dbms_output.put_line('i=' || i) ;
-			 for j in 0..35 loop
-			 	 if substr(countingChars,j+1,1) = substr(orderOfUsage,i,1) then
-				 	cnt := cnt + (j * 36 ** exp) ;
-					exit ;
-				 end if ;
-			 end loop ;	  
-			 exp := exp + 1 ; 
-		 end loop ;
-		 return cnt ;
-	end rank ;
+    begin
+         
+         for i in reverse  1..length(orderOfUsage) loop
+              --dbms_output.put_line('i=' || i) ;
+             for j in 0..35 loop
+                  if substr(countingChars,j+1,1) = substr(orderOfUsage,i,1) then
+                     cnt := cnt + (j * 36 ** exp) ;
+                    exit ;
+                 end if ;
+             end loop ;      
+             exp := exp + 1 ; 
+         end loop ;
+         return cnt ;
+    end rank ;
 
-	function convertToBase(value in number, base in number) return varchar2 is
-		countingChars varchar2(36) := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' ;
-	begin
-		if value < base then
-			return substr(countingChars,value+1,1) ;
-		else
-			return convertToBase(trunc(value/base),base) || substr(countingChars,mod(value,base)+1,1) ;
-		end if ;			
-	end convertToBase ;
+    function convertToBase(value in number, base in number) return varchar2 is
+        countingChars varchar2(36) := '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ' ;
+    begin
+        if value < base then
+            return substr(countingChars,value+1,1) ;
+        else
+            return convertToBase(trunc(value/base),base) || substr(countingChars,mod(value,base)+1,1) ;
+        end if ;            
+    end convertToBase ;
 
-	function groupPriority(rank in number) return varchar2 is
-	begin
-		return convertToBase(rank,36) ;			
-	end groupPriority ;
-	
-	
-	
-	function isOneWay(orderOfUse in orderOfUsages) return boolean is
-			 secondLetter varchar2(1) ;
-	begin
-		 secondLetter := substr(orderOfUse.FIRST,2,1) ;
-		 for oou in orderOfUse.NEXT(orderOfUse.FIRST)..orderOfUse.LAST loop
-		 	 if secondLetter  <> substr(oou,2,1) then
-			 	return true ;
-			 end if ;
-		 end loop ;
-		 return false ;
-	end isOneWay ;
-	
-	function isOneWayYorN(orderOfUse in orderOfUsages) return varchar2 is
-	begin
-		 if isOneWay(orderOfUse) then
-		 	return 'Y' ;
-		 else
-		 	return 'N' ;
-		 end if ;
-	end isOneWayYorN ;
+    function groupPriority(rank in number) return varchar2 is
+    begin
+        return convertToBase(rank,36) ;            
+    end groupPriority ;
+    
+    
+    
+    function isOneWay(orderOfUse in orderOfUsages) return boolean is
+             secondLetter varchar2(1) ;
+    begin
+         secondLetter := substr(orderOfUse.FIRST,2,1) ;
+         for oou in orderOfUse.NEXT(orderOfUse.FIRST)..orderOfUse.LAST loop
+              if secondLetter  <> substr(oou,2,1) then
+                 return true ;
+             end if ;
+         end loop ;
+         return false ;
+    end isOneWay ;
+    
+    function isOneWayYorN(orderOfUse in orderOfUsages) return varchar2 is
+    begin
+         if isOneWay(orderOfUse) then
+             return 'Y' ;
+         else
+             return 'N' ;
+         end if ;
+    end isOneWayYorN ;
     
     -- raises standard.NO_DATA_FOUND
     function isPartActiveYorN(part_no in amd_spare_parts.PART_NO%type) return varchar2 is
@@ -1239,17 +1241,17 @@ end isSpoPrimePartYorN ;
     exception when no_data_found then
         return 'N' ;
     end isSpoPartYorN ;                                           
-	
+    
 BEGIN
-	 <<getDebugThresholdInit>>
-	 DECLARE
-	 		param AMD_PARAM_CHANGES.PARAM_VALUE%TYPE ;
-	 BEGIN
-	 		SELECT param_value INTO param FROM AMD_PARAM_CHANGES WHERE param_key = 'debugUtilsThreshold' ;
-			--mDebugThreshold := to_number(param) ;
-	 EXCEPTION WHEN OTHERS THEN
-	 		   mDebugThreshold := 1000 ;
-	 END getDebugThresholdInit ;
+     <<getDebugThresholdInit>>
+     DECLARE
+             param AMD_PARAM_CHANGES.PARAM_VALUE%TYPE ;
+     BEGIN
+             SELECT param_value INTO param FROM AMD_PARAM_CHANGES WHERE param_key = 'debugUtilsThreshold' ;
+            --mDebugThreshold := to_number(param) ;
+     EXCEPTION WHEN OTHERS THEN
+                mDebugThreshold := 1000 ;
+     END getDebugThresholdInit ;
     
     select param_value bulk collect into fmsSegCodes from amd_param_changes a
     where param_key like 'fms_%' 
@@ -1258,3 +1260,13 @@ BEGIN
      
 END Amd_Utils;
 /
+
+
+DROP PUBLIC SYNONYM AMD_UTILS;
+
+CREATE PUBLIC SYNONYM AMD_UTILS FOR AMD_OWNER.AMD_UTILS;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_UTILS TO AMD_WRITER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_UTILS TO BSSM_OWNER WITH GRANT OPTION;

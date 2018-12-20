@@ -1,14 +1,12 @@
+DROP PACKAGE BODY AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
  /*
       $Author:   zf297a  $
-    $Revision:   1.91.1
-        $Date:   23 Sep 2015
+    $Revision:   1.90
+        $Date:   23 Feb 2015
     $Workfile:   AMD_LP_OVERRIDE_CONSUMABL_PKG.pkb  $
          
-        Rev 1.91.1 9/23/15 dse added START_LOC_ID
-
-        Rev 1.91 9/21/15 dse added amd_defaults.getProgramId
-        
         Rev 1.90 2/23/15 dse added amd_defaults.getStartLocId
         
         Rev 1.89 removed spo related code and made literals 'Not Used'
@@ -146,13 +144,13 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
 /*      Rev 1.49   07 Jan 2008 12:40:28   zf297a
 /*   The calc for ROP is still dependent on the ROQ value:
 /*   if rop <= 0 then
-/*   	if rop = 0 then
-/*   		if roq < default then
-/*   			rop = default for ROP
-/*   		end if
-/*   	else
-/*    		rop = default for ROP
-/*   	end if
+/*       if rop = 0 then
+/*           if roq < default then
+/*               rop = default for ROP
+/*           end if
+/*       else
+/*            rop = default for ROP
+/*       end if
 /*   end if
 /*
 /*      Rev 1.48   07 Jan 2008 09:31:36   zf297a
@@ -321,10 +319,6 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
 /*      Rev 1.0   06 Jul 2007 17:27:10   zf297a
 /*   Initial revision.
 */
-
-    PROGRAM_ID constant varchar2(30)  := amd_defaults.getProgramId ;
-    PROGRAM_ID_LL constant number := length(PROGRAM_ID) ;
-    START_LOC_ID constant number := amd_defaults.getStartLocId ;
 
     loggedDup boolean := false ;
     insertData boolean := true ;
@@ -572,7 +566,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
                 || pKey3 || ' '
                 || pKey4 || ' '
                 || pComments,1, 2000)) ;
-	END ErrorMsg;
+    END ErrorMsg;
 
 
     function isTestPart(part_no in amd_test_parts.part_no%type) return boolean is
@@ -806,9 +800,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         whseBaseRecs whseBaseTab ;
         recs tmpLocPartOveridConsumablesTab := tmpLocPartOveridConsumablesTab() ;
     begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 70,
-				pKey1 => 'loadWhseBase(' || spo_location || ',' || sc|| ')',
-				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 70,
+                pKey1 => 'loadWhseBase(' || spo_location || ',' || sc|| ')',
+                pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
                 
         debugMsg('loadWhseBase started at ' 
         || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM')
@@ -846,10 +840,10 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
                     and parts.part_no = parts.spo_prime_part_no
                     and parts.spo_prime_part_no = whseX.part
                     and whseX.sc ' || operator || ' :the_sc
-		    and whseX.created_datetime = (select max(created_datetime) 
-			                          from whse 
-						  where part = whseX.part 
-						  and sc ' || operator || ' :the_sc)
+            and whseX.created_datetime = (select max(created_datetime) 
+                                      from whse 
+                          where part = whseX.part 
+                          and sc ' || operator || ' :the_sc)
                     and nwks.action_code <> amd_defaults.getDELETE_ACTION
                     and nwks.loc_id = :the_spo_location
                     and nwks.spo_location is not null
@@ -920,9 +914,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         || ' and records processed=' || in_cnt,
             pError_location => 110) ; 
             
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 120,
-				pKey1 => 'loadWhseBase(' || spo_location || ',' || sc||  ')',
-				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 120,
+                pKey1 => 'loadWhseBase(' || spo_location || ',' || sc||  ')',
+                pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
                 pKey3 => 'in_cnt=' || to_char(in_cnt),
                 pKey4 => 'insert_cnt=' || to_char(insert_cnt),
                 pData => 'update_cnt=' || to_char(update_cnt)) ;
@@ -1030,9 +1024,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
 
 
     begin
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 130,
-				pKey1 => 'loadLvls',
-				pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 130,
+                pKey1 => 'loadLvls',
+                pKey2 => 'started at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM') ) ;
 
         debugMsg('loadLvls started at ' 
         || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
@@ -1087,9 +1081,9 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         || ' and update_cnt=' || update_cnt,
             pError_location => 170) ; 
 
-		writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 180,
-				pKey1 => 'loadLvls',
-				pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
+        writeMsg(pTableName => 'tmp_amd_location_part_override', pError_location => 180,
+                pKey1 => 'loadLvls',
+                pKey2 => 'ended at ' || TO_CHAR(SYSDATE,'MM/DD/YYYY HH:MI:SS AM'),
                 pKey3 => 'in_cnt=' || to_char(in_cnt),
                 pKey4 => 'insert_cnt=' || to_char(insert_cnt),
                 pData => 'update_cnt=' || to_char(update_cnt)) ;
@@ -1272,7 +1266,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
 
         function getRoq(roq in number, rop in number) return number is
         begin
-		-- removed filter per Rosalind Whitesides 11/20/2008
+        -- removed filter per Rosalind Whitesides 11/20/2008
             --if nvl(roq,0) = 1 and nvl(rop,0) = 0 then
              --   return 0 ;
            -- else
@@ -1321,8 +1315,8 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
                     end if ;
                 end loop ;
             end if ;
-	    debugMsg('end sum the recs',  pError_location => 190) ;
-	    debugMsg('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', pError_location => 190) ;
+        debugMsg('end sum the recs',  pError_location => 190) ;
+        debugMsg('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', pError_location => 190) ;
         end sumTheRecs ;
 
         procedure processRec(rec in whseRec, tsl_override_source in tmp_locpart_overid_consumables.tsl_override_source%type) is
@@ -1333,8 +1327,8 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
                     from whse
                     where prime = spo_prime_part_no
                     and part = prime
-                    and substr(sc,1,PROGRAM_ID_LL) = PROGRAM_ID
-                    and substr(sc,START_LOC_ID,7) = 'CTLATLG'
+                    and substr(sc,1,3) = 'C17'
+                    and substr(sc,amd_defaults.getStartLocId,7) = 'CTLATLG'
                     order by created_datetime desc ;
             recFound boolean := false ;
         begin
@@ -1423,54 +1417,54 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
 
             whsePartRecs whseTab ;
 
-	    procedure dumpQuery is
-	    begin
-		dbms_output.put_line('------------------------------,');
-		dbms_output.put_line('select parts.spo_prime_part_no,');
-		dbms_output.put_line(' sum(');
-		dbms_output.put_line('    case ');
-		dbms_output.put_line('        when whseX.reorder_point is not null then');
-		dbms_output.put_line('            round(whseX.reorder_point)');
-		dbms_output.put_line('        else');
-		dbms_output.put_line('            amd_defaults.getROP ');
-		dbms_output.put_line('    end)  rop,');
-		dbms_output.put_line(' sum(');
-		dbms_output.put_line('    case when whseX.STOCK_LEVEL is not null');
-		dbms_output.put_line('         and whseX.reorder_point is not null');
-		dbms_output.put_line('         and whseX.STOCK_LEVEL - whseX.reorder_point >= 0 then');
-		dbms_output.put_line('                whseX.STOCK_LEVEL - whseX.reorder_point');
-		dbms_output.put_line('         else');
-		dbms_output.put_line('            amd_defaults.getROQ');
-		dbms_output.put_line('    end) roq');
-		dbms_output.put_line('from whse whseX,');
-		dbms_output.put_line('amd_spare_networks nwks,');
-		dbms_output.put_line('amd_spare_parts parts,');
-		dbms_output.put_line('amd_national_stock_items items');
-		dbms_output.put_line('where parts.is_spo_part = ''Y'' ');
-		dbms_output.put_line('and parts.IS_CONSUMABLE = ''Y'' ');
-		dbms_output.put_line('and parts.part_no = parts.spo_prime_part_no');
-		dbms_output.put_line('and parts.spo_prime_part_no = whseX.part');
-		dbms_output.put_line('and whseX.sc ' || operator || ' ''' || sc || '''');
-		dbms_output.put_line('and whseX.created_datetime = (select max(created_datetime) ') ;
-		dbms_output.put_line('         from whse ') ;
-		dbms_output.put_line('  where part = whseX.part ') ;
-		dbms_output.put_line('  and sc ' || operator || '''' || sc || ''')') ;
-		dbms_output.put_line('and nwks.action_code <> ''D''');
-		dbms_output.put_line('and parts.nsn = items.nsn');
-		dbms_output.put_line('and items.action_code <> ''D''');
-		dbms_output.put_line('and nvl(items.wesm_indicator,''N'') = ''' || wesm_part || '''');
-		dbms_output.put_line('and nwks.loc_id = ''' || spo_location || '''');
-		dbms_output.put_line('and nwks.spo_location is not null');
-		dbms_output.put_line('group by  spo_prime_part_no');
-		dbms_output.put_line('------------------------------,');
-	    end dumpQuery ;
+        procedure dumpQuery is
+        begin
+        dbms_output.put_line('------------------------------,');
+        dbms_output.put_line('select parts.spo_prime_part_no,');
+        dbms_output.put_line(' sum(');
+        dbms_output.put_line('    case ');
+        dbms_output.put_line('        when whseX.reorder_point is not null then');
+        dbms_output.put_line('            round(whseX.reorder_point)');
+        dbms_output.put_line('        else');
+        dbms_output.put_line('            amd_defaults.getROP ');
+        dbms_output.put_line('    end)  rop,');
+        dbms_output.put_line(' sum(');
+        dbms_output.put_line('    case when whseX.STOCK_LEVEL is not null');
+        dbms_output.put_line('         and whseX.reorder_point is not null');
+        dbms_output.put_line('         and whseX.STOCK_LEVEL - whseX.reorder_point >= 0 then');
+        dbms_output.put_line('                whseX.STOCK_LEVEL - whseX.reorder_point');
+        dbms_output.put_line('         else');
+        dbms_output.put_line('            amd_defaults.getROQ');
+        dbms_output.put_line('    end) roq');
+        dbms_output.put_line('from whse whseX,');
+        dbms_output.put_line('amd_spare_networks nwks,');
+        dbms_output.put_line('amd_spare_parts parts,');
+        dbms_output.put_line('amd_national_stock_items items');
+        dbms_output.put_line('where parts.is_spo_part = ''Y'' ');
+        dbms_output.put_line('and parts.IS_CONSUMABLE = ''Y'' ');
+        dbms_output.put_line('and parts.part_no = parts.spo_prime_part_no');
+        dbms_output.put_line('and parts.spo_prime_part_no = whseX.part');
+        dbms_output.put_line('and whseX.sc ' || operator || ' ''' || sc || '''');
+        dbms_output.put_line('and whseX.created_datetime = (select max(created_datetime) ') ;
+        dbms_output.put_line('         from whse ') ;
+        dbms_output.put_line('  where part = whseX.part ') ;
+        dbms_output.put_line('  and sc ' || operator || '''' || sc || ''')') ;
+        dbms_output.put_line('and nwks.action_code <> ''D''');
+        dbms_output.put_line('and parts.nsn = items.nsn');
+        dbms_output.put_line('and items.action_code <> ''D''');
+        dbms_output.put_line('and nvl(items.wesm_indicator,''N'') = ''' || wesm_part || '''');
+        dbms_output.put_line('and nwks.loc_id = ''' || spo_location || '''');
+        dbms_output.put_line('and nwks.spo_location is not null');
+        dbms_output.put_line('group by  spo_prime_part_no');
+        dbms_output.put_line('------------------------------,');
+        end dumpQuery ;
 
         begin
             dbms_output.put_line('processWhseParts: spo_location=' || spo_location
             || ' sc=' || sc || ' operator=' || operator || ' wesm_part=' || wesm_part || ' roq=' || roq) ;
-	    if debug then
-		dumpQuery ;
-	    end if ;
+        if debug then
+        dumpQuery ;
+        end if ;
                 
             open theCursor for
                 'select parts.spo_prime_part_no,
@@ -1498,10 +1492,10 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
                 and parts.part_no = parts.spo_prime_part_no
                 and parts.spo_prime_part_no = whseX.part
                 and whseX.sc ' || operator || ' :the_sc
-		and whseX.created_datetime = (select max(created_datetime) 
-			                      from whse 
-					      where part = whseX.part 
-					      and sc ' || operator || ' :the_sc)
+        and whseX.created_datetime = (select max(created_datetime) 
+                                  from whse 
+                          where part = whseX.part 
+                          and sc ' || operator || ' :the_sc)
                 and nwks.action_code <> ''D''
                 and parts.nsn = items.nsn
                 and items.action_code <> ''D''
@@ -1750,67 +1744,67 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         ) fleetLevels ;
 
 
-	insert into tmp_locpart_overid_consumables
-	(part_no,spo_location,tsl_override_type,tsl_override_qty,tsl_override_user,
-	tsl_override_source,loc_sid,last_update_dt)              
-	select
-	part,'FD2090', 'Not Used', --(select rop_fixed_override from amd_spo_types_v), 
-	stock_level - 1,    
-	amd_lp_override_consumabl_pkg.getTslOverrideUser(part),
-	'CALC',
-	amd_lp_override_consumabl_pkg.GETWHSE_LOCSID,
-	sysdate
-	from whse a, amd_spare_parts b
-	where a.created_datetime is not null
-	and a.created_datetime = (select max(list.created_datetime)
-				from whse list
-				where list.part = a.part
-				and list.sc like ('%CTLATL%'))
-	and a.part = b.part_no
-	and a.sc like '%CTLATL%'
-	and b.action_code <> 'D'
-	and b.is_spo_part = 'Y'
-	and b.is_consumable = 'Y'
-	and a.stock_level is not null
-	and a.stock_level <> 0
-	and  not exists (select null from tmp_locpart_overid_consumables
-			where a.part = part_no and spo_location = 'FD2090'
-			and tsl_override_type = 'Not Used') --(select rop_fixed_override from amd_spo_types_v) )
-	and not exists (select null from tmp_locpart_overid_consumables
-			where a.part = part_no and spo_location <> 'FD2090') ;	
+    insert into tmp_locpart_overid_consumables
+    (part_no,spo_location,tsl_override_type,tsl_override_qty,tsl_override_user,
+    tsl_override_source,loc_sid,last_update_dt)              
+    select
+    part,'FD2090', 'Not Used', --(select rop_fixed_override from amd_spo_types_v), 
+    stock_level - 1,    
+    amd_lp_override_consumabl_pkg.getTslOverrideUser(part),
+    'CALC',
+    amd_lp_override_consumabl_pkg.GETWHSE_LOCSID,
+    sysdate
+    from whse a, amd_spare_parts b
+    where a.created_datetime is not null
+    and a.created_datetime = (select max(list.created_datetime)
+                from whse list
+                where list.part = a.part
+                and list.sc like ('%CTLATL%'))
+    and a.part = b.part_no
+    and a.sc like '%CTLATL%'
+    and b.action_code <> 'D'
+    and b.is_spo_part = 'Y'
+    and b.is_consumable = 'Y'
+    and a.stock_level is not null
+    and a.stock_level <> 0
+    and  not exists (select null from tmp_locpart_overid_consumables
+            where a.part = part_no and spo_location = 'FD2090'
+            and tsl_override_type = 'Not Used') --(select rop_fixed_override from amd_spo_types_v) )
+    and not exists (select null from tmp_locpart_overid_consumables
+            where a.part = part_no and spo_location <> 'FD2090') ;    
 
         insert into tmp_locpart_overid_consumables
         (part_no,spo_location,tsl_override_type,tsl_override_qty,tsl_override_user,
-	tsl_override_source,loc_sid,last_update_dt)              
-	select
-	part,'FD2090', 'Not Used', -- (select roq_fixed_override from amd_spo_types_v), 
-	1,    
-	amd_lp_override_consumabl_pkg.getTslOverrideUser(part),
-	'CALC',
-	amd_lp_override_consumabl_pkg.GETWHSE_LOCSID,
-	sysdate
-	from whse a, amd_spare_parts b
-	where a.created_datetime is not null
-	and a.created_datetime = (select max(list.created_datetime)
-				from whse list
-				where list.part = a.part
-				and list.sc like ('%CTLATL%'))
-	and a.part = b.part_no
-	and a.sc like '%CTLATL%'
-	and b.action_code <> 'D'
-	and b.is_spo_part = 'Y'
-	and b.is_consumable = 'Y'
-	and a.stock_level is not null
-	and a.stock_level <> 0
-	and  not exists (select null from tmp_locpart_overid_consumables
-			where a.part = part_no and spo_location = 'FD2090'
-			and tsl_override_type = 'Not Used' ) --(select roq_fixed_override from amd_spo_types_v) ) 
-	and not exists (select null from tmp_locpart_overid_consumables
-			where a.part = part_no and spo_location <> 'FD2090') ;	
+    tsl_override_source,loc_sid,last_update_dt)              
+    select
+    part,'FD2090', 'Not Used', -- (select roq_fixed_override from amd_spo_types_v), 
+    1,    
+    amd_lp_override_consumabl_pkg.getTslOverrideUser(part),
+    'CALC',
+    amd_lp_override_consumabl_pkg.GETWHSE_LOCSID,
+    sysdate
+    from whse a, amd_spare_parts b
+    where a.created_datetime is not null
+    and a.created_datetime = (select max(list.created_datetime)
+                from whse list
+                where list.part = a.part
+                and list.sc like ('%CTLATL%'))
+    and a.part = b.part_no
+    and a.sc like '%CTLATL%'
+    and b.action_code <> 'D'
+    and b.is_spo_part = 'Y'
+    and b.is_consumable = 'Y'
+    and a.stock_level is not null
+    and a.stock_level <> 0
+    and  not exists (select null from tmp_locpart_overid_consumables
+            where a.part = part_no and spo_location = 'FD2090'
+            and tsl_override_type = 'Not Used' ) --(select roq_fixed_override from amd_spo_types_v) ) 
+    and not exists (select null from tmp_locpart_overid_consumables
+            where a.part = part_no and spo_location <> 'FD2090') ;    
 
-		
-		
-	
+        
+        
+    
     end loadWhseX ;
     
 
@@ -1977,7 +1971,7 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
         select spo_prime_part_no
         from amd_spare_parts 
         where is_spo_part = 'Y'
-	and part_no = spo_prime_part_no
+    and part_no = spo_prime_part_no
         and is_consumable = 'Y' ;
 
         recs tmpLocPartOveridConsumablesTab := tmpLocPartOveridConsumablesTab() ;
@@ -2319,13 +2313,13 @@ CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_lp_override_consumabl_Pkg AS
     procedure version IS
     begin
         writeMsg(pTableName => 'amd_lp_override_consumabl_pkg',
-             pError_location => 730, pKey1 => 'amd_lp_override_consumabl_pkg', pKey2 => '$Revision:   1.91.1  $') ;
-        dbms_output.put_line('amd_lp_override_consumabl_pkg: $Revision:   1.91.1  $') ;
+             pError_location => 730, pKey1 => 'amd_lp_override_consumabl_pkg', pKey2 => '$Revision:   1.90  $') ;
+        dbms_output.put_line('amd_lp_override_consumabl_pkg: $Revision:   1.90  $') ;
     end version ;
 
     function getVersion return varchar2 is
     begin
-        return '$Revision:   1.91.1  $' ;
+        return '$Revision:   1.90  $' ;
     end getVersion ;
     
     procedure setUseLoadWhseX(value in varchar2) is
@@ -2367,3 +2361,13 @@ begin
     roq_type := 'Not used' ;
 end Amd_lp_override_consumabl_Pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
+CREATE PUBLIC SYNONYM AMD_LP_OVERRIDE_CONSUMABL_PKG FOR AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_LP_OVERRIDE_CONSUMABL_PKG TO AMD_WRITER_ROLE;

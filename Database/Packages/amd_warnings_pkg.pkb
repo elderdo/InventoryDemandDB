@@ -1,21 +1,23 @@
-CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
+DROP PACKAGE BODY AMD_OWNER.AMD_WARNINGS_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_warnings_pkg as
 /*
       $Author:   zf297a  $
     $Revision:   1.5  $
      $Date:   30 Jan 2009 15:41:54  $
     $Workfile:   amd_warnings_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_warnings_pkg.pkb.-arc  $
-/*   
+/*
 /*      Rev 1.5   30 Jan 2009 15:41:54   zf297a
 /*   Fixed the lv_str varchar2 size for the split function and made it 2000 ... which would be the max size of concatenated email addresses separated by semicolons
-/*   
+/*
 /*      Rev 1.4   30 Jan 2009 09:14:20   zf297a
 /*   Implemented split interface and created toArray function to convert between this package's t_array type to the email_handler_pkg.array type.  Modified sendWarnings to use the email_hander_pkg.send procedure when the to email address contains more than one email address delimitted by a semicolon.
-/*   
+/*
 /*      Rev 1.3   29 Jan 2009 15:01:24   zf297a
 /*   Added args to sendWarnings.  Implemented a sendWarnings function that returns the # of current warnings.
-/*   
-/*   
+/*
+/*
 /*
 /*      Rev 1.2   23 Jan 2009 17:57:44   zf297a
 /*   Include key_1 to key_5 in the output email.
@@ -30,7 +32,7 @@ CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
 
 	CRLF constant varchar2(2)   := utl_tcp.CRLF ;
 
-	FUNCTION toArray (arrayIn in t_array) RETURN email_handler_pkg.array 
+	FUNCTION toArray (arrayIn in t_array) RETURN email_handler_pkg.array
 	is
 		strings email_handler_pkg.array := email_handler_pkg.array() ;
 	begin
@@ -40,9 +42,9 @@ CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
 		end loop ;
 		return strings ;
 	end toArray ;
-		
 
-	FUNCTION SPLIT (p_in_string VARCHAR2, p_delim VARCHAR2) RETURN t_array 
+
+	FUNCTION SPLIT (p_in_string VARCHAR2, p_delim VARCHAR2) RETURN t_array
 	IS
 
 		i       number :=0;
@@ -53,25 +55,25 @@ CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
 
 	BEGIN
 
-		-- determine first chuck of string  
+		-- determine first chuck of string
 		pos := instr(lv_str,p_delim,1,1);
 
-		-- while there are chunks left, loop 
+		-- while there are chunks left, loop
 		WHILE ( pos != 0) LOOP
 
-			-- increment counter 
+			-- increment counter
 			i := i + 1;
 
-			-- create array element for chuck of string 
-			strings(i) := substr(lv_str,1,pos);
+			-- create array element for chuck of string
+			strings(i) := substr(lv_str,1,pos-1);
 
-			-- remove chunk from string 
+			-- remove chunk from string
 			lv_str := substr(lv_str,pos+1,length(lv_str));
 
-			-- determine next chunk 
+			-- determine next chunk
 			pos := instr(lv_str,p_delim,1,1);
 
-			-- no last chunk, add to array 
+			-- no last chunk, add to array
 			IF pos = 0 THEN
 
 				strings(i+1) := lv_str;
@@ -80,10 +82,10 @@ CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
 
 		END LOOP;
 
-		-- return array 
+		-- return array
 		RETURN strings;
 
-	END SPLIT; 
+	END SPLIT;
 
     	-- use this function  to make sure a field never exceeds its max length
 	function trimToMax(str IN VARCHAR2, maxLen IN NUMBER) RETURN VARCHAR2 IS
@@ -277,3 +279,13 @@ CREATE OR REPLACE package body AMD_OWNER.amd_warnings_pkg as
 
 end amd_warnings_pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_WARNINGS_PKG;
+
+CREATE PUBLIC SYNONYM AMD_WARNINGS_PKG FOR AMD_OWNER.AMD_WARNINGS_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_WARNINGS_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_WARNINGS_PKG TO AMD_WRITER_ROLE;

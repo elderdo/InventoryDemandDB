@@ -1,14 +1,16 @@
-CREATE OR REPLACE PACKAGE BODY "AMD_VALIDATION_PKG"    AS
+DROP PACKAGE BODY AMD_OWNER.AMD_VALIDATION_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER."AMD_VALIDATION_PKG"    AS
 /*
       $Author:   zf297a  $
     $Revision:   1.4  $
      $Date:   Dec 06 2005 10:45:32  $
     $Workfile:   amd_validation_pkg.pkb  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\amd_validation_pkg.pkb-arc  $
-   
+
       Rev 1.4   Dec 06 2005 10:45:32   zf297a
    Fixed display of sysdate in errorMsg - changed to MM/DD/YYYY HH:MM:SS
-   
+
       Rev 1.3   Dec 01 2005 09:50:48   zf297a
    added pvcs keywords
 */
@@ -80,3 +82,13 @@ CREATE OR REPLACE PACKAGE BODY "AMD_VALIDATION_PKG"    AS
 
 END Amd_Validation_Pkg ;
 /
+
+
+DROP PUBLIC SYNONYM AMD_VALIDATION_PKG;
+
+CREATE PUBLIC SYNONYM AMD_VALIDATION_PKG FOR AMD_OWNER.AMD_VALIDATION_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_VALIDATION_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_VALIDATION_PKG TO AMD_WRITER_ROLE;

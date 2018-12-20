@@ -1,14 +1,16 @@
-CREATE OR REPLACE PACKAGE BODY amd_on_order_date_filters_pkg AS
+DROP PACKAGE BODY AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+CREATE OR REPLACE PACKAGE BODY AMD_OWNER.amd_on_order_date_filters_pkg AS
 /******************************************************************************
        $Author:   zf297a  $
      $Revision:   1.4  $
          $Date:   Jun 09 2006 12:34:12  $
      $Workfile:   AMD_ON_ORDER_DATE_FILTERS_PKG.pkb  $
 	      $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Database\Packages\AMD_ON_ORDER_DATE_FILTERS_PKG.pkb.-arc  $
-/*   
+/*
 /*      Rev 1.4   Jun 09 2006 12:34:12   zf297a
 /*   implemented version
-/*   
+/*
 /*      Rev 1.3   May 17 2006 14:58:36   zf297a
 /*   removed start_date - not needed
 /*
@@ -35,7 +37,7 @@ CREATE OR REPLACE PACKAGE BODY amd_on_order_date_filters_pkg AS
 				pComments IN VARCHAR2 := '')  IS
 	BEGIN
 		Amd_Utils.writeMsg (
-				pSourceName => 'amd_on_order_date_filters_pkg',	
+				pSourceName => 'amd_on_order_date_filters_pkg',
 				pTableName  => pTableName,
 				pError_location => pError_location,
 				pKey1 => pKey1,
@@ -45,7 +47,7 @@ CREATE OR REPLACE PACKAGE BODY amd_on_order_date_filters_pkg AS
 				pData    => pData,
 				pComments => pComments);
 	end writeMsg ;
-	
+
 	FUNCTION getOrderCreateDate(filter_name in amd_on_order_date_filters.FILTER_NAME%type, voucher_prefix IN amd_on_order_date_filters.VOUCHER_PREFIX%type) RETURN DATE IS
 			 theDate date ;
 	BEGIN
@@ -211,9 +213,19 @@ CREATE OR REPLACE PACKAGE BODY amd_on_order_date_filters_pkg AS
 
 	procedure version is
 	begin
-		 writeMsg(pTableName => 'amd_on_order_date_filters_pkg', 
+		 writeMsg(pTableName => 'amd_on_order_date_filters_pkg',
 		 		pError_location => 10, pKey1 => 'amd_on_order_date_filters_pkg', pKey2 => '$Revision:   1.4  $') ;
 	end version ;
 
 END amd_on_order_date_filters_pkg;
 /
+
+
+DROP PUBLIC SYNONYM AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+CREATE PUBLIC SYNONYM AMD_ON_ORDER_DATE_FILTERS_PKG FOR AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG;
+
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG TO AMD_READER_ROLE;
+
+GRANT EXECUTE ON AMD_OWNER.AMD_ON_ORDER_DATE_FILTERS_PKG TO AMD_WRITER_ROLE;
