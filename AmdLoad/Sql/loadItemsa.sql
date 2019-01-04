@@ -22,15 +22,6 @@ set time on
 set timing on
 set echo on
 
-variable program_id varchar2(30);
-
-begin
-select amd_defaults.getProgramId into :program_id from dual;
-end;
-/
-
-print :program_id
-
 exec amd_owner.mta_truncate_table('itemsa','reuse storage');
 
 
@@ -53,6 +44,6 @@ select
 from goldsa_item_v
 where status_1 != 'D'
       and condition not in ('LDD', 'B170-ATL')
-      and sc in ( :program_id || 'PCAG', 'SATCAA0001' || :program_id || 'G') ;
+      and sc in ( 'C17PCAG', 'SATCAA0001C17G') ;
 
 exit 

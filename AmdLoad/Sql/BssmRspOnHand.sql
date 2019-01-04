@@ -43,7 +43,7 @@ SELECT 'NSN' || chr(9) || 'SRAN' || chr(9) || 'RSP_ON_HAND' || chr(9) ||  'RSP_O
          || RSP_ON_HAND
          || CHR (9)
          || RSP_OBJECTIVE
-    FROM amd_rsp_on_hand_n_objective_v
+    FROM amd_owner.rsp_on_hand_and_objective_v
 ORDER BY 1;
 
 SPOOL OFF

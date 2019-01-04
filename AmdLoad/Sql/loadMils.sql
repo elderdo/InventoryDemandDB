@@ -1,10 +1,10 @@
 /*
       $Author:   zf297a  $
-    $Revision:   1.2  $
-        $Date:   02 Dec 2013
+    $Revision:   1.1  $
+        $Date:   20 Feb 2009 09:21:08  $
     $Workfile:   loadMils.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadMils.sql.-arc  $
 /*   
-/*      Rev 1.2   provide XCA and XCC for WESM Douglas Elder
 /*      Rev 1.1   20 Feb 2009 09:21:08   zf297a
 /*   Added link variable
 /*   
@@ -31,7 +31,7 @@ select
 	trim(mils_id),trim(rec_types),created_datetime,trim(status_line),trim(part),trim(default_name)
 from mils@&&link
 where
-	default_name in ( 'A0E', 'XCA', 'XCC' ) ;
+	default_name = 'A0E';
 	
 
 exit 

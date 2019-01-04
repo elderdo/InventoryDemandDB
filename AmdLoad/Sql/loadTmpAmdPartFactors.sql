@@ -1,23 +1,28 @@
 /*
-      $Author:   Douglas S Elder
+      $Author:   zf297a  $
     $Revision:   1.0  $
-        $Date:   25 Jan 2017
+        $Date:   19 Jun 2008 10:11:12  $
     $Workfile:   loadTmpAmdPartFactors.sql  $
-   
-      Rev 1.0   19 Jun 2008 10:11:12   zf297a
-      Rev 1.1   25 Jan 2017 reformated code
-   Initial revision.
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadTmpAmdPartFactors.sql.-arc  $
+/*   
+/*      Rev 1.0   19 Jun 2008 10:11:12   zf297a
+/*   Initial revision.
 */
 
-WHENEVER SQLERROR EXIT FAILURE
-WHENEVER OSERROR EXIT FAILURE
+whenever sqlerror exit FAILURE
+whenever oserror exit FAILURE
 
-SET TIME ON
-SET TIMING ON
-SET ECHO ON
-SET SERVEROUTPUT ON SIZE 100000
+set time on
+set timing on
+set echo on
 
-EXEC  amd_part_factors_pkg.LoadTmpAmdPartFactors;
-@analyzeAmdPartFactors.sql
+exec  amd_part_factors_pkg.LoadTmpAmdPartFactors;
 
-EXIT
+exit 
+
+
+
+
+
+
+

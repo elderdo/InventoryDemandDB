@@ -1,27 +1,35 @@
---
--- SCCSID: 	Ramp.sql  1.1  Modified:  01/18/06  10:52:37
---
--- Date		By		History
--- 01/17/06	ThuyPham	Initial per Yvonne Van-Herk
---
---
+/*
+*
+* Ramp.sql  1.2  Modified:  05/19/17 DSE added order by and formatted code
+* Ramp.sql  1.1  Modified:  01/18/06  10:52:37
+*
+* Date		By		History
+* 01/17/06	ThuyPham	Initial per Yvonne Van-Herk
+*
+*
+**/
 
 
-set newpage none
-set heading off
-set pagesize 0
-set feedback off
-set tab off
-set time on
+SET NEWPAGE NONE
+SET HEADING OFF
+SET PAGESIZE 0
+SET FEEDBACK OFF
+SET tab OFF
+SET TIME ON
 
-select
-	replace(current_stock_number,'-','')|| chr(9) ||
-	substr(sc,8,6)|| chr(9) ||
-	percent_base_repair || chr(9) ||
-	percent_base_condem || chr(9) ||
-	daily_demand_rate || chr(9) ||
-	avg_repair_cycle_time
-from
-	ramp
-where Delete_Indicator is NULL;
-quit
+  SELECT    REPLACE (current_stock_number, '-', '')
+         || CHR (9)
+         || SUBSTR (sc, 8, 6)
+         || CHR (9)
+         || percent_base_repair
+         || CHR (9)
+         || percent_base_condem
+         || CHR (9)
+         || daily_demand_rate
+         || CHR (9)
+         || avg_repair_cycle_time
+    FROM ramp
+   WHERE Delete_Indicator IS NULL
+ORDER BY 1;
+
+QUIT

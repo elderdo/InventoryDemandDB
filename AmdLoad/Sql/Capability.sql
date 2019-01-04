@@ -1,41 +1,38 @@
 /*
-		$Author:   c402417  $
-	 $Revision:   1.2  $
-		  $Date:   Mar 05 2007 12:29:24  $
+		$Author:   Douglas S. Elder
+	 $Revision:   1.3
+		  $Date:   May 19 2017
 	 $Workfile:   Capability.sql  $
-			$Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\Capability.sql.-arc  $
-/*   
-/*      Rev 1.2   Mar 05 2007 12:29:24   c402417
-/*   Removed 'FB4497' from the query
-/*   
-/*      Rev 1.1   Aug 09 2006 13:47:20   c402417
-/*   The loc_id should be  FB4497 NOT FB4479. Was typo
-/*   
-/*      Rev 1.0   Aug 09 2006 09:56:20   c402417
-/*   Initial revision.
+*   
+*      Rev 1.3   May 19 2017 DSE added order by and formatted code
+*      Rev 1.2   Mar 05 2007 12:29:24   Thuy Pham
+*   Removed 'FB4497' from the query
+*   
+*      Rev 1.1   Aug 09 2006 13:47:20   Thuy Pham
+*   The loc_id should be  FB4497 NOT FB4479. Was typo
+*   
+*      Rev 1.0   Aug 09 2006 09:56:20   Thuy Pham / c402417
+*   Initial revision.
+**/
 
-*/
 
+SET UNDERLINE OFF
+SET NEWPAGE NONE
+SET HEADING OFF
+SET FEEDBACK OFF
+SET tab OFF
+SET PAGESIZE 0
+SET TIME ON
 
-set underline off
-set newpage none
-set heading off
-set feedback off
-set tab off 
-set pagesize 0
-set time on
+  SELECT DISTINCT n.nsn || CHR (9) || '4'
+    FROM amd_demands d, amd_national_stock_items n, amd_spare_networks asn
+   WHERE     d.action_code != 'D'
+         AND asn.action_code != 'D'
+         AND n.action_code != 'D'
+         AND d.nsi_sid = n.nsi_sid
+         AND d.loc_sid = asn.loc_sid
+         AND d.quantity > 0
+         AND asn.loc_id IN ('FB4488')
+ORDER BY 1;
 
-select distinct n.nsn || chr(9) || '4'
-from
-	amd_demands d,
-	amd_national_stock_items n,
-	amd_spare_networks asn
-where
-	d.action_code != 'D'
-	and asn.action_code != 'D'
-	and n.action_code != 'D'
-	and d.nsi_sid = n.nsi_sid
-	and d.loc_sid = asn.loc_sid
-	and d.quantity > 0
-	and asn.loc_id in ('FB4488');
-quit
+QUIT

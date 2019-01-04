@@ -11,15 +11,6 @@
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
 
-variable program_id varchar2(30);
-
-begin
-select amd_defaults.getProgramId into program_id from dual;
-end;
-
-print :program_id
-
-
 SET TIME ON
 SET TIMING ON
 SET ECHO ON
@@ -29,7 +20,7 @@ UPDATE ramp a
           (SELECT DISTINCT b.NSN
              FROM cat1 b
             WHERE b.nin = a.nsn AND b.nsn <> 'NSL')
- WHERE a.SC IN (:program_id || '0008FB2065G', :program_id || '0008FB2029G', :program_id || '0008FB2039G');
+ WHERE a.SC IN ('C170008FB2065G', 'C170008FB2029G', 'C170008FB2039G');
 /
 
 QUIT

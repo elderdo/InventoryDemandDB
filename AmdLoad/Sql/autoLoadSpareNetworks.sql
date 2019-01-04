@@ -1,26 +1,27 @@
-/* vim: ff=unix:ts=2:sw=2:sts=2:expandtab:autoindent:smartindent:
-      $Author:   Douglas Elder
-    $Revision:   1.2  $
+/*
+      $Author:   zf297a  $
+    $Revision:   1.1  $
         $Date:   04 Jul 2008 00:30:40  $
-       Rev 1.2   24 Jan 2017 Douglas Elder added invocation of 
-                             analyzeAmdSpareNetworks.sql
-                             and reformated code with Toad
-       Rev 1.1   04 Jul 2008 00:30:40   zf297a
-   Added instance name to package invocation.
-   
-       Rev 1.0   20 May 2008 15:01:38   zf297a
-   Initial revision.
+    $Workfile:   autoLoadSpareNetworks.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\autoLoadSpareNetworks.sql.-arc  $
+/*   
+/*      Rev 1.1   04 Jul 2008 00:30:40   zf297a
+/*   Added instance name to package invocation.
+/*   
+/*      Rev 1.0   20 May 2008 15:01:38   zf297a
+/*   Initial revision.
 */
 
-WHENEVER SQLERROR EXIT FAILURE
-WHENEVER OSERROR EXIT FAILURE
+whenever sqlerror exit FAILURE
+whenever oserror exit FAILURE
 
-SET TIME ON
-SET TIMING ON
-SET ECHO ON
+set time on
+set timing on
+set echo on
 
-EXEC  amd_spare_networks_pkg.auto_load_spare_networks;
+exec  amd_spare_networks_pkg.auto_load_spare_networks;
 
-@@analyzeAmdSpareNetworks.sql
+exit 
 
-EXIT
+
+

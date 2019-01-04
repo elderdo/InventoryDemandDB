@@ -1,44 +1,44 @@
-/*
-      $Author:   c402417  $
-    $Revision:   1.1  $
-        $Date:   Aug 08 2006 10:34:14  $
-    $Workfile:   Cat1.sql  $
-         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Cat1.sql.-arc  $
-/*   
-/*      Rev 1.1   Aug 08 2006 10:34:14   c402417
-/*   Added prime_part_no to the select statement.
-/*   
-/*      Rev 1.0   Feb 17 2006 13:22:20   zf297a
-/*   Latest Prod Version
-*/
---
--- SCCSID: Cat1.sql  1.1   Modified:  07/26/04  14:59:43
---
--- Date		By		History
--- 07/26/04	ThuyPham	Initial
---
+/* 
+*      $Author:   Douglas S. Elder
+*    $Revision:   1.4
+*        $Date:   19 May 2017
+*    $Workfile:   Cat1.sql
+*
+*      Rev 1.4  19 May 2017 DSE added order by and formatted code
+*      Rev 1.3   Aug 08 2006 10:34:14   Thuy Pham
+*   Added prime_part_no to the select statement.
+*   
+*      Rev 1.2   Feb 17 2006 13:22:20   zf297a
+*   Latest Prod Version
+*
+* Cat1.sql  1.1   Modified:  07/26/04  14:59:43
+*
+* Date		By		History
+* 07/26/04	ThuyPham	Initial
+*
+**/
 
 
-set heading off
-set feedback off
-set tab off
-set newpage none
-set pagesize 0
-set linesize 200
-set underline off
-set time on
+SET HEADING OFF
+SET FEEDBACK OFF
+SET tab OFF
+SET NEWPAGE NONE
+SET PAGESIZE 0
+SET LINESIZE 200
+SET UNDERLINE OFF
+SET TIME ON
 
-select
-	to_char(sp.nsn)|| chr(9)||
-	sp.part_no|| chr(9)||
-	nsi.prime_part_no|| chr(9) ||
-	nsi.item_type|| chr(9)||
-	nsi.smr_code
-from
-	amd_spare_parts sp,
-	amd_national_stock_items nsi
-where
-	sp.nsn = nsi.nsn
-	and sp.action_code != 'D'
-	and nsi.action_code != 'D';
-quit
+  SELECT    TO_CHAR (sp.nsn)
+         || CHR (9)
+         || sp.part_no
+         || CHR (9)
+         || nsi.prime_part_no
+         || CHR (9)
+         || nsi.item_type
+         || CHR (9)
+         || nsi.smr_code
+    FROM amd_spare_parts sp, amd_national_stock_items nsi
+   WHERE sp.nsn = nsi.nsn AND sp.action_code != 'D' AND nsi.action_code != 'D'
+ORDER BY 1;
+
+QUIT

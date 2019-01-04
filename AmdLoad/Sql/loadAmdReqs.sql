@@ -1,25 +1,27 @@
 /*
-      $Author:   Douglas S. Elder
-    $Revision:   1.1
+      $Author:   zf297a  $
+    $Revision:   1.0  $
         $Date:   19 Jun 2008 09:58:08  $
     $Workfile:   loadAmdReqs.sql  $
-   
-      Rev 1.0   19 Jun 2008 09:58:08   zf297a
-      Rev 1.1   25 Jan 2017 Douglas S Elder reformatted code
-                            added analyzeAmdReqs.sql
-   Initial revision.
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadAmdReqs.sql.-arc  $
+/*   
+/*      Rev 1.0   19 Jun 2008 09:58:08   zf297a
+/*   Initial revision.
 */
 
-WHENEVER SQLERROR EXIT FAILURE
-WHENEVER OSERROR EXIT FAILURE
+whenever sqlerror exit FAILURE
+whenever oserror exit FAILURE
 
-SET TIME ON
-SET TIMING ON
-SET ECHO ON
-SET SERVEROUTPUT ON SIZE 100000
+set time on
+set timing on
+set echo on
 
-EXEC  amd_reqs_pkg.LoadAmdReqs;
+exec  amd_reqs_pkg.LoadAmdReqs;
 
-@@analyzeAmdReqs.sql
+exit 
 
-EXIT
+
+
+
+
+

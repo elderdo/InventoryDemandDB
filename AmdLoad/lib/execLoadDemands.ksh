@@ -161,7 +161,7 @@ function checkForLoadErrors
   for f in $* 
    do
      echo "scanning for log $f"
-     log=$(ls -t $LOG_HOMNE/$(date +%Y%m%d)*${f}.log | head -n 1)
+     log=$(ls -t $LOG_HOME/$(date +%Y%m%d)*${f}.log | head -n 1)
      if [[ -n $log && -e $log ]] ; then
        $LIB_HOME/checkforerrors.ksh $log
        if (($?!=0)) ; then

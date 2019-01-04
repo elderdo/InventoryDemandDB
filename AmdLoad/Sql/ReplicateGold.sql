@@ -1,7 +1,7 @@
 /*
       $Author:   zf297a  $
-    $Revision:   1.17
-        $Date:   23 Sep 2015
+    $Revision:   1.16  $
+        $Date:   26 Nov 2008 00:37:58  $
     $Workfile:   ReplicateGold.sql  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\R
 	 eplicateGold.sql.-arc  $
@@ -32,19 +32,8 @@
 -- 08/05/05  Thuy Pham	     Added UIMS
 -- 08/09/05  Thuy Pham	     Added WHSE
 -- 10/03/05  Thuy Pham	     Added itemsa and whse from pgoldsa . 
--- 09/10/15  Douglas Elder   Added program_id
 --
 SET ECHO ON TERMOUT ON AUTOCOMMIT ON TIME ON
-
-variable program_id varchar2(30);
-
-begin
-select amd_defaults.getProgramId into :program_id from dual;
-end;
-/
-
-print :program_id
-
 
 exec amd_owner.mta_truncate_table('poi1','reuse storage');
 exec amd_owner.mta_truncate_table('ord1','reuse storage');
@@ -378,7 +367,7 @@ select
 		else reorder_point
 	end reorder_point, planner_code
 from  whse@pgoldlb
-where	sc like :program_id || '%CODUKBG' or sc like :program_id || '%CODAUSG' or sc like :program_id || '%CTLATLG' or sc like :program_id || '%CODCANG';
+where	sc like 'C17%CODUKBG' or sc like 'C17%CODAUSG' or sc like 'C17%CTLATLG' or sc like 'C17%CODCANG';
 
 
 insert into whse
@@ -394,7 +383,7 @@ select
 	end reorder_point, planner_code
 from 
 	whse@pgoldsa
-where	sc = :program_id || 'PCAG';
+where	sc = 'C17PCAG';
 
 
 insert into itemsa
@@ -416,7 +405,7 @@ select
 from item@pgoldsa
 where status_1 != 'D'
       and condition not in ('LDD', 'B170-ATL')
-      and sc = :program_id || 'PCAG';
+      and sc = 'C17PCAG';
 
 
 insert into uims

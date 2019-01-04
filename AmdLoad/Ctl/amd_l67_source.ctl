@@ -24,7 +24,7 @@ when (doc_no != '00000000000000') and (doc_no != 'ZZZZZZZZZZZZZZ')
 	ttpc char(2),
 	dmd_cd char(1),
 	trans_date char(7) nullif (trans_date='0000000') "to_date(:trans_date,'YYYYDDD')",
-	trans_ser char(5) "to_char(to_number(trim(:trans_ser)))",
+	trans_ser char(5),
 	marked_for char(14),
 	action_qty char(6),
 	reason char(1),

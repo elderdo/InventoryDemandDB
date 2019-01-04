@@ -1,25 +1,30 @@
-/* Formatted on 1/25/2017 6:03:32 PM (QP5 v5.287) */
 /*
-      $Author:   Douglas S Elder
-    $Revision:   1.1
-        $Date:   25 Jan 2017
-    $Workfile:   loadTmpAmdLocPartLeadTime.sql
-   
-      Rev 1.0   19 Jun 2008 10:09:16   zf297a
-      Rev 1.1   25 Jan 2017 DSE add set serveroutput and reformatted code
-   Initial revision.
+      $Author:   zf297a  $
+    $Revision:   1.0  $
+        $Date:   19 Jun 2008 10:09:16  $
+    $Workfile:   loadTmpAmdLocPartLeadTime.sql  $
+         $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\loadTmpAmdLocPartLeadTime.sql.-arc  $
+/*   
+/*      Rev 1.0   19 Jun 2008 10:09:16   zf297a
+/*   Initial revision.
 */
 
-WHENEVER SQLERROR EXIT FAILURE
-WHENEVER OSERROR EXIT FAILURE
+whenever sqlerror exit FAILURE
+whenever oserror exit FAILURE
 
-SET TIME ON
-SET TIMING ON
-SET ECHO ON
-SET SERVEROUTPUT ON SIZE 100000
+set time on
+set timing on
+set echo on
 
-EXEC amd_location_part_leadtime_pkg.LoadTmpAmdLocPartLeadtime;
+exec amd_location_part_leadtime_pkg.LoadTmpAmdLocPartLeadtime;
 
-@@analyzeTmpAmdLocationPartLeadtime.sql
+exit 
 
-EXIT
+
+
+
+
+
+
+
+
