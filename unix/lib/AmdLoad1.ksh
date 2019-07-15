@@ -1,8 +1,15 @@
 #!/bin/ksh
+# vim: ff=unix:ts=2:sw=2:sts=2:expandtab:autoindent:smartindent:
 #   $Author:   zf297a  $
-# $Revision:   1.13  $
+# $Revision:   1.15  $
 #     $Date:   04 Sep 2009 22:59:40  $
 # $Workfile:   AmdLoad1.ksh  $
+# rev 1.13 04 Sep 2009 
+# rev 1.14 21 Feb 2012 - made loadPsms a foreground process so deadlock does not occur
+# rev 1.15 24 Jan 2017 - add analyzeTmpAmdSpareParts
+# rev 1.16 19 Mar 2017 - fixed function execSqlplus
+# rev 1.17 03 Aug 2017 - fixed function abort to say AmdLoad1.ksh failed 
+#                        vs AmdLoad2.ksh failed
 
 USAGE="usage: ${0##*/} [-m] [-f] [-d] [-o override_file]  [startStep endStep ]\n\n
 \twhere\n
@@ -31,7 +38,7 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
 fi
 
 function abort {
-	errmsg="AmdLoad2.ksh Failed"
+	errmsg="AmdLoad1.ksh Failed"
 	print "$errmsg $1"
 	print -u2 "$errmsg $1"
 	exit 4
@@ -143,7 +150,7 @@ SQLPLUS_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${this
 
 function execSqlplus {
 	print "$0.ksh $1 started at `date` exec'ed by $CUR_USER"
-	if [[ -n $2 || "${AMD_FOREGROUND:-N}" = "Y" ]] then
+	if [[ -n $2 || "${AMD_FOREGROUND:-N}" = "Y" ]] ; then
 		$LIB_HOME/execSqlplus.ksh -t -e $SQLPLUS_ERROR_LOG $1  
 		RC=$?
 		if (($RC!=0)) ; then
@@ -157,10 +164,11 @@ function execSqlplus {
 # loadGold creates tmp_amd_spare_parts which is input to loadMain
 # so it must complete first
 steps[1]="execSqlplus loadGold -f"
-steps[2]="execSqlplus loadPsms"
+steps[2]="execSqlplus loadPsms -f"
 steps[3]="execSqlplus loadMain"
 steps[4]="execSqlplus loadWecm"
-steps[5]=return
+steps[5]="execSqlplus analyzeTmpAmdSpareParts"
+steps[6]=return
 
 THIS_FILE=`basename $0`
 THIS_FILE_NO_EXT=`echo $THIS_FILE | sed 's/\..\{3\}$//'`
