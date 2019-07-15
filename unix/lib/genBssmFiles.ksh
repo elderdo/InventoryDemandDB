@@ -2,8 +2,8 @@
 # vim: ff=unix:ts=2:sw=2:sts=2:expandtab:
 #------------------------------------------------------------------------------
 # Module    : genBssmFiles.ksh
-# Version   : 1.1
-# Date      : 18/May/2017
+# Version   : 1.4
+# Date      : 26/Sep/2017
 # Author    : Douglas S Elder
 #
 # Purpose: Create the BSSM flat files used by the BSSM load process
@@ -11,11 +11,19 @@
 #
 # Modification history:
 #
-# Date          Who           Purpose
-# ---------     -----------   -------------------------------------------------
-# 18/May/17     Douglas Elder added -o data_dir option to override the
-#                             default data directory /apps/CRON/AMD/data
-# 07/APR/17     Douglas Elder New module
+#          Date          Who           Purpose
+#          ---------     -----------   -------------------------------------------------
+# Rev 1.4  26/Sep/17     Douglas Elder fixed display of menu
+# Rev 1.3  13/Sep/17     Douglas Elder Uses only DATA_DIR for the home directory of the
+#                                      output files
+# Rev 1.2  19/May/17     Douglas Elder Since the sql scripts were changed to accept the
+#                                      complete path for the spoolname then get the sql 
+#                                      and the spoolname to pass to it from a text file 
+#                                      and load it into steps array
+# Rev 1.2  21/May/17     Douglas Elder added check if mkdir works
+# Rev 1.1  18/May/17     Douglas Elder added -o data_dir option to override the
+#                                      default data directory /apps/CRON/AMD/data
+# Rev 1.0  07/APR/17     Douglas Elder New module
 # -----------------------------------------------------------------------------
 #
 # ------------------------------------------------------------------------------
@@ -25,11 +33,12 @@ DEBUG=
 DBGECHO=
 APIDBG=
 STEP=
-DATA_DIR=
+SILENT=-s
 
 # set up the Oracle environment
 . /apps/CRON/AMD/lib/amdenv.ksh
 . /apps/CRON/AMD/lib/amdconfig.ksh
+DATA_DIR=$DATA_HOME
 
 stepnum=1
 rc=0
@@ -40,18 +49,19 @@ set -o pipefail
 
 function usage
 {
-  echo >&2 "usage: amd_bssmFlatFiles.ksh -d -h -m -o data_dir -r stepname -s stepnum"
+  echo >&2 "usage: amd_bssmFlatFiles.ksh -d -h -m -o data_dir -r stepname -s stepnum -v"
   echo >&2 "  -d turn on debug"
   echo >&2 "  -h this message"
   echo >&2 "  -m show step menu"
   echo >&2 "  -o data_dir the output directory"
   echo >&2 "  -r stepname where stepname a = check_app_files"
   echo >&2 "  -s stepnum to start at"
+  echo >&2 "  -v verbose - show sqlplus messages"
 }
 
 
 OPTIND=1
-while getopts dhmo:r:s: o
+while getopts dhmo:r:s:v o
 do  case "$o" in
   d)  DEBUG=Y 
       DBGECHO=ksh -x
@@ -68,6 +78,7 @@ do  case "$o" in
           exit 4 ;;
      esac ;;
   s)  stepnum=$OPTARG ;;
+  v)  SILENT= ;;
 [?])  usage
       exit 1;;
   esac
@@ -77,13 +88,21 @@ shift $(( $OPTIND - 1))
 
 function check_app_files
 {
+  [[ "$DEBUG" == "Y" ]] && set -x
   rc=0
-  for l in ${steps[@]}
+  let i=0
+  
+  while [[ $i -lt ${#steps[*]} ]]
   do
+    # array item format is file.sql spoolname
+    # so extract just the file.sql from each array item
+    l=$(echo ${steps[$i]} | sed 's/^\(.*.sql\) .*/\1/')
 	  if [ ! -r "$SRC_HOME/$l" ] ; then
 	    echo "$SRC_HOME/$l is not readable"
       rc=4
+      break
     fi
+    let i+=1
   done
 
   return $rc
@@ -93,6 +112,7 @@ function check_app_files
 
 function main
 {
+  [[ "$DEBUG" == "Y" ]] && set -x
   echo "********************************************************"
   echo "* Start Date & Time: $(date) $0"
   echo "********************************************************"
@@ -103,19 +123,28 @@ function main
     return $rc
   fi  
 
+  # get rid of previous files
+  if [[ -n $DATA_DIR ]] ; then
+    rm -f $DATA_DIR/*.TXT
+  fi
+
   n=0
-  for l in ${steps[@]}
+  let i=0
+  while [[ $i -lt ${#steps[*]} ]]  
   do
-    let n=$n+1
+    l=${steps[$i]}
+    let n+=1
     if [ $n -eq $stepnum ] ; then
       echo "executing $SRC_HOME/$l - $(date)"
-      sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/$l $DATA_DIR
+      # run in the background so that files get created ASAP
+      sqlplus $SILENT $DB_CONNECTION_STRING @$SRC_HOME/$l
       rc=$?
       if [ $rc -ne 0 ] ; then
         return $rc
       fi
       let stepnum=$stepnum+1
     fi
+    let i+=1
   done
 
   echo -e "##############################################################"
@@ -129,17 +158,34 @@ function main
 
 function loadSteps
 {
+    [[ "$DEBUG" == "Y" ]] && set -x
     if [ ! -e $DATA_HOME/bssm_sql.txt ] ; then
       echo $DATA_HOME/bssm_sql.txt not found
       rc=4
       return $rc
+    fi
+    YYYYMMDD=$(date +%Y%m%d)
+    if [[ -z $DATA_DIR ]] ; then
+      DATA_DIR=$DATA_HOME
+    else
+      if [[ ! -e $DATA_DIR ]] ; then
+        mkdir $DATA_DIR
+        if (($?!=0)) ; then
+          echo "genBssmFiles.ksh: unaable to created directory /$DATA_DIR"
+          return 4
+        fi
+      fi
     fi
 
     n=0
     set -A steps
     while IFS= read -r line
     do
-      steps[$n]=$line
+      if [[ -z $DATA_DIR ]] ; then
+        steps[$n]=$(echo $line | sed -e "s/\${YYYYMMDD}/${YYYYMMDD}/" -e "s/\$DATA_HOME/${DATA_DIR}/")
+      else
+        steps[$n]=$(echo $line | sed -e "s/\${YYYYMMDD}/${YYYYMMDD}/" -e "s!\$DATA_HOME!${DATA_DIR}!")
+      fi
       let n=$n+1
     done < $DATA_HOME/bssm_sql.txt
     num_steps=$n
@@ -151,7 +197,7 @@ function displayMenu
       clear
     fi
     cnt=j
-    for l in ${steps[@]}
+    for l in "${steps[@]}"
     do
       let cnt=$cnt+1
       echo " $cnt. $l"
@@ -173,7 +219,7 @@ function menu
         if ((stepnum <= num_steps))  ; then
           n=$stepnum-1
           echo "executing $SRC_HOME/${steps[$n]}"
-          sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/${steps[$n]} $DATA_DIR
+          sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/${steps[$n]} 
           if [ $? -ne 0 ] ; then
             echo "${steps[$n]} failed"
             rc=4

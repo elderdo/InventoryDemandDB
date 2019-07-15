@@ -18,13 +18,13 @@ USAGE="usage: ${0##*/} [-a addr_file] [-f from] [-t recipient addresses] [-c cc 
 \t-p do not send html, send plain text
 \t [file1 file2...] optional file attachments"
 
-if [[ $# > 0 && "$1" = "?" ]]
+if [[ $# > 0 && "$1" == "?" ]]
 then
 	print $USAGE
 	exit 0
 fi
 
-hostname=`hostname -s`
+hostname=$(uname -n)
 
 function abort {
 	print -u2 ${1:-"$0 failed"}
@@ -36,7 +36,7 @@ function abort {
 
 UNVAR=${UNVAR:-}
 
-if [[ -n $UNVAR && -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -n $UNVAR && -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
@@ -44,14 +44,14 @@ then
 		abort "$UNVAR/apps/CRON/AMD/lib/amdconfig.ksh failed"
 	fi
 	print "Using $UNVAR for amdconfig"
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. /apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
 	then
 		abort "/apps/CRON/AMD/lib/amdconfig.ksh failed"
 	fi
-elif [[ -a ./amdconfig.ksh ]]
+elif [[ -e ./amdconfig.ksh ]]
 then
 	. ./amdconfig.ksh 
 	if (( $? > 0 ))
@@ -98,9 +98,9 @@ shift $positions_occupied_by_switches
 # remaining nonswitch arguments.
 
 if [[ -n $LOGNAME ]] ; then
-	if [[ -a /home/amd/amduser/${LOGNAME} ]] ; then
+	if [[ -e /home/amd/amduser/${LOGNAME} ]] ; then
 		USER_HOME=/home/amd/amduser/${LOGNAME}
-		if [[ -a ${USER_HOME}/data/${ADDR_FILE:-"addresses.txt"} ]] ; then
+		if [[ -e ${USER_HOME}/data/${ADDR_FILE:-"addresses.txt"} ]] ; then
 			DATA_HOME=${USER_HOME}${DATA_HOME} 
 		fi
 	fi
@@ -115,7 +115,7 @@ then
           *) absolute=0 
              ADDR_FILE=$DATA_HOME/$ADDR_FILE ;;
         esac
-	if [[ -a $ADDR_FILE ]]
+	if [[ -e $ADDR_FILE ]]
 	then
 		{ while read myline; do
 			if [[ -z $TO ]]
@@ -133,7 +133,7 @@ fi
 if [[ -z $CC ]]
 then
 	CC_FILE=${CC_FILE:-"cc.txt"}
-	if [[ -a $DATA_HOME/$CC_FILE ]]
+	if [[ -e $DATA_HOME/$CC_FILE ]]
 	then
 		{ while read myline; do
 			if [[ -z $CC ]]
@@ -151,7 +151,7 @@ fi
 if [[ -z $BCC ]]
 then
 	BCC_FILE=${BCC_FILE:-"bcc.txt"}
-	if [[ -a $DATA_HOME/$BCC_FILE ]]
+	if [[ -e $DATA_HOME/$BCC_FILE ]]
 	then
 		{ while read myline; do
 			if [[ -z $BCC ]]
@@ -166,7 +166,7 @@ then
 	fi
 fi
 
-TO=${TO:-"Douglas.S.Elder@boeing.com,phuong-thuy.pham@boeing.com,willy.yao@boeing.com"}
+TO=${TO:-"Douglas.S.Elder@boeing.com,rena.r.huang@boeing.com"}
 
 
 SUBJ=${SUBJ:-Test of $0@$AMDENV}
@@ -174,7 +174,7 @@ SUBJ=${SUBJ:-Test of $0@$AMDENV}
 FROM=${FROM:-"$0_on_$hostname"}
 
 
-if [[ "$AMD_NOTIFY" = "N" ]] ; then 
+if [[ "$AMD_NOTIFY" == "N" ]] ; then 
 	print "Subject: $SUUBJ"
 	print "From: $FROM"
 	print "To: $TO"
@@ -187,11 +187,16 @@ if [[ "$AMD_NOTIFY" = "N" ]] ; then
 	return 0
 fi
 
-if [[ "${debug:-N}" = "Y" ]] ; then
+if [[ "${debug:-N}" == "Y" ]] ; then
 	EMAIL_COMMAND="cat"
 else
 	EMAIL_COMMAND="/usr/sbin/sendmail  -t"
 fi
+
+# see if uuencode exists
+# UUENCODE will be zero if it exists
+which uuencode 2> /dev/null > /dev/null
+UUENCODE=$?
 
 {
 
@@ -220,14 +225,14 @@ ${MSG:-This is a test message}
 
 EOF
 
-if [[ -n $1 && -f $1 ]]
+if [[ -n $1 && -f $1 && "$UUENCODE" == "0" ]]
 then
 	for file in $*
 	do
-		if [[ -a $file ]]
+		if [[ -e $file ]]
 		then
 			# sed -e '/^[ \t]*$/d' -e 's/$/<br>/' ${file}
-			BASE=`basename $file`
+			BASE=$(basename $file)
 			print -R "--DMW.Boundary.605592468"
 			print "Content-Type: application/7bit\; name=\"$BASE\""
 			print "Content-Disposition: attachment\; filename=\"$BASE\""

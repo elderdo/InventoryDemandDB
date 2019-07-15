@@ -1,10 +1,17 @@
 #!/bin/ksh
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# cancelLoad.ksh
 # Author: Douglas S. Elder
-# Date: 12/19/2011
+# Date: 02/15/2018
+# Rev: 1.1
 # Description: This script cancel
 # all future AMD batch load jobs
 # until rescheduleLoad.ksh is 
 # executed
+# Rev 1.0  Date: 12/19/2011
+# Rev 1.1  Date: 02/15/2018 replaced obsolete -a with -e
+#                           replaced obsolete back tic's with
+#                           $(..)
 USAGE="usage: ${0##*/} [-o] [-d]
 \twhere\n
 \t-d enables debug\n"
@@ -20,7 +27,7 @@ function abort {
 # import common definitions
 UNVAR=${UNVAR:-}
 
-if [[ -n $UNVAR && -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -n $UNVAR && -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
   . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
   if (( $? > 0 ))
@@ -28,14 +35,14 @@ then
     abort "$UNVAR/apps/CRON/AMD/lib/amdconfig.ksh failed"
   fi
   print "Using $UNVAR for amdconfig"
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
   . /apps/CRON/AMD/lib/amdconfig.ksh
   if (( $? > 0 ))
   then
     abort "/apps/CRON/AMD/lib/amdconfig.ksh failed"
   fi
-elif [[ -a ./amdconfig.ksh ]]
+elif [[ -e ./amdconfig.ksh ]]
 then
   . ./amdconfig.ksh
   if (( $? > 0 ))
@@ -74,7 +81,7 @@ function main {
 }
 
 
-export TimeStamp=`date $DateStr | sed "s/:/_/g"`
+export TimeStamp=$(date $DateStr | sed "s/:/_/g")
 export LOG=$LOG_HOME/${TimeStamp}_cancelLoad.log
 
 main | tee $LOG

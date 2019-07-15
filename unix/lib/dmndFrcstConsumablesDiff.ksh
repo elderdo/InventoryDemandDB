@@ -5,11 +5,13 @@
 # $Workfile:   dmndFrcstConsumablesDiff.ksh  $
 #
 # $Revision:   1.5  14 Oct 2009 
+# $Revision:   1.6  13 Jun 2013
+# $Revision:   1.7  15 Feb 2018 removed obsolete back tic's
+#                               replaced with $(..)
 #
 . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
-NUM_ROWS=`$LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_dmnd_frcst_consumables ;"`
+NUM_ROWS=$($LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_dmnd_frcst_consumables ;")
 if ((NUM_ROWS>0)) ; then
-	$LIB_HOME/execJavaApp.ksh DmndFrcstConsumables
 	$LIB_HOME/execSqlplus.ksh dmndFrcstConsumablesDiff 
 	RC=$?
 	return $RC

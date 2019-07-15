@@ -1,8 +1,9 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.18
-#     $Date:   20 Jun 2016
-# $Workfile:   checkforerrors.ksh  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# checkforerrors.ksh  $
+#   $Author:   Douglas S. Elder
+# $Revision:   1.19
+#     $Date:   15 Feb 2018
 #
 # SCCSID: checkforerrors.ksh  1.6  Modified: 07/09/02 09:35:10
 #
@@ -21,6 +22,8 @@
 # 03/21/14  Elder D.       1.16 added -p phone numbers for  error text messages
 # 06/16/16  Elder D.       1.17 added -c command line opt to make search case sensitive
 # 06/20/16  Elder D.       1.18 added function to doNOtify
+# 02/15/18  Elder D.       1.19 removed obsolete back tic's and replaced with $(..)
+#                               use (( )) for numeric calc's and compares
 #
 
 USAGE="usage: ${0##*/} [ -a addr_file ] [ -c ] [ -p ] [ -n ] [ -d ] [ -g grep_pattern_file ] [ -l libdir ]
@@ -39,7 +42,7 @@ USAGE="usage: ${0##*/} [ -a addr_file ] [ -c ] [ -p ] [ -n ] [ -d ] [ -g grep_pa
 \n\t-d turns on debuging
 \n\tand file is the file to be scanned for errors\n"
 
-if [[ "$#" -gt "0" && "$1" = "?" ]]
+if [[ (($#>0)) && "$1" == "?" ]]
 then
 	print $USAGE
 	exit 0
@@ -49,11 +52,11 @@ fi
 
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	TimeStamp=`date $DateStr | sed "s/:/_/g"`
+	TimeStamp=$(date $DateStr | sed "s/:/_/g")
 fi
-hostname=`hostname -s`
+hostname=$(hostname -s)
 
-if [[ "$( tty )" = 'not a tty' ]]
+if [[ "$( tty )" == 'not a tty' ]]
 then
     STDIN_DATA_PRESENT=1
 else
@@ -91,7 +94,7 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-if (($#<1 && $STDIN_DATA_PRESENT==0)) ; then
+if (($#<1 && STDIN_DATA_PRESENT==0)) ; then
 	print $USAGE
 	exit 4
 fi
@@ -107,13 +110,13 @@ function doNotify {
 
 	THE_MESSAGE="$1"
 	if [[ -n ${ErrorLogFile:-} ]] ; then
-		ATTACHMENT2=/tmp/`basename $ErrorLogFile`
+		ATTACHMENT2=/tmp/$(basename $ErrorLogFile)
 		# use awk to convert a Unix text file to a Windows text file
 		awk 'sub("$", "\r")' $ErrorLogFile > $ATTACHMENT2
 	fi
 
 	# allow for paging to be turned off for testing
-	if [[ "${AMD_SEND_PAGE:-Y}" = "Y" ]] ; then
+	if [[ "${AMD_SEND_PAGE:-Y}" == "Y" ]] ; then
 		if [[ -n ${TimeStamp:-} ]] ; then 
 			TIMESTAMP_INFO=" at $TimeStamp"
 		fi
@@ -144,7 +147,7 @@ function doNotify {
 		fi
 	fi
 
-	if [[ "${debug:-}" = "Y" ]] ; then
+	if [[ "${debug:-}" == "Y" ]] ; then
 		NOTIFY_DEBUG=-b
 	else
 		NOTIFY_DEBUG=
@@ -162,7 +165,7 @@ function doNotify {
 
 
 
-if [[ "$STDIN_DATA_PRESENT" = "1" ]]
+if [[ "$STDIN_DATA_PRESENT" == "1" ]]
 then
     ErrorLogFile=
     GET_STDIN="cat - |"
@@ -178,7 +181,7 @@ fi
 GREP_PATTERN_FILE=${GREP_PATTERN_FILE:-$DATA_HOME/checkForErrorsGrepPatterns.txt}
 
 if [[ -f $GREP_PATTERN_FILE ]] ; then
-	RetStr=`eval "$GET_STDIN grep $GREP_CASE -f $GREP_PATTERN_FILE $ErrorLogFile"`
+	RetStr=$(eval "$GET_STDIN grep $GREP_CASE -f $GREP_PATTERN_FILE $ErrorLogFile")
 else
 	
 	doNotify "checkforerrors.ksh: $GREP_PATTERN_FILE does not exist."
@@ -192,11 +195,11 @@ if (($?==0)) ; then
   # allow notification to be turned off for running tests via the 
   # AMD_ERROR_NOTIFICATION  environment variable
 
-  if [[ "${AMD_ERROR_NOTIFICATION:-Y}" = "Y" ]] ; then
+  if [[ "${AMD_ERROR_NOTIFICATION:-Y}" == "Y" ]] ; then
 	doNotify "Text found: $RetStr"
   fi
 
-  print -u2 "`date`: For ENV=$AMDENV AMD Load Failed on $hostname${TIMESTAMP_INFO:-}${STEPINFO:-}. $0 found error text:
+  print -u2 "$(date): For ENV=$AMDENV AMD Load Failed on $hostname${TIMESTAMP_INFO:-}${STEPINFO:-}. $0 found error text:
 \n\t$RetStr
 \n\tin $ERROR_SOURCE"
 

@@ -1,7 +1,7 @@
 #!/usr/bin/ksh
 #   $Author:   zf297a  $
-# $Revision:   1.7  $
-#     $Date:   11 Sep 2014
+# $Revision:   1.10  $
+#     $Date:   14 Sep 2017
 # $Workfile:   amd_bssmFlatFiles.ksh  $
 #
 # SCCSID: amd_bssmFlatFiles.ksh  1.1   Modifies: 07/26/04  10:22:53
@@ -11,13 +11,21 @@
 # -----------	--------------	-----------------------------------------
 # 07/16/04	Thuy P		Initial implementation.
 # 09/1l/l4	Douglas Elder	Rev 1.7 Added InventorySummed_to_W
+# 09/02/l5	Douglas Elder	Rev 1.8 added chmod 660 *.TXT
+# 09/13/l5	Douglas Elder	Rev 1.9 changed the output directory
+#                                 to $DATA_HOME/bssm
+# 09/13/l5	Douglas Elder	Rev 1.9 removed obsolete back tics and
+#                                 replaced it with $(command params)
+#                                 where command is date and params is
+#                                 the date format
 # 
 
 . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
+export DATA_HOME=$DATA_HOME/bssm
 
 DateStr="+%Y"
 DateStr="$DateStr%m%d"
-export TimeStamp=`date $DateStr`;
+export TimeStamp=$(date $DateStr);
 
 rm -f $DATA_HOME/AMDII*.TXT
 rm -f $DATA_HOME/FedLog_Active*.TXT
@@ -41,7 +49,7 @@ sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/PartSumSranConv.sql >$DATA_HOME/sran
 sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/Capability.sql >$DATA_HOME/capability.txt
 sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/Repair.sql >$DATA_HOME/repair.txt
 sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/InventorySranConv.sql >$DATA_HOME/invsranconv.txt
-sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/BssmRspOnHand.sql >$DATA_HOME/rsponhand.txt
+sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/BssmRspOnHand.sql $DATA_HOME/RSP_On_Hand_and_Objective_${TimeStamp}.TXT
 sqlplus -s $DB_CONNECTION_STRING @$SRC_HOME/InventorySummed_to_W.sql $DATA_HOME/AMDII_di_Inventory_summed_to_W_${TimeStamp}.TXT
 
 
@@ -105,8 +113,5 @@ cat $SRC_HOME/invsranconv_header.txt $DATA_HOME/invsranconv.txt > $DATA_HOME/inv
 cat $DATA_HOME/invsranconv_out.txt | grep -v "rows selected." >$DATA_HOME/AMDII_di_Inventory_SRANS-Conv_${TimeStamp}.TXT
 rm -f $DATA_HOME/invsranconv*.*
 
-cat $SRC_HOME/rsp_header.txt $DATA_HOME/rsponhand.txt > $DATA_HOME/rsponhand_out.txt
-cat $DATA_HOME/rsponhand_out.txt | grep -v "rows selected." >$DATA_HOME/RSP_On_Hand_and_Objective_${TimeStamp}.TXT
-rm -f $DATA_HOME/rsponhand*.*
 
 chmod 660 $DATA_HOME/*.TXT

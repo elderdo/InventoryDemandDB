@@ -1,7 +1,7 @@
 #!/usr/bin/ksh
 # amd_loadFtpFile.ksh
 # Author: Douglas S. Elder
-# Revision: 1.13
+# Revision: 1.14
 # Date: 10/18/2015
 #
 #------------------------------------------------------------------------------
@@ -38,6 +38,9 @@
 #                           used by the notify.ksh script
 #                           fixed DestFile in GenStats
 #                           fixed fileWithoutExt in compressAttachedFile
+# 11/09/2017 Douglas Elder  for /tmp files use Amd to distinguish Amd
+#                           files
+#                           replaced obsolete back tics with $(....)
 USAGE="Usage: ${0##*/}  [ -a address_file -d ]\n\n
 \twhere\n
 \t-a address_file contains email addresses for the notify.ksh\n
@@ -45,7 +48,7 @@ USAGE="Usage: ${0##*/}  [ -a address_file -d ]\n\n
 \t-d enables debug\n"
 # setup the env
 
-CUR_USER=`logname`
+CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
   CUR_USER=amduser
 fi
@@ -87,14 +90,14 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-hostname=`hostname -s`
+hostname=$(hostname -s)
 
-print "$0 started at " `date`
+print "$0 started at " $(date)
 
 if [[ -z ${TimeStamp:-} ]] ; then
-  export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+  export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-  export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+  export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
 FTPDir=$DATA_HOME/L67GV
@@ -122,17 +125,17 @@ if [ -z "$ADDRESSES" ] ; then
   fi
 fi
 
-rm -f /tmp/fileList*.txt
-TMPFILE=/tmp/fileList${$}.txt
-rm -f /tmp/MesgBody*.txt
-MesgFile=/tmp/MesgBody${$}.txt
+rm -f /tmp/AmdFileList*.txt
+TMPFILE=/tmp/AmdFileList${$}.txt
+rm -f /tmp/AmdMesgBody*.txt
+MesgFile=/tmp/AmdMesgBody${$}.txt
 
 if [  $# -ne 1 ] ; then
   print -u2 "$USAGE"
   exit 4
 fi
 FileType="$1"
-FileType=`echo $FileType |tr '[:lower:]' '[:upper:]'`
+FileType=$(echo $FileType |tr '[:lower:]' '[:upper:]')
 
 if [ "$FileType" = "L67" ]; then
   uType="L67"
@@ -159,13 +162,13 @@ function compressAttachedFile
     set -x
   fi
 
-  fileToCompress=`basename $1`
+  fileToCompress=$(basename $1)
   # remove file extension
   fileWithoutExt=${fileToCompress%.*}
-  TARFILE=/tmp/$fileWithoutExt${$}.tar
-  rm -f $/tmp/${fileWithoutExt}*.tar
-  rm -f $/tmp/${fileWithoutExt}*.tar.gz
-  CUR_DIR=`pwd`
+  TARFILE=/tmp/Amd$fileWithoutExt${$}.tar
+  rm -f $/tmp/Amd${fileWithoutExt}*.tar
+  rm -f $/tmp/Amd${fileWithoutExt}*.tar.gz
+  CUR_DIR=$(pwd)
   cd $(dirname $1)
   # do the tar without path info 
   tar -cvf $TARFILE $fileToCompress > $LOG_HOME/tarLogs.log
@@ -214,7 +217,7 @@ function ProcessList
     set -x
   fi
 
-  for InFile in `grep -i $FileType $TMPFILE|awk '{print $1}'`
+  for InFile in $(grep -i $FileType $TMPFILE|awk '{print $1}')
   do
     SourceFile=$FTPDir/$InFile
     DestFile=$DATA_HOME/${InFile%.*}
@@ -226,7 +229,7 @@ function ProcessList
       if [ "$FileType" = "L67" ]; then
         LoadFile=$DestFile.tmp        #Will contain filename in file.
         AttFile=$DestFile.txt         #File to be attached.
-        FileArg=`basename $DestFile`
+        FileArg=$(basename $DestFile)
       
         # Add the filename to the file to populate in the database.
         awk -v FileName=$FileArg \
@@ -342,7 +345,7 @@ function GenStats
 
   rm -f $MesgFile
 
-  for InFile in `grep -i $FileType $TMPFILE|awk '{print $1}'`
+  for InFile in $(grep -i $FileType $TMPFILE|awk '{print $1}')
   do
     DestFile=$DATA_HOME/${InFile%.*}
 
@@ -393,4 +396,4 @@ function GenStats
 
 
 main $*
-print "$0 ended at " `date`
+print "$0 ended at " $(date)

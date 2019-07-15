@@ -1,8 +1,13 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.0  $
-#     $Date:   23 May 2009 16:25:24  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# invPostProcess.ksh
+#   $Author:   Douglas S. Elder
+# $Revision:   1.1  $
+#     $Date:   15 May 2018
 # $Workfile:   invPostProcess.ksh  $
+# $Revision:   1.0 23 May 2009 16:25:24  Init Rev
+# $Revision:   1.1 15 Feb 2018 DSE replaced obsolete back tic's with $(..)
+#                                  replaced obsolete = with ==
 #
 USAGE="usage: ${0##*/} [-a] [-t] [-s step] [-d] [-e] [-w] [-o] [-v]
 \twhere\n
@@ -52,36 +57,36 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-	print "$0 starting at " `date`
+	print "$0 starting at " $(date)
 
 	thisFile=${0##*/}
 	baseFile=${thisFile%\.*}
 
 	if [[ -z ${TimeStamp:-} ]] ; then
-		export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+		export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 	else
-		export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+		export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 	fi
 
 	LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${baseFile}.log"
 
-	if [[ "${SEND_ALL_PARTS:-N}" = "Y" ]] ; then
+	if [[ "${SEND_ALL_PARTS:-N}" == "Y" ]] ; then
         	$LIB_HOME/execSqlplus.ksh -e $LOG_NAME ${VIEW_PARTINFO_LOG:+-n} $baseFile
 		print "sending all parts" >> $LOG_NAME
 	fi
 
-	if [[ "$REMOTE_TEE" = "N" ]]
+	if [[ "$REMOTE_TEE" == "N" ]]
 	then
 		$LIB_HOME/execRemoteShell.ksh sendPartInfo.ksh >> $LOG_NAME
 	else
 		$LIB_HOME/execRemoteShell.ksh sendPartInfo.ksh | tee -a $LOG_NAME
 	fi
 
-	if [[ "$VIEW_PARTINFO_LOG" = "Y" ]] ; then
+	if [[ "$VIEW_PARTINFO_LOG" == "Y" ]] ; then
 		cat $LOG_NAME
 	fi
 
-	if [[ "${showRunEnqueueDebug:-}" = "Y" ]] ; then
+	if [[ "${showRunEnqueueDebug:-}" == "Y" ]] ; then
 		$LIB_HOME/checkforerrors.ksh $LOG_NAME
    		if (($?!=0)) ; then
 		   exit 4
@@ -99,28 +104,28 @@ shift $positions_occupied_by_switches
 	grep "enqueued successfully" $LOG_NAME  
 	if  (($? != 0 )) 
 	then
-		if [[ "${ABORT_FOR_WARNINGS:-N}" = "Y" ]] ; then
+		if [[ "${ABORT_FOR_WARNINGS:-N}" == "Y" ]] ; then
 			PARTINFO_MSG="Failed"
 		else
 			PARTINFO_MSG="Warning"
 		fi
 		PARTINFO_MSG="${PARTINFO_MSG}: there were no records enqueued for PartInfo"
 		print "AMD Loader $PARTINFO_MSG at $TimeStamp"		
-		if [ "${AMD_ERROR_NOTIFICATION:-}" = "Y" ]
+		if [ "${AMD_ERROR_NOTIFICATION:-}" == "Y" ]
 		then
-			if [[ "${ABORT_FOR_WARNINGS:-N}" = "Y" ]] ; then # only send a page when aborting
+			if [[ "${ABORT_FOR_WARNINGS:-N}" == "Y" ]] ; then # only send a page when aborting
 				$LIB_HOME/sendPage.ksh  "$thisFile $PARTINFO_MSG at $TimeStamp"		
 			fi
 			# notify.ksh uses data/addresses.txt for the list of email recipients
 			# -s is the subject
 			# -m is for the message body
-			hostname=`hostname -s`
+			hostname=$(hostname -s)
 			$LIB_HOME/notify.ksh -s "$thisFile $PARTINFO_MSG on $hostname" -m "$0 $PARTINFO_MSG on $hostname. No records enqueued" $LOG_NAME
 		fi
 
-		if [[ "${ABORT_FOR_WARNINGS:-N}" = "Y" ]] ; then 
+		if [[ "${ABORT_FOR_WARNINGS:-N}" == "Y" ]] ; then 
 			exit 4
 		fi
 	fi
 
-	print "$0 ending at " `date`
+	print "$0 ending at " $(date)

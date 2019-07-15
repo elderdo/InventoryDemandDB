@@ -1,8 +1,12 @@
 #!/usr/bin/ksh
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# debugRemoteScript.ksh  $
 #   $Author:   zf297a  $
-# $Revision:   1.1  $
-#     $Date:   13 Sep 2010 18:28  $
-# $Workfile:   debugRemoteScript.ksh  $
+# $Revision:   1.2  $
+#     $Date:   15 Feb 2018
+# $Revision:   1.1  13 Sep 2010 18:28  $
+# $Revision:   1.2  15 Feb 2018 replaced = with ==
+#                               replaced back tic's with $(..)
 #
 USAGE="usage: ${0##*/} [-n] [-r] [-d] scriptName
 \twhere
@@ -11,7 +15,7 @@ USAGE="usage: ${0##*/} [-n] [-r] [-d] scriptName
 \t\t-n\tdon't use ksh -x when executing the script
 \tscriptName is the script or command line to execute"
 
-if [[ $# > 0 && $1 = "?" ]]
+if [[ $# > 0 && $1 == "?" ]]
 then
 	print "$USAGE"
 	exit 0
@@ -25,7 +29,7 @@ while getopts :nr arguments
 do
 	case $arguments in
 	  d) debug=Y
-	     set -x
+	     set -x ;;
 	  n) debug=N;;
 	  r) USE_REMSCH=N;;
 	  *) print -u2 "$USAGE"
@@ -43,7 +47,7 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-export TimeStamp=`date $DateStr`;
+export TimeStamp=$(date $DateStr)
 
 
 
@@ -57,7 +61,7 @@ function execRemoteShell
 	else
 		THE_COMMAND="$*"
 	fi
-	curUser=`whoami`
+	curUser=$(whoami)
 	if [ "$curUser" != "amduser" ]
 	then
 		print -u2 "Error: User $curUser cannot do a remote shell to $SCM_HOST, you must be user amduser" 
@@ -65,10 +69,10 @@ function execRemoteShell
 	fi
 
 	EXECREMOTE_ARGS=
-	if [[ "${USE_RESMSH:-}" = "Y" ]] ; then
+	if [[ "${USE_RESMSH:-}" == "Y" ]] ; then
 		EXECREMOTE_ARGS="-r"
 	fi
-	if [[ "${debug:-N}" = "Y" ]] ; then
+	if [[ "${debug:-N}" == "Y" ]] ; then
 		EXECREMOTE_ARGS="$EXECUTEREMOTE_ARGS -d"
 		shellCmd="ksh -x"
 	else

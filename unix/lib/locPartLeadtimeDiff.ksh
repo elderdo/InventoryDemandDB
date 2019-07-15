@@ -1,20 +1,18 @@
 #!/usr/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.5  $
-#     $Date:   10 Jul 2009 17:47:44  $
-# $Workfile:   locPartLeadtimeDiff.ksh  $
+#   $Author:   Douglas S. Elder
+# $Revision:   1.6
+#     $Date:   13 Jun 2016
 #
-#SCCSID: %M%  %I%  Modified: %G% %U%
 #
 # Date      Who            Purpose
 # --------  -------------  --------------------------------------------------
 # 08/09/05  KenShew	   Initial implementation
+# 07/10/09  D. Elder   Revision:   1.5
 . $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 
-$LIB_HOME/execJavaApp.ksh LocationPartLeadtime 
+$LIB_HOME/execSqlplus.ksh locationPartLeadtimeDiff 
 if (($?!=0)) ; then
-	print -u2 "execJavaApp.ksh failed for LocationPartLeadtime"
-	print  "execJavaApp.ksh failed for LocationPartLeadtime"
+	print -u2 "execSqlplus.ksh failed for locationPartLeadtimeDiff"
+	print  "execSqlplus.ksh failed for locationPartLeadtimeDiff"
 	exit 4
 fi
-chmod 666 $LOG_HOME/WinDiff.log*

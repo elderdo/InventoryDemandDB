@@ -1,9 +1,12 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.2  $
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
+# execRemoteShell.ksh
+#   $Author:   Douglas S Elder
+# $Revision:   1.3
 #     $Date:   22 Sep 2010 14:19  $
-# $Workfile:   execRemoteShell.ksh  $
 #
+#  Rev 1.2:   22 Sep 2010 14:19  $
+#  Rev 1.3:   15 Feb 2018 DSE removed obsolete back tic's replaced with $(..)
 USAGE="usage: ${0##*/} [-h host] [-u user] [-d] the_command
 \twhere\n
 \t-d\tturns on debug
@@ -11,7 +14,7 @@ USAGE="usage: ${0##*/} [-h host] [-u user] [-d] the_command
 \t-u uses\tconnects with user and executes a command
 \tthe_command is the name of the remote script to execute."
 
-if [[ "$1" = "?" ]] ; then
+if [[ "$1" == "?" ]] ; then
 	print "$USAGE"
 	return 0
 fi
@@ -26,14 +29,14 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $SRC_HOME || -z $DB_CONNECTION_STRING ]
 fi
 
 
-USER=`whoami`
+USER=$(whoami)
 REMOTE_CMD="ssh -l $USER"
 HOST=sbhs3044.slb.cal.boeing.com
 
 while getopts :dh:u: arguments
 do
 	case $arguments in
-	  h) if [[ "$AMDEVN" = "$OPTARG" ]] ;
+	  h) if [[ "$AMDEVN" == "$OPTARG" ]] ;
 	     then
 	       print "script not needed - use regular Unix commands"
 	       exit
@@ -67,11 +70,11 @@ shift $positions_occupied_by_switches
 		REMOTE_CMD=ssh
 	fi
 	REMOTE_CMD=${REMOTE_CMD:-ssh -l $USER}
-	print "$0 $@ starting at " `date`
+	print "$0 $@ starting at " $(date)
 
 	if [[ -z $1 ]]
 	then
-		if [[ "$USER" = "amduser" ]]
+		if [[ "$USER" == "amduser" ]]
 		then
 			THE_COMMAND="su -u escm hostname"
 		else
@@ -82,4 +85,4 @@ shift $positions_occupied_by_switches
 	fi
 	$REMOTE_CMD $HOST "$THE_COMMAND"
 
-	print "$REMOTE_CMD $HOST $THE_COMMAND ending at " `date`
+	print "$REMOTE_CMD $HOST $THE_COMMAND ending at " $(date)

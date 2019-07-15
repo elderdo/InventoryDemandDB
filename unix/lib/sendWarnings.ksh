@@ -1,8 +1,10 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.1  $
-#     $Date:   30 Jan 2009 16:41:06  $
+#   $Author:   Douglas S. Eldere
+# $Revision:   1.2
+#     $Date:   15 Feb 2018
 # $Workfile:   sendWarnings.ksh  $
+# Rev 1.0 30 Jan 2009 Douglas S. Elder   Init Rev
+# Rev 1.2 15 Feb 2018 Douglas S. Elder   removed obsolete back tic's
 USAGE="usage: ${0##*/} [-a addr_file] [-f from] [-t recipient addresses] [-c cc addresses_file] [-C cc addresses] [-s subject] [-m message] [-b] [-o]  [file1 file2....]
 \t-d data_directory - directory where data can be stored
 \t-a addr_file file used to get a list of recipients
@@ -17,13 +19,13 @@ USAGE="usage: ${0##*/} [-a addr_file] [-f from] [-t recipient addresses] [-c cc 
 \t-o do not send a message just print it to stdout
 \t [file1 file2...] optional file attachments"
 
-if [[ $# > 0 && "$1" = "?" ]]
+if [[ $# > 0 && "$1" == "?" ]]
 then
 	print $USAGE
 	exit 0
 fi
 
-hostname=`hostname -s`
+hostname=$(hostname -s)
 
 function abort {
 	print -u2 ${1:-"$0 failed"}
@@ -35,7 +37,7 @@ function abort {
 
 UNVAR=${UNVAR:-}
 
-if [[ -n $UNVAR && -a $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
+if [[ -n $UNVAR && -e $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
@@ -43,14 +45,14 @@ then
 		abort "$UNVAR/apps/CRON/AMD/lib/amdconfig.ksh failed"
 	fi
 	print "Using $UNVAR for amdconfig"
-elif [[ -a /apps/CRON/AMD/lib/amdconfig.ksh ]]
+elif [[ -e /apps/CRON/AMD/lib/amdconfig.ksh ]]
 then
 	. /apps/CRON/AMD/lib/amdconfig.ksh
 	if (( $? > 0 ))
 	then
 		abort "/apps/CRON/AMD/lib/amdconfig.ksh failed"
 	fi
-elif [[ -a ./amdconfig.ksh ]]
+elif [[ -e ./amdconfig.ksh ]]
 then
 	. ./amdconfig.ksh 
 	if (( $? > 0 ))
@@ -95,9 +97,9 @@ shift $positions_occupied_by_switches
 # remaining nonswitch arguments.
 
 if [[ -n $LOGNAME ]] ; then
-	if [[ -a /home/amd/amduser/${LOGNAME} ]] ; then
+	if [[ -e /home/amd/amduser/${LOGNAME} ]] ; then
 		USER_HOME=/home/amd/amduser/${LOGNAME}
-		if [[ -a ${USER_HOME}${DATA_HOME}/${ADDR_FILE:-"addresses.txt"} ]] ; then
+		if [[ -e ${USER_HOME}${DATA_HOME}/${ADDR_FILE:-"addresses.txt"} ]] ; then
 			DATA_HOME=${USER_HOME}${DATA_HOME} 
 		fi
 	fi
@@ -106,7 +108,7 @@ fi
 if [[ -z $TO ]]
 then
 	ADDR_FILE=${ADDR_FILE:-"warnings.txt"}
-	if [[ -a $DATA_HOME/$ADDR_FILE ]]
+	if [[ -e $DATA_HOME/$ADDR_FILE ]]
 	then
 		{ while read emailAddr; do
 			if [[ -z $SEND_TO ]] ; then
@@ -119,7 +121,7 @@ then
 		  done } < $DATA_HOME/$ADDR_FILE
 		if [[ -n $SEND_TO ]] ; then
 			$LIB_HOME/execSqlplus.ksh emailWarnings "$SEND_TO" \
-		    	  "AMD Load for $AMDENV@`hostname` finished with Warnings"
+		    	  "AMD Load for $AMDENV@$(hostname) finished with Warnings"
 			  if (($?!=0)) ; then
 				  return 4
 			  fi

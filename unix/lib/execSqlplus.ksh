@@ -26,11 +26,11 @@ USAGE="usage: ${0##*/} [-c connection_string | -s ] [-t] [-n] [-e errorlog] [-l 
 \terrorlog is the name of an optional file to create 
 \t\twhen sqlplus has an error"
 
-if [[ "$debug" = "Y" ]] ; then
+if [[ "$debug" == "Y" ]] ; then
 	set -x
 fi
 
-if [[ "$1" = "?" || "$#" -eq "0" ]] ; then
+if [[ "$1" == "?" || "$#" == "0" ]] ; then
 	print "$USAGE"
 	exit 0
 fi
@@ -76,9 +76,9 @@ shift $positions_occupied_by_switches
 # remaining nonswitch arguments.
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+	TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-	TimeStamp=`print $TimeStamp | sed "s/:/_/g"`
+	TimeStamp=$(print $TimeStamp | sed "s/:/_/g")
 fi
 
 REPORT_TIMES=${REPORT_TIMES:-N}
@@ -127,13 +127,13 @@ if (($?==0)) ; then
 fi
 
 
-if [[ "$REPORT_TIMES" = "Y" ]] ; then
+if [[ "$REPORT_TIMES" == "Y" ]] ; then
 	print "execSqlplus for $SQLPLUS_SCRIPT_FILE started at $(date)"
 fi
 
 LOG_NAME=${LOG_NAME:-$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${SUBSTEP:+${SUBSTEP}_}${sqlplus_script}.log}
 
-if [[ "${SQLPLUS_LOG:-Y}" = "Y" ]] ; then
+if [[ "${SQLPLUS_LOG:-Y}" == "Y" ]] ; then
 	if [[ -n ${APP_MSG:-} ]] ; then
 		print "$APP_MSG" >> $LOG_NAME
 	fi
@@ -146,13 +146,13 @@ else
 	sqlplus -logon $THE_CONNECTION_STRING  @${SQLPLUS_SCRIPT_FILE}  "$@"
 fi
 RC=$?
-if [[ "$REPORT_TIMES" = "Y" ]] ; then
+if [[ "$REPORT_TIMES" == "Y" ]] ; then
 	print "execSqlplus for $SQLPLUS_SCRIPT_FILE ended at $(date)"
 fi
-if  [[ "${RETURN_RC:-N}" = "Y" ]] ; then
+if  [[ "${RETURN_RC:-N}" == "Y" ]] ; then
 	return $RC
 fi
-if (($RC!=0)) ; then
+if ((RC!=0)) ; then
 	# the error log file can be checked by any parent process
 	if [[ -n ${SQLPLUS_ERROR_LOG:-} ]] ; then
 		cat $LOG_NAME >> $SQLPLUS_ERROR_LOG

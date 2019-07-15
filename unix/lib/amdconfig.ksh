@@ -1,7 +1,7 @@
 #!/usr/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.6  $
-#     $Date:   16 Jan 2014
+#   $Author:   Douglas S. Elder
+# $Revision:   1.7
+#     $Date:   15 Feb 2018
 # $Workfile:   amdconfig.ksh  $
 #
 # SCCSID: amdconfig.ksh  1.15  Modified: 12/17/01 16:33:23
@@ -18,6 +18,7 @@
 # 09/21/13  Elder D.      Use ORACLE_HOME & ORACLE_SID env varialbes
 #                         added ORACLE_HOME to the PATH env variable 
 # 01/16/14  Elder D.      rev 1.6 removed DB_CONNECTION_STRING_FOR_SPO
+# 02/15/18  Elder D.      removed osbsolete back tic's
 #
 # DateStr is used for the AMD load to create the log file names.
 # DO NOT PUT THESE TOGETHER due to conflicts with the SCCS check-in proc.
@@ -40,8 +41,8 @@ DATA_HOME="$AMD_HOME/data"; export DATA_HOME
 ARCH_HOME="$DATA_HOME/archive"; export ARCH_HOME
 CSV_HOME="$DATA_HOME"; export CSV_HOME
 	        
-#EXPORT_MAP_FILE="$AMD_HOME/log/export_map_by_table_`date $DateStr`.txt"
-DATE_TIME="`date $DateStr`"
+#EXPORT_MAP_FILE="$AMD_HOME/log/export_map_by_table_$(date $DateStr).txt"
+DATE_TIME="$(date $DateStr)"
 
 # defines environment, dev, it, prod
 . $AMD_HOME/lib/amdenv.ksh

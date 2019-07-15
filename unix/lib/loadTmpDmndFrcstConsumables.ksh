@@ -1,17 +1,20 @@
 #!/usr/bin/ksh
+# vim:ts=2:sw=2:sts=2:et:autoindent:smartindent:ff=unix:
+# loadTmpDmndFrcstConsumables.ksh 
 #   $Author:   zf297a  $
 # $Revision:   1.0  $
 #     $Date:   12 Nov 2009 $
-# $Workfile:   loadTmpDmndFrcstConsumables.ksh  $
 #
 #------------------------------------------------------------------------------
 # This script will process all files in the ftp folder for demand consumables
 # transferring it to tmp_dmnd_frcst_consumables
 #
+# $Revision:   1.0  12 Nov 2009 Initial Rev
+# $Revision:   1.1  15 Feb 2018 DSE replaced = with ==
 #
 USAGE="usage: ${0##*/} [-n] \n\n\twhere\n\t-n will skip the truncation of tmp_amd_dmnd_frcst_consumables\n\t-d will turn on debug"
 
-if [[ $# > 0 && $1 = "?" ]]
+if [[ $# > 0 && $1 == "?" ]]
 then
 	print $USAGE
 	exit 0
@@ -57,11 +60,11 @@ MesgRecpt2=douglas.s.elder@west.boeing.com
 #MesgRecpt3=phuong-thuy.pham@boeing.com
 MesgRecpt3=
 
-theTime=`date $DateStr`;
+theTime=$(date $DateStr);
 TimeStamp=${TimeStamp:-$theTime}
 
 function main {
-	if [[ ${truncate:-Y} = Y ]]
+	if [[ ${truncate:-Y} == Y ]]
 	then
 		truncateTmpAmdDmndFrcstConsumables
 	fi
@@ -106,8 +109,8 @@ function fileProcessed {
 	if [[ ! -d $PROCESSED_DIR ]] ; then
 		makeDir $PROCESSED_DIR
 	fi
-	THE_FILE=`basename $1`
-	TIME_STAMP=`date $DateStr | sed "s/:/_/g"`
+	THE_FILE=$(basename $1)
+	TIME_STAMP=$(date $DateStr | sed "s/:/_/g")
 	print "Moving file $1 to $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}"
 	mv $1 $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}
 	chmod 440 $PROCESSED_DIR/${TIME_STAMP}_${THE_FILE}
@@ -122,9 +125,9 @@ function saveBadData {
 	if [[ ! -d $BAD_DATA_DIR ]] ; then
 		makeDir $BAD_DATA_DIR
 	fi
-	THE_FILE_BASENAME=`basename $1`
+	THE_FILE_BASENAME=$(basename $1)
 	THE_FILE=${THE_FILE_BASENAME%\.*} # remove file extension
-	TIME_STAMP=`date $DateStr | sed "s/:/_/g"`
+	TIME_STAMP=$(date $DateStr | sed "s/:/_/g")
 	print "Moving file $LOG_HOME/*${THE_FILE}*.bad to $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.bad"
 	mv $LOG_HOME/*${THE_FILE}*.bad $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.bad
 	chmod 440 $BAD_DATA_DIR/${TIME_STAMP}_${THE_FILE}.bad
@@ -145,13 +148,13 @@ function sendWarningMsg {
 		exit 4
 	fi
 
-	THE_FILE_BASENAME=`basename $1`
+	THE_FILE_BASENAME=$(basename $1)
 	THE_FILE=${THE_FILE_BASENAME%\.*} # remove file extension
 
 	SQLLDR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${THE_FILE}.log
 
-	if [[ -a $DATA_HOME/warnings.txt ]] ; then
-		hostname=`hostname -s`
+	if [[ -e $DATA_HOME/warnings.txt ]] ; then
+		hostname=$(hostname -s)
 		MSG="Load of $TARGET_TABLE data for $AMDENV on $hostname"
 		print "Scanning log file $SQLLDR_LOG for reject count"
 		REJECTED=$(grep -i "Total logical records rejected:" $SQLLDR_LOG)
@@ -170,30 +173,30 @@ function ProcessList {
 	TARGET_TABLE="tmp_amd_dmnd_frcst_consumables"
 	# process most recent files first
 	FilesProcessed=0
-	for InFile in `ls -t $FTPDir/*.*`
+	for InFile in $(ls -t $FTPDir/*.*)
 	do
 		DmndFile=${InFile%\.*} # remove file extension
 	
 		if [[ -f $InFile ]]
 		then
-			print "`date`: removing previous log/bad files for $InFile"
-			THE_FILE=`basename $InFile`
+			print "$(date): removing previous log/bad files for $InFile"
+			THE_FILE=$(basename $InFile)
 			THE_FILE=${THE_FILE%\.*} # remove file extension
 			rm -f $LOG_HOME/*${THE_FILE}*
-			print "`date`: Loading file $InFile to $TARGET_TABLE"
-			((FilesProcessed=$FilesProcessed+1))
+			print "$(date): Loading file $InFile to $TARGET_TABLE"
+			((FilesProcessed=FilesProcessed+1))
 			$LIB_HOME/execSqlldr.ksh -f $InFile $TARGET_TABLE
 			RC=$?
 			case $RC in
-				0) print "`date`: loaded $TARGET_TABLE successfully with $InFile"
+				0) print "$(date): loaded $TARGET_TABLE successfully with $InFile"
 				   fileProcessed $InFile ;;
-				1) print "`date`: sqlldr failed while loading $TARGET_TABLE with $InFile"
+				1) print "$(date): sqlldr failed while loading $TARGET_TABLE with $InFile"
 				   exit $RC ;;
-			  	2) print "`date`: all or some records rejected while loading $TARGET_TABLE with $InFile"
+			  	2) print "$(date): all or some records rejected while loading $TARGET_TABLE with $InFile"
 				   sendWarningMsg $InFile
 				   fileProcessed $InFile
 				   saveBadData $InFile ;;
-				3) print "`date`: sqlldr had a fatal error trying to load $TARGET_TABLE with $InFile"
+				3) print "$(date): sqlldr had a fatal error trying to load $TARGET_TABLE with $InFile"
 				   exit $RC ;;
 			esac
 		elif [[ -d $InFile ]]
@@ -213,10 +216,10 @@ function ProcessList {
 function GenStats {
 	rm -f $MesgFile
 
-	for InFile in `ls -t $FTPDir/*.*`
+	for InFile in $(ls -t $FTPDir/*.*)
 	do
-		WK_LOG_FILE=`basename $InFile`
-		WK_LOG_FILE=`print $WK_LOG_FILE | sed "s/\./_/g"`
+		WK_LOG_FILE=$(basename $InFile)
+		WK_LOG_FILE=$(print $WK_LOG_FILE | sed "s/\./_/g")
 		WK_LOG_FILE=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${WK_LOG_FILE}.log
 		(if [[ -f $WK_LOG_FILE ]] ; then
 			awk -v FileName=$InFile \

@@ -1,9 +1,9 @@
 #!/bin/ksh
-#   vim: ts=2 sw=2 sts=2 et 
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix: 
+# edit_load_logs.ksh
 #   $Author:   Douglas S. Elder
-# $Revision:   1.1
-#     $Date:   31 Jan 2017
-# $Workfile:   edit_load_logs.ksh_  $
+# $Revision:   1.2
+#     $Date:   15 Feb 2018
 #      Desc:   edit the lasts 6 amd_loader 
 #              logs 
 # 26 Jan 2017 $Revision:   1.0 Initial Rev
@@ -22,10 +22,12 @@
 #                          to execute
 #                          Use find to get the list of possible
 #                          log file names to edit
+# 15 Feb 2018 $Revision:   1.2 removed obsolete back tic's 
+#                          replaced them with $(...)
 #
 #
 
-if [[ "$debug" = "Y" ]] ; then
+if [[ "$debug" == "Y" ]] ; then
   set -x
 fi
 NUMLOGS=6
@@ -39,7 +41,7 @@ function usage {
 }
 
 # import common definitions
-CWD=`pwd`
+CWD=$(pwd)
 if echo "$CWD" | grep -q "AMD" ; then
   . /apps/CRON/AMD/lib/amdconfig.ksh
   BATCH="*amd_loader*"

@@ -1,14 +1,16 @@
 #!/usr/bin/ksh
+# vim:ts=2:sw=2:sts=2:et:ai:ff=unix:
 # copyFiles.ksh
 # Author: Douglas S. Elder
-# Revision: 1.0
-# Date: 04/08/2014
+# Revision: 1.1
+# Date: 02/15/2018
 #
 #------------------------------------------------------------------------------
 # This script will copy files to the dev and integrated test servers
 #
 # Date      By            History
-# 04/14  Elder D.      Initial Implementation
+# 04/14     Elder D.      Rev 1.0 Initial Implementation
+# 02/15/18  Elder D.      Rev 1.1 removed obsolete back tic's and replaced with $(..)
 #
 #
 USAGE="Usage: ${0##*/}  [ -d ] [ -s dir ] [ FileType ]\n\n
@@ -18,7 +20,7 @@ USAGE="Usage: ${0##*/}  [ -d ] [ -s dir ] [ FileType ]\n\n
 \tFileType is the prefix of the source files - default is L67\n"
 # setup the env
 
-CUR_USER=`logname`
+CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
   CUR_USER=amduser
 fi
@@ -60,13 +62,13 @@ shift $positions_occupied_by_switches
 # After the shift, the set of positional parameter contains all
 # remaining nonswitch arguments.
 
-hostname=`hostname -s`
+hostname=$(hostname -s)
 
 
 if [[ -z ${TimeStamp:-} ]] ; then
-  export TimeStamp=`date $DateStr | sed "s/:/_/g"`;
+  export TimeStamp=$(date $DateStr | sed "s/:/_/g");
 else
-  export TimeStamp=`print "$TimeStamp" | sed "s/:/_/g"`
+  export TimeStamp=$(print "$TimeStamp" | sed "s/:/_/g")
 fi
 
 if [[ -z ${FTPDir:-} ]] ; then
@@ -82,8 +84,8 @@ if (($#==0)) ; then
   FileType="L67"
 else  
   FileType="$1"
-  FileType=`echo $FileType |tr -A "L67" "L67"`
-  FileType=`echo $FileType |tr -A "GDSS" "GDSS"`
+  FileType=$(echo $FileType |tr -A "L67" "L67")
+  FileType=$(echo $FileType |tr -A "GDSS" "GDSS")
 fi
 
 if [ "$FileType" = "L67" ]; then
@@ -110,7 +112,7 @@ function main
 function ProcessFiles
 {
   cd $FTPDir
-  for InFile in `ls -l L67* 2> /dev/null | grep ^- | awk '{print $9}'`
+  for InFile in $(ls -l L67* 2> /dev/null | grep ^- | awk '{print $9}')
   do
     SourceFile=$FTPDir/$InFile
     scp -q $SourceFile ssd-sw-9000.vmpc1.cloud.boeing.com:$SourceFile
