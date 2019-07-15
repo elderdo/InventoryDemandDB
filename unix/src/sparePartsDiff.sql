@@ -10,7 +10,7 @@ PROMPT ready sparePartDiff.sql
 SET ECHO ON
 SET TIME ON
 SET TIMING ON
-SET SERVEROUTPUT ON SIZE 1000000
+SET SERVEROUTPUT ON SIZE UNLIMITED
 
 WHENEVER SQLERROR EXIT FAILURE
 WHENEVER OSERROR EXIT FAILURE
@@ -531,6 +531,9 @@ BEGIN
             insertCnt := insertCnt + 1;
          ELSE
             insertErrCnt := insertErrCnt + 1;
+            dbms_output.put_line('part :' || newRec.part_no || ' was not inserted');
+            -- something is wrong lets get more details if it happens again
+            amd_spare_parts_pkg.setDebug('Y');
          END IF;
       ELSIF isDiff (newRec)
       THEN
@@ -579,10 +582,16 @@ BEGIN
 
    IF insertErrCnt > 0 OR updateErrCnt > 0 OR deleteErrCnt > 0 OR diffError
    THEN
-      :rc := 4;
+      -- keep going and see if subsequent processing is OK
+      IF insertErrCnt > 0 THEN
+        :rc := 0;
+      ELSE
+        :rc := 4;
+      END IF ;
    ELSE
       :rc := 0;
    END IF;
+   dbms_output.put_line('rc=' || :rc);
 END;
 /
 

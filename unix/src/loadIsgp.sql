@@ -1,16 +1,17 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.3  $
-        $Date:   11 Jan 2013
+      $Author:   Douglas S Elder
+    $Revision:   1.4
+        $Date:   22 Nov 2017
     $Workfile:   loadIsgp.sql  $
 /*   
-/*      Rev 1.3   11 Jan 2013 zf297a - make sure sequence_no has a default value of 01
-/*      Rev 1.2   19 May 2010 16:19   zf297a
+/*      Rev 1.4   22 Nov 2017 DSE changed serveroutput to UNLIMITED
+/*      Rev 1.3   11 Jan 2013 DSE
+/*      Rev 1.2   19 May 2010 16:19   DSE
 /*   Added procedures to load the data and to check for bad data
-/*      Rev 1.1   20 Feb 2009 09:27:08   zf297a
+/*      Rev 1.1   20 Feb 2009 09:27:08   DSE
 /*   Added link variable
 /*   
-/*      Rev 1.0   20 May 2008 14:30:50   zf297a
+/*      Rev 1.0   20 May 2008 14:30:50   DSE
 /*   Initial revision.
 */
 
@@ -20,7 +21,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
-set serveroutput on size 100000 
+set serveroutput on size UNLIMITED 
 
 define link = &1
 

@@ -57,6 +57,7 @@ INSERT INTO ord1 (order_no,
                   status,
                   qty_ordered,
                   unit_price,
+                  po_price,
                   serial)
    SELECT TRIM (order_no),
           order_type,
@@ -93,6 +94,7 @@ INSERT INTO ord1 (order_no,
           status,
           qty_ordered,
           unit_price,
+          po_price,
           trim(serial)
      FROM ord1@&&link;
 

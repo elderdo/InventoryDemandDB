@@ -29,6 +29,7 @@ insert into nsn1
 )
 select
 	trim(nsn),trim(nsn_smic)
-from nsn1@&&link ;
+from nsn1@&&link
+where length(nsn) <= 16;
 
 exit 

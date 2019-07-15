@@ -1,31 +1,35 @@
 /*
 vim: set ff=unix:
 Author:   Laurie Compton
-Rev:   1.2
-Date:  1/6/2014 
+Rev:   1.3
+Date:  5/19/2017 
 
   Rev 1.0   Laurie Compton 1/6/2014    Initial Rev
   Rev 1.1   Douglas Elder 9/11/2014    setup for batch processing
   Rev 1.2   Douglas Elder 9/12/2014    added header record
+  Rev 1.3   Douglas Elder 5/19/2017    added order by and formatted code
 
 */
 
-whenever sqlerror exit FAILURE
-whenever oserror exit FAILURE
 
-set newpage none
-set heading off
-set pagesize 0
-set feedback off
-set tab off
-set time on
-set echo off
-set term off
 
-/* Formatted on 9/11/2014 3:34:17 PM (QP5 v5.252.13127.32867) */
-spool &1
+WHENEVER SQLERROR EXIT FAILURE
+WHENEVER OSERROR EXIT FAILURE
 
-SELECT RPAD('NSN',13) || CHR (9) || 'SRAN' || CHR(9) || 'INVENTORY' FROM dual ;
+SET NEWPAGE NONE
+SET HEADING OFF
+SET PAGESIZE 0
+SET FEEDBACK OFF
+SET tab OFF
+SET TIME ON
+SET ECHO OFF
+SET TERM OFF
+
+
+SPOOL &1
+
+SELECT RPAD ('NSN', 13) || CHR (9) || 'SRAN' || CHR (9) || 'INVENTORY'
+  FROM DUAL;
 
   SELECT TO_CHAR (asp.nsn) || CHR (9) || 'W' || CHR (9) || SUM (invQty)
     FROM (SELECT part_no, loc_sid, repair_qty invQty
@@ -55,10 +59,8 @@ SELECT RPAD('NSN',13) || CHR (9) || 'SRAN' || CHR(9) || 'INVENTORY' FROM dual ;
                               FROM bssm_cods
                              WHERE lock_sid = 0))
 GROUP BY asp.nsn, 'W'
-ORDER BY asp.nsn ;
+ORDER BY 1;
 
-spool off
+SPOOL OFF
 
-quit
-
-
+QUIT

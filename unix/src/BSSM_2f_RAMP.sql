@@ -1,9 +1,11 @@
 /* 
  BSSM_2f_RAMP.sql
- Rev:  1.0
- Date: 4/7/2017
+ Rev:  1.1
+ Date: 5/19/2017
  Author: Douglas Elder
  Desc: Create file BSSM_2f_RAMP_$TimeStamp.TXT
+ Rev:  1.0 4/7/2017 initial rev
+ Rev:  1.1 5/19/2017 DSE simplified spoolname and added order by
 
 **/
 SET PAGESIZE 0
@@ -20,32 +22,9 @@ SELECT '' "1"
   FROM DUAL
  WHERE ROWNUM = 0;
 
-DEFINE data_dir = &1 "AMD\AMDD\data"
-
-
-COL spoolname NEW_VALUE spoolname
-
-SELECT    CASE
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' = 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/data/'
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' <> 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/&data_dir./'
-             WHEN USER IN ('AMD_OWNER', 'ZF297A')
-             THEN
-                'C:\Users\zf297a\Documents\&data_dir.\'
-             ELSE
-                'C:\Users\' || USER || '\Documents\'
-          END
-       || 'BSSM_2f_RAMP_'
-       || TO_CHAR (SYSDATE, 'yyyymmdd')
-       || '.TXT'
-          spoolname
-  FROM DUAL;
+DEFINE spoolname = &1 "BSSM_2f_RAMP.TXT"
 
 SPOOL '&spoolname'
-
 
 SELECT    'NSN'
        || CHR (9)
@@ -53,7 +32,7 @@ SELECT    'NSN'
        || CHR (9)
        || 'PERCENT BASE REPAIR'
        || CHR (9)
-       || 'PERCENT BASE CONDEMN'
+       || 'PERCENT BASE CONDEM'
        || CHR (9)
        || 'DAILY DEMAND RATE'
        || CHR (9)
@@ -71,9 +50,8 @@ SELECT    NSN
        || DAILY_DEMAND_RATE
        || CHR (9)
        || AVG_REPAIR_CYCLE_TIME
-  FROM bssm_2f_ramp_V;
-
-
+  FROM bssm_2f_ramp_V
+  ORDER BY 1;
 
 SPOOL OFF
 

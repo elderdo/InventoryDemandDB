@@ -1,27 +1,28 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.5  $
-        $Date:   22 Feb 2012
+      $Author:   Douglas S Elder
+    $Revision:   1.6
+        $Date:   22 Nov 2017
     $Workfile:   updateCostToRepairOffBase.sql  $
 
-      Rev 1.5   22 Feb 2012 Use the new getCostToRepairOffbase function zf297a
+      Rev 1.6   22 Nov 2017 DSE changed serveroutput to UNLIMITED
+      Rev 1.5   22 Feb 2012 Use the new getCostToRepairOffbase function DSE
 	NOTE: this script gets executed after all part data has been updated.
 	If it does not run, the SparePart diff will still update the cost_to_repair_off_base
 	when it runs the next day.
 
-      Rev 1.4   20 Aug 2009 09:00:08   zf297a
+      Rev 1.4   20 Aug 2009 09:00:08   DSE
    Change to use v_poi1 was requested via ClearQuest LBPSS00002264 
    
-      Rev 1.3   19 Aug 2009 11:53:32   zf297a
+      Rev 1.3   19 Aug 2009 11:53:32   DSE
   Commented out set serveroutput - this only needs to be turned on for debugging purposes.
    
-      Rev 1.2   19 Aug 2009 11:36:20   zf297a
+      Rev 1.2   19 Aug 2009 11:36:20   DSE
    removed "set termout off"
   
-      Rev 1.1   19 Aug 2009 11:32:28   zf297a
+      Rev 1.1   19 Aug 2009 11:32:28   DSE
    Removed rollback, Laurie Compton has approved the data.
    
-      Rev 1.0   18 Aug 2009 15:11:54   zf297a
+      Rev 1.0   18 Aug 2009 15:11:54   DSE
    Initial revision.
 */
 
@@ -31,7 +32,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
-set serveroutput on size 100000
+set serveroutput on size UNLIMITED
 -- uncomment this and set create_csv_file to true
 column dcol new_value mydate noprint
 select to_char(sysdate,'YYYYMMDD') dcol from dual;

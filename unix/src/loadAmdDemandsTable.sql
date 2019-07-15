@@ -1,10 +1,11 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.0  $
-        $Date:   31 Jul 2012
+      $Author:   Douglas S Elder
+    $Revision:   1.1
+        $Date:   21 Nov 2017
  $
 /*
-/*      Rev 1.0   19 Jun 2008 10:27:16   zf297a
+/*      Rev 1.1   21 Nov 2017 DSE added set serveroutput
+/*      Rev 1.0   19 Jun 2008 10:27:16   DSE
 /*   Initial revision.
 */
 
@@ -14,6 +15,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
+set serveroutput on size unlimited
 
 exec  amd_demand.load_amd_demands_table ;
 

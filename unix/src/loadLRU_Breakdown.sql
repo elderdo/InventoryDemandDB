@@ -1,7 +1,7 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.1  $
-        $Date:   10 Aug 2011 23:45:44  $
+      $Author:   Douglas S Elder
+    $Revision:   1.3
+        $Date:   22 Nov 2017
     $Workfile:   loadLRU_Breakdown.sql  $
          Desc:   This script loads the table amd_owner.lru_breakdown
    using as input amd_owner.lru_master_lcn_v sorted by lcn and an outer join
@@ -11,6 +11,7 @@
       Rev 1.1   10 Aug 2011 23:45:44   created new view and
                                        defined load algorithm
       Rev 1.2   09 Feb 2012 added more columns to lru_breakdown
+      Rev 1.3   22 Nov 2017 changed serveroutput to UNLIMITED
 
 */
 
@@ -19,7 +20,7 @@ whenever oserror exit FAILURE
 
 set time on
 set timing on
-set serveroutput on size 100000
+set serveroutput on size UNLIMITED
 set echo on
 
 exec amd_owner.mta_truncate_table('amd_owner.lru_breakdown','reuse storage');

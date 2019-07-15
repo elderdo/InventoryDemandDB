@@ -1,10 +1,11 @@
 /*
       $Author:   c402417  $
-    $Revision:   1.3  $
-        $Date:   Aug 09 2007 09:18:22  $
+    $Revision:   1.4  $
+        $Date:   Nov 21 2017
     $Workfile:   AmdLoad1.sql  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\AmdLoad1.sql.-arc  $
 /*   
+/*      Rev 1.4   Nov 21 2017 DSE added set serveroutput
 /*      Rev 1.3   Aug 09 2007 09:18:22   c402417
 /*   Added exec amd_load.loadwecm.
 /*   
@@ -27,6 +28,7 @@
 set echo on
 set termout on
 set time on
+set serveroutput on size unlimited
 
 prompt exec amd_load.LoadGold;
 exec amd_load.loadgold;

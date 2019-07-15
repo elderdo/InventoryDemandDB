@@ -37,17 +37,6 @@ SELECT    'NSN'
        || 'SMR CODE'
   FROM DUAL;
 
-SELECT    NSN
-       || CHR (9)
-       || PART_NO
-       || CHR (9)
-       || PRIME_PART_NO
-       || CHR (9)
-       || ITEM_TYPE
-       || CHR (9)
-       || SMR_CODE
-  FROM AMDII_2A_CAT1_V
-  ORDER BY 1;
 
 SPOOL OFF
 

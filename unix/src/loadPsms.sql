@@ -16,6 +16,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
+set serveroutput on size unlimited
 
 alter session set global_names=false;
 

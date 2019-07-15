@@ -1,37 +1,32 @@
 /*
-	  $Author:   c402417  $
-	$Revision:   1.0  $
-	    $Date:   Aug 03 2006 12:57:34  $
+	  $Author:   Douglas S. Elder
+	$Revision:   1.1
+	    $Date:   May 19 2017
 	$Workfile:   Repair.sql  $
-	     $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\Repair.sql.-arc  $
 /*   
-/*      Rev 1.0   Aug 03 2006 12:57:34   c402417
+/*      Rev 1.1   May 19 2017 DSE added order by and formatted code
+/*      Rev 1.0   Aug 03 2006 12:57:34   Thuy Pham
 /*   Initial revision.
 */
 
 
-set newpage none
-set heading off
-set pagesize 0
-set feedback off
-set tab off
-set time on
+SET NEWPAGE NONE
+SET HEADING OFF
+SET PAGESIZE 0
+SET FEEDBACK OFF
+SET tab OFF
+SET TIME ON
 
 
-select
-	asp.nsn || chr(9) ||
-	sum(repair_qty)
-from
-	amd_in_repair air,
-	amd_spare_parts asp,
-	amd_spare_networks asn
-where
-	air.part_no = asp.part_no
-	and air.loc_sid = asn.loc_sid
-	and air.action_code != 'D'
-	and asp.action_code != 'D'
-	and asn.action_code != 'D'
-	and substr(asn.loc_id,1,3) not in ('MRC','ROT','SUP')
-group by 
-	asp.nsn ;
-quit
+  SELECT asp.nsn || CHR (9) || SUM (repair_qty)
+    FROM amd_in_repair air, amd_spare_parts asp, amd_spare_networks asn
+   WHERE     air.part_no = asp.part_no
+         AND air.loc_sid = asn.loc_sid
+         AND air.action_code != 'D'
+         AND asp.action_code != 'D'
+         AND asn.action_code != 'D'
+         AND SUBSTR (asn.loc_id, 1, 3) NOT IN ('MRC', 'ROT', 'SUP')
+GROUP BY asp.nsn
+ORDER BY 1;
+
+QUIT

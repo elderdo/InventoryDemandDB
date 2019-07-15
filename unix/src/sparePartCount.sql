@@ -4,7 +4,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
-set serveroutput on size 1000000
+set serveroutput on size UNLIMITED
 
 
 spool ../log/sparePartCount.txt

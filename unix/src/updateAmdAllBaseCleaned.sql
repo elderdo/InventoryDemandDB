@@ -1,28 +1,29 @@
 /*
-      $Author:   zf297a  $
-    $Revision:   1.5  $
-        $Date:   27 Sep 2013 
+      $Author:   Douglas S Elder
+    $Revision:   1.6
+        $Date:   22 Nov 2017 
     $Workfile:   updateAmdAllBaseCleaned.sql  $
          $Log:   I:\Program Files\Merant\vm\win32\bin\pds\archives\SDS-AMD\Components-ClientServer\Unix\Sql\updateAmdAllBaseCleaned.sql.-arc  $
 /*   
-/*      Rev 1.5   27 Sep 2013    zf297a
+/*      Rev 1.6   22 Nov 2017    DSE changed serveroutput to UNLIMITED
+/*      Rev 1.5   27 Sep 2013    DSE
 /*       simplify retries using a loop
 /*
-/*      Rev 1.4   07 Aug 2009 11:54:52   zf297a
+/*      Rev 1.4   07 Aug 2009 11:54:52   DSE
 /*   Use new common sleep procedure
 /*   
-/*      Rev 1.3   15 Jun 2009 10:40:32   zf297a
+/*      Rev 1.3   15 Jun 2009 10:40:32   DSE
 /*   Fixed sleep procedure - add the number of seconds to sleep to the current date/time giving the end_date_time, then loop while the current date/time is less than the end_date_time.
 /*   
 /*   Add some start/stop times for the sleep procedure so we can see when it does get executed.
 /*   
-/*      Rev 1.2   13 Oct 2008 11:30:56   zf297a
+/*      Rev 1.2   13 Oct 2008 11:30:56   DSE
 /*   Fixed DEADLOCK constant .. should be negative for all sqlcodes except data not found which is +100 and +1 for user defined exceptions.
 /*   
-/*      Rev 1.1   20 Aug 2008 01:01:58   zf297a
+/*      Rev 1.1   20 Aug 2008 01:01:58   DSE
 /*   Add a check for a potential deadlock condition and sleep for a few seconds and try again.
 /*   
-/*      Rev 1.0   19 Jun 2008 10:25:54   zf297a
+/*      Rev 1.0   19 Jun 2008 10:25:54   DSE
 /*   Initial revision.
 */
 
@@ -36,7 +37,7 @@ set feedback off
 
 variable ret_val number
 
-set serveroutput on size 100000
+set serveroutput on size UNLIMITED
 
 declare
 	executed boolean := false ;

@@ -1,9 +1,11 @@
 /* 
  PULL_ORD1_D.sql
- Rev:  1.0
- Date: 4/7/2017
+ Rev:  1.1
+ Date: 5/19/2017
  Author: Douglas Elder
  Desc: Create file PULL_ORD1_D_$TimeStamp.TXT
+ Rev:  1.0 4/7/2017 initial rev
+ Rev:  1.1 5/19/2017 DSE simplified spoolname and added order by
 
 **/
 SET PAGESIZE 0
@@ -20,40 +22,19 @@ SELECT '' "1"
   FROM DUAL
  WHERE ROWNUM = 0;
 
-DEFINE data_dir = &1 "AMD\AMDD\data"
-
+DEFINE spoolname = &1 "PULL_ORD1_D.TXT"
 
 COL spoolname NEW_VALUE spoolname
 
-SELECT    CASE
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' = 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/data/'
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' <> 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/&data_dir./'
-             WHEN USER IN ('AMD_OWNER', 'ZF297A')
-             THEN
-                'C:\Users\zf297a\Documents\&data_dir.\'
-             ELSE
-                'C:\Users\' || USER || '\Documents\'
-          END
-       || 'PULL_ORD1_D_'
-       || TO_CHAR (SYSDATE, 'yyyymmdd')
-       || '.TXT'
-          spoolname
-  FROM DUAL;
-
 SPOOL '&spoolname'
-
 
 SELECT    'PN'
        || CHR (9)
-       || 'FINISH_DATE'
+       || 'FINISH DATE'
        || CHR (9)
-       || 'START_DATE'
+       || 'START DATE'
        || CHR (9)
-       || 'ACTION_TAKEN'
+       || 'ACTION TAKEN'
   FROM DUAL;
 
 SELECT    PN
@@ -63,9 +44,8 @@ SELECT    PN
        || START_DATE
        || CHR (9)
        || ACTION_TAKEN
-  FROM PULL_ORD1_D_V;
-
-
+  FROM PULL_ORD1_D_V
+  ORDER BY 1;
 
 SPOOL OFF
 

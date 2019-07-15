@@ -1,9 +1,11 @@
 /* 
  RSP_On_Hand_and_Objective.sql
- Rev:  1.0
- Date: 4/7/2017
+ Rev:  1.1
+ Date: 5/19/2017
  Author: Douglas Elder
  Desc: Create file RSP_On_Hand_and_Objective_$TimeStamp.TXT
+ Rev:  1.0 4/7/2017 initial rev
+ Rev:  1.1 5/19/2017 DSE simplified spoolname and added order by
 
 **/
 SET PAGESIZE 0
@@ -20,29 +22,7 @@ SELECT '' "1"
   FROM DUAL
  WHERE ROWNUM = 0;
 
-DEFINE data_dir = &1 "AMD\AMDD\data"
-
-
-COL spoolname NEW_VALUE spoolname
-
-SELECT    CASE
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' = 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/data/'
-             WHEN USER = 'BSRM_LOADER' and '&data_dir' <> 'AMD\AMDD\data'
-             THEN
-                '/apps/CRON/AMD/&data_dir./'
-             WHEN USER IN ('AMD_OWNER', 'ZF297A')
-             THEN
-                'C:\Users\zf297a\Documents\&data_dir.\'
-             ELSE
-                'C:\Users\' || USER || '\Documents\'
-          END
-       || 'RSP_On_Hand_and_Objective_'
-       || TO_CHAR (SYSDATE, 'yyyymmdd')
-       || '.TXT'
-          spoolname
-  FROM DUAL;
+DEFINE spoolname = &1 "RSP_On_Hand_and_Objective.TXT"
 
 SPOOL '&spoolname'
 
@@ -51,6 +31,7 @@ SELECT    'NSN'
        || 'SRAN'
        || CHR (9)
        || 'RSP_ON_HAND'
+       || CHR(9)
        || 'RSP_OBJECTIVE'
   FROM DUAL;
 
@@ -61,7 +42,8 @@ SELECT    nsn
        || rsp_on_hand
        || CHR (9)
        || rsp_objective
-  FROM rsp_on_hand_and_objective_v;
+  FROM amd_rsp_on_hand_n_objective_v
+  ORDER BY 1;
 
 SPOOL OFF
 

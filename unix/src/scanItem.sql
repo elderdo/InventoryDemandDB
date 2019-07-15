@@ -4,7 +4,7 @@ whenever oserror exit FAILURE
 set time on
 set timing on
 set echo on
-set serveroutput on size 100000
+set serveroutput on size UNLIMITED
 
 define link = &1
 
