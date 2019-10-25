@@ -1,11 +1,11 @@
 #!/usr/bin/ksh
 # vim: ts=2:sw=2:sts=2:et:autoindent:smartindent:
 #   Author:   Douglas S. Elder
-# Revision:   1.29
-#     Date:   19 Apr 2018
+# Revision:   1.28
+#     Date:   01 Feb 2018
 #     File:   AmdLoad2.ksh
 
-# Rev 1.29 19 Apr 2018 fixed checkForErrors arguments to have the correct ranges
+# Rev 1.29 19 Apr 2018 Fixed arguments to checkForErrors to the correct ranage
 # Rev 1.28 01 Feb 2018 turned on loadSanAntonio data TFS 52919
 #                      renamed loadBascUkDemands to loadDepotDemands
 # Rev 1.27 19 Dec 2017 turned off loadSanAntonio data TFS 48244
