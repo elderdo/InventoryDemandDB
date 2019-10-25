@@ -1,7 +1,7 @@
 #!/bin/ksh
 # vim: ff=unix:ts=2:sw=2:sts=2:expandtab:autoindent:smartindent:
-#   $Author:   zf297a  $
-# $Revision:   1.15  $
+#   $Author:   Douglas S. Elder
+# $Revision:   1.18  $
 #     $Date:   04 Sep 2009 22:59:40  $
 # $Workfile:   AmdLoad1.ksh  $
 # rev 1.13 04 Sep 2009 
@@ -10,6 +10,7 @@
 # rev 1.16 19 Mar 2017 - fixed function execSqlplus
 # rev 1.17 03 Aug 2017 - fixed function abort to say AmdLoad1.ksh failed 
 #                        vs AmdLoad2.ksh failed
+# rev 1.18 11 Jul 2019 - Added LIB env var and loadFlatFiles step
 
 USAGE="usage: ${0##*/} [-m] [-f] [-d] [-o override_file]  [startStep endStep ]\n\n
 \twhere\n
@@ -18,7 +19,9 @@ USAGE="usage: ${0##*/} [-m] [-f] [-d] [-o override_file]  [startStep endStep ]\n
 \t-o override file - default is data/AmdLoad1Steps.ksh\n
 \t-d enables debug\n"
 
-if [[ "$#" -gt "0" && "$1" = "?" ]] ; then
+LIB=/apps/CRON/AMD/lib
+
+if (($#>0)) && [[ "$1" == "?" ]] ; then
 	print $USAGE
 	exit 0
 fi
@@ -38,6 +41,7 @@ if [[ -z $LOG_HOME || -z $LIB_HOME || -z $DB_CONNECTION_STRING ]] ; then
 fi
 
 function abort {
+  [[ "$debug" == "Y" ]] && set -x
 	errmsg="AmdLoad1.ksh Failed"
 	print "$errmsg $1"
 	print -u2 "$errmsg $1"
@@ -74,47 +78,67 @@ shift $positions_occupied_by_switches
 
 
 function execSteps {
+  [[ "$debug" == "Y" ]] && set -x
+  typeset -Z3 array
+  cnt=0
+  for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
+  do
+    let cnt=cnt+1
+    array[$cnt]=$x
+  done
 
-		typeset -Z3 array
-		cnt=0
-		for x in `echo $* | awk -f $BIN_HOME/awkNumInput.txt`
-		do
-			let cnt=cnt+1
-			array[$cnt]=$x
-		done
+  # set $* to the data in the work array
+  set -s ${array[*]}
 
-		# set $* to the data in the work array
-		set -s ${array[*]}
+  # empty work array
+  i=1
+  while (( $i <= $cnt ))
+  do
+    array[$i]=
+    let i=i+1
+  done
 
-		# empty work array
-		i=1
-		while (( $i <= $cnt ))
-		do
-			array[$i]=
-			let i=i+1
-		done
-
-		for x in $*
-		do
-			((x=x)) # make sure x is a number with no leading zerso
-			if [[ "${steps[$x]}" = "return" || "${steps[$x]}" = "exit" ]] ; then
-				AMD_EXIT=Y
-				return
-			else
-				${steps[$x]} 
-			fi
-		done
+  for x in $*
+  do
+    ((x=x)) # make sure x is a number with no leading zerso
+    if [[ "${steps[$x]}" == "return" || "${steps[$x]}" == "exit" ]] ; then
+      AMD_EXIT=Y
+      return
+    else
+      ${steps[$x]} 
+    fi
+  done
 
 }
 
+function loadFlatFiles {
+  echo "loadFlatFiles beginning at $(date)"
+  DEBUGOPT=
+  [[ "$debug" == "Y" ]] && set -x && DEBUGOPT=-d
+  RC=0
+  $LIB/loadAmdRepairCostDetail.ksh $DEBUGOPT
+  RC=$?
+  if ((RC==0)) ; then  
+    $LIB/loadWarnerRobinsDemands.ksh $DEBUGOPT
+    RC=$?
+  fi
+  if ((RC==0)) ; then  
+    $LIB/loadAmdBenchStock.ksh $DEBUGOPT
+    RC=$?
+  fi
+  echo "loadFlatFiles ending at $(date) with return code $RC"
+  return $RC
+}
+  
 function mainMenu {
+  [[ "$debug" == "Y" ]] && set -x
 	PS3="select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? "
 
 	select item in "${steps[@]}"
 	do
 		set  $REPLY
 		execSteps $*
-		if [[ "${AMD_EXIT:-N}" = "Y" ]] ; then
+		if [[ "${AMD_EXIT:-N}" == "Y" ]] ; then
 			return
 		fi
 	done
@@ -122,6 +146,7 @@ function mainMenu {
 
 function main
 {
+  [[ "$debug" == "Y" ]] && set -x
 	echo "main started at `date`" 
 	execSteps 1-${#steps[*]}
 	echo "main ended at `date`" 
@@ -129,6 +154,8 @@ function main
 }
 
 function checkForErrors {
+  [[ "$debug" == "Y" ]] && set -x
+
 	if [[ -a $SQLPLUS_ERROR_LOG ]] ; then
 		$LIB_HOME/checkforerrors.ksh $SQLPLUS_ERROR_LOG
 		if (($?!=0)) ; then
@@ -149,25 +176,33 @@ thisFile=${0##*/}
 SQLPLUS_ERROR_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.*}Errors.log
 
 function execSqlplus {
+  DEBUGOPT=
+  [[ "$debug" == "Y" ]] && set -x && DEBUGOPT=-d
 	print "$0.ksh $1 started at `date` exec'ed by $CUR_USER"
-	if [[ -n $2 || "${AMD_FOREGROUND:-N}" = "Y" ]] ; then
-		$LIB_HOME/execSqlplus.ksh -t -e $SQLPLUS_ERROR_LOG $1  
+	if [[ -n $2 || "${AMD_FOREGROUND:-N}" == "Y" ]] ; then
+		$LIB_HOME/execSqlplus.ksh $DEBUGOPT \
+                              -t -e $SQLPLUS_ERROR_LOG $1  
 		RC=$?
 		if (($RC!=0)) ; then
 			print "$0 $1 had an error"
 		fi
 	else
-		$LIB_HOME/execSqlplus.ksh -t -e $SQLPLUS_ERROR_LOG $1   &
+		$LIB_HOME/execSqlplus.ksh $DEBUGOPT \
+                              -t -e $SQLPLUS_ERROR_LOG $1   &
 	fi
 }
 
 # loadGold creates tmp_amd_spare_parts which is input to loadMain
 # so it must complete first
 steps[1]="execSqlplus loadGold -f"
-steps[2]="execSqlplus loadPsms -f"
-steps[3]="execSqlplus loadMain"
-steps[4]="execSqlplus loadWecm"
-steps[5]="execSqlplus analyzeTmpAmdSpareParts"
+# disabled until SLIC account AMD2PSMS_LNK_USR
+# is reset and working so the AMD_PSLMS_LINK is updated
+# with AMD2PSMS_LNK_USR's new password
+#steps[2]="execSqlplus loadPsms -f"
+steps[2]="execSqlplus loadMain"
+steps[3]="execSqlplus loadWecm"
+steps[4]="execSqlplus analyzeTmpAmdSpareParts"
+steps[5]="loadFlatFiles"
 steps[6]=return
 
 THIS_FILE=`basename $0`
@@ -183,7 +218,7 @@ if [[ -f $STEPS_FILE ]] ;  then
 fi
 	
 
-if [[ "${AMD_USE_AMDLOAD1_MENU:-N}" = "Y" ]] ; then
+if [[ "${AMD_USE_AMDLOAD1_MENU:-N}" == "Y" ]] ; then
 	mainMenu 
 else
 	if (( $# > 0 )) ; then
@@ -194,4 +229,4 @@ else
 fi
 wait
 checkForErrors
-print "$0 ending at " `date`
+print "$0 ending at " $(date)
