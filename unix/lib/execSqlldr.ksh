@@ -3,6 +3,8 @@
 # $Revision:   1.7  $
 #     $Date:   13 Oct 2009 18:01 $
 # $Workfile:   execSqlldr.ksh  $
+#       Rev:   1.7 13 Oct 2009
+#       Rev:   1.8 08 Jul 2017 fixed printing of USAGE - env var needed dollar sign
 #
 USAGE="usage: ${0##*/} [-c connection_string | -s ] [-f datafile] [-d] [-l logfile] ctl [errorlog]
 \nwhere
@@ -55,7 +57,7 @@ shift $positions_occupied_by_switches
 # remaining nonswitch arguments.
 
 if (($#>2)) ; then
-	print "USAGE"
+	print "$USAGE"
 	exit 4
 fi
 
