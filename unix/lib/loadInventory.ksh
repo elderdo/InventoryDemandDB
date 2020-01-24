@@ -11,7 +11,7 @@
 #                                 replaced them with $(....)
 #                                 use (( )) for numeric compares
 #          
-USAGE="usage: ${0##*/} [ -p] [-s step] [-d] [-w] [-o] [-n] [-z] [-g]\n
+USAGE="usage: $(basename $0) [ -p] [-s step] [-d] [-w] [-o] [-n] [-z] [-g]\n
 \t\t[-v] [-t 999] [-m]\n
 \twhere\n
 \t-g get pgoldlb data - default\n
@@ -81,7 +81,8 @@ shift $positions_occupied_by_switches
 # remaining nonswitch arguments.
 
 hostname=$(uname) 
-thisFile=${0##*/}
+thisFile=$(basename $0)
+thisFile=$(echo "$thisFile" | cut -f 1 -d '.')
 
 function abort {
   $LIB_HOME/notify.ksh -a loadInventory.txt  -s "$thisFile failed at $1" -m "$thisFile has failed on $hostname at $1." 
@@ -345,7 +346,7 @@ if [[ "$AMD_LOADINV_MENU" == "Y" ]] ; then
   steps[8]=loadRsp
   steps[9]=loadAmdReqs
   steps[10]=invDiff
-  steps[13]=exit
+  steps[11]=exit
 
   doOverride
 
@@ -359,6 +360,7 @@ else
   steps[4]=loadAmdReqs
   steps[5]=invDiff
   steps[6]="notify $0"
+  steps[7]=exit
 
   doOverride
 
