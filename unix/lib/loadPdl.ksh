@@ -9,6 +9,11 @@
 # Rev 1.0 08/11/2019 Initial Rev
 # Rev 1.1 10/03/2019 added deleteData
 # Rev 1.2 10/04/2019 add line numbers when display files
+# Rev 1.3 02/04/2020 added switch -n m|c|b -p
+# Rev 1.4 02/06/2020 consolidated steps by running independent
+#                    tasks simultaneously in the background
+# Rev 1.5 02/10/2020 add runrbl step and got rid of old commented
+#                    out code.
 
 # set Globals var's
 HOME=/apps/CRON/AMD
@@ -17,14 +22,55 @@ SRC=$HOME/src
 BIN=$HOME/bin
 PATH=$LIB:$BIN:$PATH
 DATA=$HOME/data
-. $LIB/pdlenv.ksh
 ECHO=
 DEBUG=N
+SKIP=
+PREPROD=N
 STEP=1
 SUBSTEP=1
-END_STEP=7
 AMDENV=$LIB/amdenv.ksh
 AMDCONFIG=$LIB/amdconfig.ksh
+
+usage() {
+  echo ""
+  echo "loadPdl.ksh [ -d -e -h -m -n getopt -p -s n ]"
+  echo "where -d turns on debug"
+  echo "      -e echos the step instead of executing it"
+  echo "         good for debugging" 
+  echo "      -h shows this message"
+  echo "      -m shows the menu of steps"
+  echo "      -n getopt"
+  echo "         where getopt of m skips getting Mils data"
+  echo "         where getopt of c skips getting Cat1 data"
+  echo "         where getopt of b skips getting both Mils and Cat1 data"
+  echo "      -p will load data to prepdlr"
+  echo "      -s n start execution with step n"
+  echo "         where n is 1 to 7"
+  echo "         if n is a range like 2-3"
+  echo "         then only step 2 and 3 are executed"
+  echo "         if n is a range like 2-2"
+  echo "         then only step 2 is executed"
+  echo ""
+}
+
+# hopefully the background tasks running at the same time
+# will speed up the entire process
+menu() {
+  echo " all of step 1's substeps are done at the same time"
+  echo " in the background"
+  echo " 1. get MILS data from PGOLD"
+  echo "    get CAT1 data from PGOLD"
+  echo "    delete CAT1 data from DPDLR"
+  echo "    delete MILS data from DPDLR"
+  echo "    delete CAT1 from PREPDLR"
+  echo "    delete MILS from PREPDLR"
+  echo " all of step 2's substeps are done at the same time"
+  echo " in the background"
+  echo " 2. load MILS data to pdl.GOLD_MILS_STAGE"
+  echo "    load CAT1 data to pdl.GOLD_CAT1_STAGE"
+  echo "    load CAT1 for PREPDLR"
+  echo "    load MILS for PREPDLR"
+}
 
 sourceScript() {
   typeset SCRIPT=$1
@@ -32,17 +78,11 @@ sourceScript() {
     . $SCRIPT
   fi
 }
+
 sourceScript $AMDENV
 sourceScript $AMDCONFIG
 
-if [ -e $LIB/pdlenv.ksh ] ; then
-  . $LIB/pdlenv.ksh
-else
-  2>&1 echo "Cannot find $LIB/pdlenv.ksh"
-  exit 4
-fi
-
-while getopts dehms:u: arguments
+while getopts dehmn:s: arguments
 do
   case $arguments in
     d) DEBUG=Y
@@ -52,8 +92,9 @@ do
        exit 0;;
     m) menu
        exit 0;;
+    p) PREPROD=Y;;
+    n) SKIP=$OPTARG;;
     s) STEP=$OPTARG;;
-    u) SUBSTEP=$OPTARG;;
     *) usage
        exit 4;;
   esac
@@ -86,7 +127,9 @@ runSqlplus() {
   fi
 
   echo "runSqlplus ($SQLSCRIPT $DATAFILE $LOG) started at $(date)"
-  $ECHO rm -f $DATAFILE
+  if [[ "$DATAFILE" != "" && -f "$DATAFILE" ]] ; then
+    $ECHO rm -f $DATAFILE
+  fi
   # display the SQL*Plus script on the log
   echo "$SQLSCRIPT:"
   echo ""
@@ -141,58 +184,20 @@ loadData() {
   return $RC
 }
 
+runrbl() {
 
-loadPdlTables() {
-  if (($#!=2)) ; then
-    2>&1 echo "loadPdlTAbles requires 2 arguments"
-    return 4
-  fi
-  typeset CONNECTION_STRING=$1
-  typeset LOG=$2
   typeset RC=0
-  typeset CNT=0
+  typeset RBLSERVER=spmqa.vmpc1.cloud.boeing.com
+  typeset SPMQA_ACCT=spmadmin
+  typeset RBLBIN=/home/spmadmin/bin
+  typeset RBL=$RBLBIN/runrbl.sh
+  typeset XRG="export XARG=bamp4321 "
+  typeset CMD="ssh -q ${SPMQA_ACCT}@${RBLSERVER} $XARG $RBL"
 
-  echo "loadPdlTables started at $(date)"
-
-
-  for sql in load_NSN_TO_PART load_RBL_DRCT load_RBL_PARENT_NSNS \
-             load_RBL_XCB_ITEM_DATA load_RBL_XE4_ADJUSTED_STOCK_LEVEL
-  do
-    ((CNT=CNT+1))
-    if [ $SUBSTEP -eq $CNT ] && [ $RC = 0 ] ; then
-      echo "$sql:"
-      cat -n $SRC/$sql.sql
-      $ECHO execSqlplus.ksh $OPT -c $CONNECTION_STRING \
-                                  -l $LOG $sql
-      RC=$?
-      if [ $RC -ne 0 ] ; then
-        2>&1 echo "Failed to run $sql - RC=$RC"
-        break
-      fi
-      ((SUBSTEP=SUBSTEP+1))
-    fi
-  done
-
-  echo "loadPdlTables started at $(date)"
-
+  $CMD
+  RC=$?
   return $RC
 
-}
-
-menu() {
-  echo "1. get MILS data from PGOLD"
-  echo "2. delete C17 data from PDL.GOLD_MILS_STAGE"
-  echo "3. load MILS data to pdl.GOLD_MILS_STAGE"
-  echo "4. get CAT1 data from PGOLD"
-  echo "5. delete C17 data from PDL.GOLD_CAT1_STAGE"
-  echo "6. load CAT1 data to pdl.GOLD_CAT1_STAGE"
-  echo "7. load PDL tables using existing views"
-  echo "SubSteps: "
-  echo "  1. load NSN_TO_PART" 
-  echo "  2. load RBL_DRCT" 
-  echo "  3. load RBL_PARENT_NSNS" 
-  echo "  4. load RBL_XCB_ITEM_DATA" 
-  echo "  5. load RBL_XE4_ADJUSTED_STOCK_LEVEL" 
 }
 
 main() {
@@ -205,111 +210,62 @@ main() {
   if [ $STEP -eq 1 ] ; then
     # show the entire script
     [ "$DEBUG" == "Y" ] && cat -n $0 && echo "..." && echo "....."
-    runSqlplus getMils $MILSDAT $LOG
+    if [[ "$SKIP" == "m" || "$SKIP" == "b" ]] ; then
+      RC=0
+    else
+      runSqlplus getMils $MILSDAT $LOG &
+      runSqlplus getCat1 $CAT1DAT $LOG &
+      . $LIB/pdlenv.ksh
+      runSqlplus pdl_mils_delete "" $LOG $PDLCONN &
+      runSqlplus pdl_cat1_delete "" $LOG $PDLCONN &
+      . $LIB/pdlpre.ksh
+      runSqlplus pdl_mils_delete "" $LOG $PDLCONN &
+      runSqlplus pdl_cat1_delete "" $LOG $PDLCONN &
+      wait
+    fi
     RC=$?
     if [ ! -s $MILSDAT ] ; then
       2>&1 echo $MILSDAT is empty
       [ "$ECHO" == "" ] && RC=4
     fi  
+    if [ ! -s $CAT1DAT ] ; then
+      2>&1 echo $CAT1DAT is empty
+      [ "$ECHO" == "" ] && RC=4
+    fi  
     
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
+    if [ $RC -eq 0 ] ; then
       ((STEP=STEP+1))
     fi
   fi
 
-  if [ $STEP -eq 2 ] && [ $RC -eq 0 ] ; then
-    # arg 2 is an empty string since there is no data file when
-    # deleting, but optional 4th argument is the 
-    # connection string for PDL
-    runSqlplus pdl_mils_delete "" $LOG $PDLCONN
+
+  if  [ $STEP -eq 2 ] && [ $RC -eq 0 ] ; then
+    . $LIB/pdlenv.ksh
+    loadData $PDLCONN mils $MILSDAT &
+    loadData $PDLCONN cat1 $CAT1DAT &
+    . $LIB/pdlpre.ksh
+    loadData $PDLCONN mils $MILSDAT &
+    loadData $PDLCONN cat1 $CAT1DAT &
+    wait
     RC=$?
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
+    if [ $RC -eq 0 ] ; then
       ((STEP=STEP+1))
     fi
   fi
 
-  if  [ $STEP -eq 3 ] && [ $RC -eq 0 ] ; then
-    loadData $PDLCONN mils $MILSDAT
-    RC=$?
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
-      ((STEP=STEP+1))
-    fi
-  fi
-
-  if [ $STEP -eq 4 ] && [ $RC -eq 0 ] ; then
-    runSqlplus getCat1 $CAT1DAT $LOG
-    RC=$?
-    if [ ! -s $CAT1DAT ] ; then
-      2>&1 echo $CAT1DAT is empty
-      RC=4
-    fi
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
-      ((STEP=STEP+1))
-    fi
-  fi
-
-  if [ $STEP -eq 5 ] && [ $RC -eq 0 ] ; then
-    runSqlplus pdl_cat1_delete "" $LOG $PDLCONN
-    RC=$?
-    if [ ! -s $CAT1DAT ] ; then
-      2>&1 echo $CAT1DAT is empty
-      RC=4
-    fi
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
-      ((STEP=STEP+1))
-    fi
-  fi
-
-  if [ $STEP -eq 6 ] && [ $RC -eq 0 ] ; then
-    loadData $PDLCONN cat1 $CAT1DAT
-    RC=$?
-    if [ $STEP -ne $END_STEP ] && [ $RC -eq 0 ] ; then
-      ((STEP=STEP+1))
-    fi
-  fi
-  if [ $STEP -eq 7 ] && [ $RC -eq 0 ] ; then
-    loadPdlTables $PDLCONN $LOG
-  fi
   echo "main: ended at $(date)"
   return $RC
 }
 
 
 
-usage() {
-  echo ""
-  echo "loadPdl.ksh [ -d -e -h -m -s n -u n ]"
-  echo "where -d turns on debug"
-  echo "      -e echos the step instead of executing it"
-  echo "         good for debugging" 
-  echo "      -h shows this message"
-  echo "      -m shows the menu of steps"
-  echo "      -s n start execution with step n"
-  echo "         where n is 1 to 7"
-  echo "         if n is a range like 2-3"
-  echo "         then only step 2 and 3 are executed"
-  echo "         if n is a range like 2-2"
-  echo "         then only step 2 is executed"
-  echo "      -u n start execution at substep n for step 7 loadPdlTables"
-  echo ""
-}
 
 
 # check for range
 case $STEP in
-      1|2|3|4|5) OK=Y;;
-  [1-5]-[1-5]) NUM1=$(echo $STEP | cut -d"-" -f1)
-               NUM2=$(echo $STEP | cut -d"-" -f2)
-               if [ $NUM1 -le $NUM2 ] ; then
-                 STEP=$NUM1
-                 END_STEP=$NUM2
-               else
-                 2>&1 echo "Bad range $STEP"
-                 usage
-                 exit 4
-               fi ;;
-  *) usage
-     exit 4;;
+   1|2|3|4|5|7|8|9|10) OK=Y;;
+                    *) usage
+                       exit 4;;
 esac
 
 SRC=${SRC_HOME:-/apps/CRON/AMD/src}
