@@ -1,6 +1,6 @@
 DROP VIEW AMD_OWNER.AMD_RSP_ON_HAND_N_OBJECTIVE_V;
 
-/* Formatted on 8/24/2017 6:22:02 PM (QP5 v5.287) */
+/* Formatted on 4/16/2020 4:40:46 PM (QP5 v5.294) */
 CREATE OR REPLACE FORCE VIEW AMD_OWNER.AMD_RSP_ON_HAND_N_OBJECTIVE_V
 (
    NSN,
@@ -12,12 +12,12 @@ CREATE OR REPLACE FORCE VIEW AMD_OWNER.AMD_RSP_ON_HAND_N_OBJECTIVE_V
 AS
      SELECT nsn,
             NVL (NEW_VALUE, asn.loc_id) sran,
-            SUM (rsp_inv) rsp_on_hand,
-            SUM (rsp_level) rsp_objective
-       FROM amd_rsp r,
-            amd_spare_networks asn,
+            SUM (rsp_inv)             rsp_on_hand,
+            SUM (rsp_level)           rsp_objective
+       FROM amd_rsp                r,
+            amd_spare_networks     asn,
             amd_national_stock_items ansi,
-            amd_substitutions subs
+            amd_substitutions      subs
       WHERE     r.action_code != 'D'
             AND R.PART_NO = ANSI.PRIME_PART_NO
             AND ANSI.ACTION_CODE != 'D'
@@ -27,7 +27,7 @@ AS
             AND subs.original_value(+) = loc_id
             AND subs.action_code(+) <> 'D'
    GROUP BY ansi.nsn, NVL (NEW_VALUE, asn.loc_id)
-     HAVING SUM (rsp_inv) > 0;
+     HAVING SUM (rsp_inv) > 0 OR SUM (rsp_level) > 0;
 
 
 DROP PUBLIC SYNONYM AMD_RSP_ON_HAND_N_OBJECTIVE_V;

@@ -1,5 +1,3 @@
-DROP PACKAGE BODY AMD_OWNER.AMD_INVENTORY;
-
 CREATE OR REPLACE PACKAGE BODY AMD_OWNER.Amd_Inventory
 AS
    /* ------------------------------------------------------------------- */
@@ -14,9 +12,11 @@ AS
        PVCS Keywords
 
       $Author:   Douglas S Elder
-    $Revision:   1.121
-        $Date:   21 Nov 2017
+    $Revision:   1.122
+        $Date:   14 Apr 2020
     $Workfile:   amd_inventory.pkb  $
+
+         Rev 1.122 14 Apr 2020 for loadRsp and rspInv cursor added or rsp_level > 0 for rsp_v
 
          Rev 1.121 21 Nov 2017 added dbms_output for all raise commands
 
@@ -375,9 +375,9 @@ AS
    CURSOR partCur
    IS
       SELECT DISTINCT asp.part_no, asp.nsn
-        FROM AMD_SPARE_PARTS asp,
+        FROM AMD_SPARE_PARTS          asp,
              AMD_NATIONAL_STOCK_ITEMS ansi,
-             AMD_NSI_PARTS anp
+             AMD_NSI_PARTS            anp
        WHERE     icp_ind = amd_defaults.getIcpInd
              AND asp.part_no = anp.part_no
              AND anp.prime_ind = 'Y'
@@ -446,16 +446,21 @@ AS
       pNsn    VARCHAR2)
    IS
       SELECT DECODE (n.loc_type, 'TMP', asn2.loc_sid, n.loc_sid) loc_sid,
-             NVL (r.serviceable_balance, 0) serviceable_balance,
-             NVL (r.spram_balance, 0) spram_balance,
-             NVL (r.hpmsk_balance, 0) hpmsk_balance,
-             NVL (r.wrm_balance, 0) wrm_balance,
-             NVL (r.total_inaccessible_qty, 0) total_inaccessible_qty,
-             NVL (r.difm_balance, 0) difm_balance,
-             NVL (r.spram_level, 0) spram_level,
-             NVL (r.wrm_level, 0) wrm_level,
-             NVL (r.hpmsk_level_qty, 0) hpmsk_level_qty,
-             TRUNC (NVL (r.date_processed, SYSDATE)) inv_date,
+             NVL (r.serviceable_balance, 0)
+                serviceable_balance,
+             NVL (r.spram_balance, 0)
+                spram_balance,
+             NVL (r.hpmsk_balance, 0)
+                hpmsk_balance,
+             NVL (r.wrm_balance, 0)                              wrm_balance,
+             NVL (r.total_inaccessible_qty, 0)
+                total_inaccessible_qty,
+             NVL (r.difm_balance, 0)                             difm_balance,
+             NVL (r.spram_level, 0)                              spram_level,
+             NVL (r.wrm_level, 0)                                wrm_level,
+             NVL (r.hpmsk_level_qty, 0)
+                hpmsk_level_qty,
+             TRUNC (NVL (r.date_processed, SYSDATE))             inv_date,
              TRUNC ( (r.date_processed) + NVL (avg_repair_cycle_time, 0))
                 repair_need_date
         FROM (SELECT *
@@ -675,21 +680,21 @@ AS
 
       CURSOR itemType3aCur
       IS
-           SELECT asp.part_no part_no,
+           SELECT asp.part_no                 part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
-                  invQ.inv_date inv_date,
-                  SUM (invQ.inv_qty) inv_qty,
-                  invQ.order_no order_no,
-                  TRUNC (invQ.receipt_date) receipt_date,
+                  invQ.inv_date               inv_date,
+                  SUM (invQ.inv_qty)          inv_qty,
+                  invQ.order_no               order_no,
+                  TRUNC (invQ.receipt_date)   receipt_date,
                   amd_defaults.getINSERT_ACTION action_code,
-                  SYSDATE last_update_dt
+                  SYSDATE                     last_update_dt
              FROM (SELECT DISTINCT
-                          o.part part_no,
+                          o.part                           part_no,
                           o.loc_id,
-                          TRUNC (o.created_datetime) inv_date,
-                          NVL (o.qty_due, 0) inv_qty,
-                          o.order_no order_no,
+                          TRUNC (o.created_datetime)       inv_date,
+                          NVL (o.qty_due, 0)               inv_qty,
+                          o.order_no                       order_no,
                           DECODE (ecd, NULL, need_date, ecd) receipt_date
                      FROM ORD1 o, amd_spare_networks asn
                     WHERE     o.status = 'O'
@@ -711,11 +716,11 @@ AS
                                                          7))))
                    UNION ALL
                    SELECT DISTINCT
-                          part part_no,
+                          part                                   part_no,
                           o.loc_id,
-                          TRUNC (o.created_datetime) inv_date,
-                          NVL (o.qty_due, 0) inv_qty,
-                          o.order_no order_no,
+                          TRUNC (o.created_datetime)             inv_date,
+                          NVL (o.qty_due, 0)                     inv_qty,
+                          o.order_no                             order_no,
                           DECODE (o.ecd, NULL, o.need_date, o.ecd) receipt_date
                      FROM ORD1 o, amd_spare_networks asn
                     WHERE     o.status = 'O'
@@ -738,11 +743,11 @@ AS
                                                          7))))
                    UNION ALL
                    SELECT DISTINCT
-                          part part_no,
+                          part                                   part_no,
                           o.loc_id,
-                          TRUNC (o.created_datetime) inv_date,
-                          NVL (o.qty_due, 0) inv_qty,
-                          o.order_no order_no,
+                          TRUNC (o.created_datetime)             inv_date,
+                          NVL (o.qty_due, 0)                     inv_qty,
+                          o.order_no                             order_no,
                           DECODE (o.ecd, NULL, o.need_date, o.ecd) receipt_date
                      FROM ORD1 o, amd_spare_networks asn
                     WHERE     o.status = 'O'
@@ -766,7 +771,7 @@ AS
                                                          START_LOC_ID,
                                                          7))))) invQ,
                   AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
+                  AMD_SPARE_PARTS  asp,
                   AMD_SPARE_NETWORKS asnLink
             WHERE     asp.part_no = invQ.part_no
                   AND asn.loc_id = invQ.loc_id
@@ -785,20 +790,20 @@ AS
 
       CURSOR itemType3bCur
       IS
-           SELECT i.part part_no,
+           SELECT i.part                   part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
                   TRUNC (i.created_datetime) inv_date,
-                  SUM (i.qty) inv_qty,
-                  i.item_id order_no,
+                  SUM (i.qty)              inv_qty,
+                  i.item_id                order_no,
                   DECODE (TRUNC (o.ecd), NULL, SYSDATE, TRUNC (o.ecd))
                      receipt_date,
                   amd_defaults.INSERT_ACTION action_code,
-                  SYSDATE last_update_dt
-             FROM ITEM i,
-                  ORD1 o,
+                  SYSDATE                  last_update_dt
+             FROM ITEM             i,
+                  ORD1             o,
                   AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
+                  AMD_SPARE_PARTS  asp,
                   AMD_SPARE_NETWORKS asnLink
             WHERE     i.receipt_order_no = o.order_no
                   AND o.status = 'O'
@@ -834,19 +839,19 @@ AS
 
       CURSOR itemType3cCur
       IS
-           SELECT from_part part_no,
+           SELECT from_part                part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
-                  TRUNC (from_datetime) inv_date,
-                  SUM (qty_due) inv_qty,
-                  temp_out_id order_no,
+                  TRUNC (from_datetime)    inv_date,
+                  SUM (qty_due)            inv_qty,
+                  temp_out_id              order_no,
                   DECODE (est_return_date, NULL, NULL, est_return_date)
                      receipt_date,
                   amd_defaults.INSERT_ACTION action_code,
-                  SYSDATE last_update_dt
+                  SYSDATE                  last_update_dt
              FROM TMP1,
                   AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
+                  AMD_SPARE_PARTS  asp,
                   AMD_SPARE_NETWORKS asnLink
             WHERE     NVL (returned_voucher, '-1') = '-1'
                   AND status = 'O'
@@ -1107,9 +1112,9 @@ AS
                 rsp_inv,
                 rsp_level,
                 amd_defaults.getINSERT_ACTION action_code,
-                SYSDATE last_update_dt
+                SYSDATE                       last_update_dt
            FROM rsp_inv_v
-          WHERE rsp_inv > 0;
+          WHERE rsp_inv > 0 OR rsp_level > 0;
 
 
       rspCnt          NUMBER := 0;
@@ -3154,13 +3159,15 @@ AS
          pNsn       VARCHAR2,
          pPartNo    VARCHAR2)
       IS
-         SELECT pPartNo part_no,
+         SELECT pPartNo                                             part_no,
                 DECODE (n.loc_type, 'TMP', asn2.loc_sid, n.loc_sid) loc_sid,
-                TRUNC (NVL (r.date_processed, SYSDATE)) inv_date,
+                TRUNC (NVL (r.date_processed, SYSDATE))             inv_date,
                 NVL (r.serviceable_balance, 0) + NVL (r.difm_balance, 0)
                    inv_qty,
-                amd_defaults.getINSERT_ACTION action_code,
-                SYSDATE last_update_dt
+                amd_defaults.getINSERT_ACTION
+                   action_code,
+                SYSDATE
+                   last_update_dt
            FROM (SELECT *
                    FROM RAMP
                   WHERE current_stock_number = pNsn) r,
@@ -3181,18 +3188,18 @@ AS
            SELECT asp.part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
-                  invQ.inv_date inv_date,
-                  SUM (invQ.inv_qty) inv_qty,
+                  invQ.inv_date               inv_date,
+                  SUM (invQ.inv_qty)          inv_qty,
                   amd_defaults.getINSERT_ACTION action_code,
-                  SYSDATE last_update_dt
-             FROM (  SELECT part part_no,
+                  SYSDATE                     last_update_dt
+             FROM (  SELECT part             part_no,
                             SUBSTR (i.sc, 8, 6) loc_id,
                             TRUNC (
                                DECODE (i.created_datetime,
                                        NULL, i.last_changed_datetime,
                                        i.created_datetime))
                                inv_date,
-                            '1' inv_type,
+                            '1'              inv_type,
                             SUM (NVL (i.qty, 0)) inv_qty
                        FROM ITEM i
                       WHERE     i.status_3 != 'I'
@@ -3218,7 +3225,7 @@ AS
                                        NULL, i.last_changed_datetime,
                                        i.created_datetime))
                    UNION
-                   (  SELECT part part_no,
+                   (  SELECT part             part_no,
                              DECODE (i.sc,
                                      PROGRAM_ID || 'PCAG', 'EY1746',
                                      'SATCAA0001' || PROGRAM_ID || 'G', 'EY1746')
@@ -3228,7 +3235,7 @@ AS
                                         NULL, i.last_changed_datetime,
                                         i.created_datetime))
                                 inv_date,
-                             '1' inv_type,
+                             '1'              inv_type,
                              SUM (NVL (i.qty, 0)) inv_qty
                         FROM ITEMSA i
                        WHERE     i.status_3 != 'I'
@@ -3255,7 +3262,7 @@ AS
                                         NULL, i.last_changed_datetime,
                                         i.created_datetime)))) invQ,
                   AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
+                  AMD_SPARE_PARTS  asp,
                   AMD_SPARE_NETWORKS asnLink
             WHERE     asp.part_no = invQ.part_no
                   AND asn.loc_id = invQ.loc_id
@@ -3400,15 +3407,17 @@ AS
       IS
          SELECT pPartNo,
                 DECODE (n.loc_type, 'TMP', asn2.loc_sid, n.loc_sid) loc_sid,
-                TRUNC (NVL (r.date_processed, SYSDATE)) inv_date,
+                TRUNC (NVL (r.date_processed, SYSDATE))             inv_date,
                   NVL (r.unserviceable_balance, 0)
                 + NVL (r.suspended_in_stock, 0)
                    inv_qty,
-                'Retail' order_no,
+                'Retail'                                            order_no,
                 TRUNC ( (r.date_processed) + NVL (avg_repair_cycle_time, 0))
                    repair_need_date,
-                amd_defaults.INSERT_ACTION action_code,
-                SYSDATE last_update_dt
+                amd_defaults.INSERT_ACTION
+                   action_code,
+                SYSDATE
+                   last_update_dt
            FROM (SELECT *
                    FROM RAMP
                   WHERE current_stock_number = pNsn) r,
@@ -3428,18 +3437,18 @@ AS
            SELECT asp.part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
-                  TRUNC (i.created_datetime) inv_date,
-                  SUM (NVL (i.qty, 0)) inv_qty,
-                  i.item_id item_id,
+                  TRUNC (i.created_datetime)  inv_date,
+                  SUM (NVL (i.qty, 0))        inv_qty,
+                  i.item_id                   item_id,
                   TRUNC (i.created_datetime + ansi.time_to_repair_off_base)
                      repair_need_date,
                   amd_defaults.getINSERT_ACTION action_code,
-                  SYSDATE last_update_dt
-             FROM ITEM i,
+                  SYSDATE                     last_update_dt
+             FROM ITEM                   i,
                   AMD_NATIONAL_STOCK_ITEMS ansi,
-                  AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
-                  AMD_SPARE_NETWORKS asnLink
+                  AMD_SPARE_NETWORKS     asn,
+                  AMD_SPARE_PARTS        asp,
+                  AMD_SPARE_NETWORKS     asnLink
             WHERE     asp.part_no = i.part
                   AND i.prime = ansi.prime_part_no
                   AND ansi.nsn = asp.nsn
@@ -3473,19 +3482,19 @@ AS
            SELECT asp.part_no,
                   DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                      loc_sid,
-                  TRUNC (i.created_datetime) repair_date,
-                  SUM (NVL (i.qty, 0)) inv_qty,
-                  i.item_id item_id,
+                  TRUNC (i.created_datetime)  repair_date,
+                  SUM (NVL (i.qty, 0))        inv_qty,
+                  i.item_id                   item_id,
                   TRUNC (
                      i.created_datetime + NVL (ansi.time_to_repair_off_base, 0))
                      repair_need_date,
                   amd_defaults.getINSERT_ACTION action_code,
-                  SYSDATE last_update_dt
-             FROM ITEMSA i,
+                  SYSDATE                     last_update_dt
+             FROM ITEMSA                 i,
                   AMD_NATIONAL_STOCK_ITEMS ansi,
-                  AMD_SPARE_NETWORKS asn,
-                  AMD_SPARE_PARTS asp,
-                  AMD_SPARE_NETWORKS asnLink
+                  AMD_SPARE_NETWORKS     asn,
+                  AMD_SPARE_PARTS        asp,
+                  AMD_SPARE_NETWORKS     asnLink
             WHERE     asp.part_no = i.part
                   AND i.prime = ansi.prime_part_no
                   AND ansi.nsn = asp.nsn
@@ -3518,20 +3527,20 @@ AS
                 asp.part_no,
                 DECODE (asn.loc_type, 'TMP', asnLink.loc_sid, asn.loc_sid)
                    loc_sid,
-                o.created_datetime inv_date,
-                NVL (o.qty_due, 0) inv_qty,
-                o.order_no order_no,
+                o.created_datetime            inv_date,
+                NVL (o.qty_due, 0)            inv_qty,
+                o.order_no                    order_no,
                 DECODE (ov.vendor_est_ret_date,
                         NULL, o.ecd,
                         ov.vendor_est_ret_date)
                    repair_need_date,
                 amd_defaults.getINSERT_ACTION action_code,
-                SYSDATE last_update_dt
-           FROM ORD1 o,
-                ORDV ov,
+                SYSDATE                       last_update_dt
+           FROM ORD1               o,
+                ORDV               ov,
                 amd_sc_inclusions,
                 AMD_SPARE_NETWORKS asn,
-                AMD_SPARE_PARTS asp,
+                AMD_SPARE_PARTS    asp,
                 AMD_SPARE_NETWORKS asnLink
           WHERE     o.order_no = ov.order_no
                 AND asp.part_no = o.part
@@ -3726,9 +3735,9 @@ AS
       IS
            SELECT ansi.nsn, SUM (qty) quantity
              FROM (SELECT a.part_no, quantity qty, nsn
-                     FROM AMD_IN_TRANSITS a,
+                     FROM AMD_IN_TRANSITS  a,
                           AMD_SPARE_NETWORKS asn,
-                          AMD_SPARE_PARTS asp
+                          AMD_SPARE_PARTS  asp
                     WHERE     asn.loc_sid = a.to_loc_sid
                           AND a.part_no = asp.part_no
                           AND asp.action_code IN ('A', 'C')
@@ -3737,9 +3746,9 @@ AS
                           AND asn.spo_location IS NOT NULL
                    UNION ALL
                    SELECT a.part_no, order_qty qty, asp.nsn
-                     FROM AMD_ON_ORDER a,
+                     FROM AMD_ON_ORDER     a,
                           AMD_SPARE_NETWORKS asn,
-                          AMD_SPARE_PARTS asp
+                          AMD_SPARE_PARTS  asp
                     WHERE     asn.loc_sid = a.loc_sid
                           AND a.part_no = asp.part_no
                           AND asp.action_code IN ('A', 'C')
@@ -3750,7 +3759,7 @@ AS
                    SELECT a.part_no, inv_qty qty, asp.nsn
                      FROM AMD_ON_HAND_INVS a,
                           AMD_SPARE_NETWORKS asn,
-                          AMD_SPARE_PARTS asp
+                          AMD_SPARE_PARTS  asp
                     WHERE     asn.loc_sid = a.loc_sid
                           AND a.part_no = asp.part_no
                           AND asp.action_code IN ('A', 'C')
@@ -3759,9 +3768,9 @@ AS
                           AND asn.spo_location IS NOT NULL
                    UNION ALL
                    SELECT a.part_no, repair_qty qty, asp.nsn
-                     FROM AMD_IN_REPAIR a,
+                     FROM AMD_IN_REPAIR    a,
                           AMD_SPARE_NETWORKS asn,
-                          AMD_SPARE_PARTS asp
+                          AMD_SPARE_PARTS  asp
                     WHERE     asn.loc_sid = a.loc_sid
                           AND a.part_no = asp.part_no
                           AND asp.action_code IN ('A', 'C')
@@ -3770,9 +3779,9 @@ AS
                           AND asn.spo_location IS NOT NULL
                    UNION ALL
                    SELECT a.part_no, rsp_inv qty, asp.nsn
-                     FROM AMD_RSP a,
+                     FROM AMD_RSP          a,
                           AMD_SPARE_NETWORKS asn,
-                          AMD_SPARE_PARTS asp
+                          AMD_SPARE_PARTS  asp
                     WHERE     asn.loc_sid = a.loc_sid
                           AND a.part_no = asp.part_no
                           AND asp.action_code IN ('A', 'C')
@@ -4226,15 +4235,3 @@ AS
    END setDebug;
 END Amd_Inventory;
 /
-
-
-DROP PUBLIC SYNONYM AMD_INVENTORY;
-
-CREATE PUBLIC SYNONYM AMD_INVENTORY FOR AMD_OWNER.AMD_INVENTORY;
-
-
-GRANT EXECUTE ON AMD_OWNER.AMD_INVENTORY TO AMD_READER_ROLE;
-
-GRANT EXECUTE ON AMD_OWNER.AMD_INVENTORY TO AMD_WRITER_ROLE;
-
-GRANT EXECUTE ON AMD_OWNER.AMD_INVENTORY TO BSRM_LOADER;
