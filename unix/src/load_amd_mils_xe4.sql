@@ -1,0 +1,18 @@
+/* Formatted on 8/15/2019 11:41:56 AM (QP5 v5.294) */
+WHENEVER OSERROR  EXIT FAILURE
+WHENEVER SQLERROR EXIT FAILURE
+
+SET ECHO ON
+SET FEEDBACK ON
+
+
+exec amd_owner.mta_truncate_table('mils_xe4','reuse storage') ;
+
+COMMIT;
+
+INSERT INTO mils_xe4
+   SELECT * FROM V_MILS_XE4;
+
+COMMIT;
+
+QUIT

@@ -6,7 +6,16 @@
 #       Rev:   1.7 13 Oct 2009
 #       Rev:   1.8 08 Jul 2017 fixed printing of USAGE - env var needed dollar sign
 #
-USAGE="usage: ${0##*/} [-c connection_string | -s ] [-f datafile] [-d] [-l logfile] ctl [errorlog]
+THIS=$(basename $0)
+APP=$(echo $THIS | cut -d '.' -f 1)
+DATA=/apps/CRON/AMD/data
+debug=N
+if [[ -f $DATA/debug.txt ]] ; then
+  debug=$(cat $DATA/debug.txt)
+  [[ "$debug" == "Y" ]] && set -x
+fi
+
+USAGE="$THIS [-c connection_string | -s ] [-f datafile] [-d] [-l logfile] ctl [errorlog]
 \nwhere
 \t-s use the spo connection string
 \n\t\t(defaults to amd's connection string)
@@ -32,15 +41,15 @@ if [[ -z $SRC_HOME || -z $LOG_HOME || -z $DB_CONNECTION_STRING ]] ; then
 	. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
 fi
 
-while getopts :ndsf:c:l: arguments
+while getopts c:df:l:s arguments
 do
 	case $arguments in
-	  f) SQLLDR_DATA_FILE=${OPTARG};;
 	  c) THE_CONNECTION_STRING=${OPTARG};;
-	  l) THE_LOG_FILE=${OPTARG};;
-	  s) THE_CONNECTION_STRING=$DB_CONNECTION_STRING_FOR_SPO;;
 	  d) debug=Y
 	     set -x ;;
+	  f) SQLLDR_DATA_FILE=${OPTARG};;
+	  l) THE_LOG_FILE=${OPTARG};;
+	  s) THE_CONNECTION_STRING=$DB_CONNECTION_STRING_FOR_SPO;;
 	  *) print -u2 $USAGE
 	     exit 4;;
 	esac
@@ -62,7 +71,7 @@ if (($#>2)) ; then
 fi
 
 if [[ -z ${TimeStamp:-} ]] ; then
-	TimeStamp=$(date $DateStr | sed "s/:/_/g");
+  TimeStamp=$(date +%Y%m%d_%H%M%S)
 else
 	TimeStamp=$(print $TimeStamp | sed "s/:/_/g")
 fi
@@ -104,7 +113,7 @@ fi
 sqlldr $THE_CONNECTION_STRING \
 	control=$SRC_HOME/${1}.ctl ${SQLLDR_DATA_FILE:-} \
 	rows=10000 readsize=10000000 bindsize=10000000 \
-	log=/tmp/${SQLLDR_FILE}.log \
+	log=${THE_LOG_FILE:-/$LOG_HOME/${SQLLDR_FILE}.log} \
 	bad=$LOG_HOME/${SQLLDR_FILE}.bad
 RC=$?
 

@@ -1,9 +1,13 @@
 #!/bin/ksh
-#   $Author:   zf297a  $
-# $Revision:   1.2  $
-#     $Date:   18 May 2010 18:30 $
-# $Workfile:   sendPage.ksh  $
-USAGE="usage: ${0##*/} [-d data_directory] [-p phone_file] [-t phone number] [-b] [-o] message
+#   Author:   Douglas S. Elder  
+# Revision:   1.2  
+#     Date:   18 May 2010 18:30 
+# Workfile:   sendPage.ksh  
+# 
+# Rev  Date     By          Desc
+# 1.2  05/18/10 DSE         cur rev
+# 1.3  11/30/20 DSE         allow commented out phone numbers - see read
+USAGE="usage: {0##*/} [-d data_directory] [-p phone_file] [-t phone number] [-b] [-o] message
 \t-d directory where data can be stored
 \t-p name of file with phone numbers
 \t\n\t-t a phone number to send to (overrides -p file)
@@ -150,7 +154,8 @@ then
 	if [[ -f $PHONE_FILE ]]
 	then
 		{ while read phoneNum; do
-			SendPage $phoneNum "$message"
+        [[ "phoneNum" == \#* ]] && continue
+  			SendPage $phoneNum "$message"
 		  done } < $PHONE_FILE
 	else
 		print "$PHONE_FILE not defined"

@@ -1,0 +1,18 @@
+/* Formatted on 8/15/2019 11:41:56 AM (QP5 v5.294) */
+WHENEVER OSERROR  EXIT FAILURE
+WHENEVER SQLERROR EXIT FAILURE
+
+SET ECHO ON
+SET FEEDBACK ON
+
+
+exec amd_owner.mta_truncate_table('amd_rbl_xe4','reuse storage') ;
+
+COMMIT;
+
+INSERT INTO amd_rbl_xe4
+   SELECT * FROM V_RBL_XE4_ADJUSTED_STOCK_LEVEL;
+
+COMMIT;
+
+QUIT

@@ -1,7 +1,7 @@
 #!/usr/bin/ksh
 # amd_loadFtpFile.ksh
 # Author: Douglas S. Elder
-# Revision: 1.14
+# Revision: 1.16
 # Date: 10/18/2015
 #
 #------------------------------------------------------------------------------
@@ -41,11 +41,24 @@
 # 11/09/2017 Douglas Elder  for /tmp files use Amd to distinguish Amd
 #                           files
 #                           replaced obsolete back tics with $(....)
-USAGE="Usage: ${0##*/}  [ -a address_file -d ]\n\n
-\twhere\n
-\t-a address_file contains email addresses for the notify.ksh\n
-\t   (default is $DATA_HOME/AmdLoadFtpAddresses.txt)\n
-\t-d enables debug\n"
+# 05/28/2020 Douglas Elder  fixed usages - added filetype L67 or GDSS
+# 06/15/2020 Douglas Elder  made several code improvements
+
+THIS=$(basename $0)
+APP=$(echo $THIS | cut -d. -f1)
+DATA=/apps/CRON/AMD/data
+debug=N
+if [[ -f $DATA/debug.txt ]] ; then
+  debug=$(cat $DATA/debug.txt)
+  [[ "$debug" == "Y" ]] && set -x
+fi
+
+USAGE="\nUsage: ${THIS}  [ -a address_file -d ] filetype\n \
+\twhere\n \
+\t-a address_file contains email addresses for the notify.ksh\n \
+\t   (default is $DATA_HOME/AmdLoadFtpAddresses.txt)\n \
+\t-d enables debug\n \
+\tfiletype is L67 or GDSS\n" 
 # setup the env
 
 CUR_USER=$(logname)
@@ -68,16 +81,13 @@ do
   case $arguments in
     a) ADDRESSES=$OPTARG;;
     d) debug=Y
+       set -x
        export debug ;;
-    *) print -u2 "$USAGE"
+    *) >&2 echo -e "$USAGE"
        exit 4;;
   esac
 done
 
-if [ "$debug" = "Y" ]
-then
-  set -x
-fi
 
 # OPTIND now contains a numnber representing the identity of the first
 # nonswitch argument on the command line.  For example, if the first
@@ -92,7 +102,7 @@ shift $positions_occupied_by_switches
 
 hostname=$(hostname -s)
 
-print "$0 started at " $(date)
+print "$THIS started at " $(date)
 
 if [[ -z ${TimeStamp:-} ]] ; then
   export TimeStamp=$(date $DateStr | sed "s/:/_/g");
@@ -126,7 +136,7 @@ if [ -z "$ADDRESSES" ] ; then
 fi
 
 rm -f /tmp/AmdFileList*.txt
-TMPFILE=/tmp/AmdFileList${$}.txt
+LIST_OF_FILES=/tmp/AmdFileList${$}.txt
 rm -f /tmp/AmdMesgBody*.txt
 MesgFile=/tmp/AmdMesgBody${$}.txt
 
@@ -148,45 +158,36 @@ fi
 
 function main
 {
+  [[ "$debug" == "Y" ]] && set -x
+  typeset RC=0
   BuildList
+  RC=$?
 
   ProcessList
+  RC=$?
 
   GenStats
+  return $RC
 }
 
 function compressAttachedFile
 {
-  if [ "$debug" = "Y" ]
-  then
-    set -x
-  fi
+  [[ "$debug" == "Y" ]] && set -x
 
   fileToCompress=$(basename $1)
   # remove file extension
   fileWithoutExt=${fileToCompress%.*}
-  TARFILE=/tmp/Amd$fileWithoutExt${$}.tar
-  rm -f $/tmp/Amd${fileWithoutExt}*.tar
-  rm -f $/tmp/Amd${fileWithoutExt}*.tar.gz
+  ZIPFILE=/tmp/Amd$fileWithoutExt${$}.zip
+  rm -f $/tmp/Amd${fileWithoutExt}*.zip
   CUR_DIR=$(pwd)
   cd $(dirname $1)
-  # do the tar without path info 
-  tar -cvf $TARFILE $fileToCompress > $LOG_HOME/tarLogs.log
+  # do the zip without path info 
+  zip $ZIPFILE $fileToCompress > $LOG_HOME/tarLogs.log
   if (($?!=0)) ; then
-    echo "tar failed to create $TARFILE for $fileToCompress"
+    echo "zip failed to create $ZIPFILE for $fileToCompress"
     cd $CUR_DIR
     return 4
   fi    
-  # make sure tar file exists
-  if [[ -f $TARFILE ]] ; then
-    gzip $TARFILE
-    if (($?==0)) ; then
-      GZIPFILE=${TARFILE}.gz
-    else
-      GZIPFILE=
-      rm -f ${TARFILE}
-    fi      
-  fi
   cd $CUR_DIR
   return 0
 }
@@ -197,14 +198,61 @@ function compressAttachedFile
 #
 function BuildList
 {
-  if [ "$debug" = "Y" ]
-  then
-    set -x
-  fi
+  [[ "$debug" == "Y" ]] && set -x
 
-  (cd $FTPDir
+  ( cd $FTPDir
     ls ${uType}* 2> /dev/null
-  )>$TMPFILE
+  ) > $LIST_OF_FILES
+
+  [[ "$debug" == "Y" ]] && set -x
+}
+function processGDSSfile {
+  [[ "$debug" == "Y" ]] && set -x
+  typeset RC=0
+  InFileType=$InFile.Type.dat
+  DestFileType=$DestFile.Type.dat
+
+  print "\nCreating AMD_MISSION_TYPES file($InFileType) from $InFile."
+  awk 'BEGIN{FS=","}
+    {print $8 "," $8}' $DestFile | sort -u > $DestFileType
+
+  print "\nLoading file $InFileType to AMD_MISSION_TYPES table."
+  sqlldr \
+    silent=header \
+    userid=$DB_CONNECTION_STRING \
+    data=$DestFileType \
+    control=$SRC_HOME/amd_mission_types.ctl \
+    log=$LOG_HOME/$InFileType.log \
+    bad=$LOG_HOME/$InFileType.bad
+  RC=$?
+
+  InFileIcao=$InFile.icao.dat
+  DestFileIcao=$DestFile.icao.dat
+
+  print "\nCreating AMD_AIRPORTS file($InFileIcao) from $InFile."
+  awk 'BEGIN{FS=","}
+    {print $6 "," $6}' $DestFile | sort -u > $DestFileIcao
+
+  print "\nLoading file $InFileIcao to AMD_AIRPORTS table."
+  sqlldr \
+    silent=header \
+    userid=$DB_CONNECTION_STRING \
+    data=$DestFileIcao \
+    control=$SRC_HOME/amd_airports.ctl \
+    log=$LOG_HOME/$InFileIcao.log \
+    bad=$LOG_HOME/$InFileIcao.bad
+  RC=$?
+
+  print "\nLoading file $InFile to AMD_MISSION_FLIGHTS table."
+  sqlldr \
+    silent=header \
+    userid=$DB_CONNECTION_STRING \
+    data=$DestFile \
+    control=$SRC_HOME/amd_mission_flights.ctl \
+    log=$LOG_HOME/$InFile.log \
+    bad=$LOG_HOME/$InFile.bad
+  RC=$?
+  return $RC
 }
 
 #
@@ -212,12 +260,12 @@ function BuildList
 #
 function ProcessList
 {
-  if [ "$debug" = "Y" ]
-  then
-    set -x
-  fi
+  typeset CNT=0
+  typeset RC=0
 
-  for InFile in $(grep -i $FileType $TMPFILE|awk '{print $1}')
+  [[ "$debug" == "Y" ]] && set -x
+
+  for InFile in $(grep -i $FileType $LIST_OF_FILES|awk '{print $1}')
   do
     SourceFile=$FTPDir/$InFile
     DestFile=$DATA_HOME/${InFile%.*}
@@ -243,77 +291,54 @@ function ProcessList
           control=$SRC_HOME/amd_l67_source.ctl \
           log=$LOG_HOME/$InFile.log \
           bad=$LOG_HOME/$InFile.bad
+        RC=$?
+        if [ $RC -ne 0 ] ; then
+          echo "sqlldr failed with return code $RC"
+        else
+          ((CNT++))
+        fi
 
         print "Emailing $InFile."
         cat $DestFile >>$AttFile
 
 	      compressAttachedFile $AttFile
-      	if [[ -f $GZIPFILE ]] ; then
-      	  $LIB_HOME/notify.ksh -m "L67 data loaded for $InFile" \
+
+        ATTACHFILES=
+        for f in $ZIPFILE  \
+                 $AttFile \
+                 $LOG_HOME/$InFile.log \
+                 $LOG_HOME/$InFile.bad
+        do
+          # does file exist?
+          if [[ -f $f ]] ; then
+            # does file contain data?
+            if [[ -s $f ]] ; then
+              ATTACHFILES="$f $ATTACHFILES" 
+            fi
+          fi
+        done
+
+    	  $LIB_HOME/notify.ksh -m "L67 data loaded for $InFile" \
              -a $ADDRESSES \
-             -s "$InFile on $hostname" \
-	           $GZIPFILE
-      	else
-      	  $LIB_HOME/notify.ksh -m "L67 data loaded for $InFile" \
-             -a $ADDRESSES \
-             -s "$InFile on $hostname"
-        fi
+             -s "L67 load on $hostname" \
+	           $ATTACHFILES
         rm -f $LoadFile $AttFile
 
       elif [ "$FileType" = "GDSS" ]; then
-        InFileType=$InFile.Type.dat
-        DestFileType=$DestFile.Type.dat
-
-        print "\nCreating AMD_MISSION_TYPES file($InFileType) from $InFile."
-        awk 'BEGIN{FS=","}
-          {print $8 "," $8}' $DestFile | sort -u > $DestFileType
-
-        print "\nLoading file $InFileType to AMD_MISSION_TYPES table."
-        sqlldr \
-          silent=header \
-          userid=$DB_CONNECTION_STRING \
-          data=$DestFileType \
-          control=$SRC_HOME/amd_mission_types.ctl \
-          log=$LOG_HOME/$InFileType.log \
-          bad=$LOG_HOME/$InFileType.bad
-
-        InFileIcao=$InFile.icao.dat
-        DestFileIcao=$DestFile.icao.dat
-
-        print "\nCreating AMD_AIRPORTS file($InFileIcao) from $InFile."
-        awk 'BEGIN{FS=","}
-          {print $6 "," $6}' $DestFile | sort -u > $DestFileIcao
-
-        print "\nLoading file $InFileIcao to AMD_AIRPORTS table."
-        sqlldr \
-          silent=header \
-          userid=$DB_CONNECTION_STRING \
-          data=$DestFileIcao \
-          control=$SRC_HOME/amd_airports.ctl \
-          log=$LOG_HOME/$InFileIcao.log \
-          bad=$LOG_HOME/$InFileIcao.bad
-
-        print "\nLoading file $InFile to AMD_MISSION_FLIGHTS table."
-        sqlldr \
-          silent=header \
-          userid=$DB_CONNECTION_STRING \
-          data=$DestFile \
-          control=$SRC_HOME/amd_mission_flights.ctl \
-          log=$LOG_HOME/$InFile.log \
-          bad=$LOG_HOME/$InFile.bad
+        processGDSSfile
       fi
-      # add the source file to a tar archive
-      if [[ ! -f $PROCESSED/L67${TimeStamp}.tar ]]
+      # add the source file to a zip archive
+      if [[ ! -f $PROCESSED/L67${TimeStamp}.zip ]]
       then
         # create the archive if it does not exist  
-        tar -cf $PROCESSED/L67${TimeStamp}.tar $SourceFile
+        zip $PROCESSED/L67${TimeStamp}zip $SourceFile
        	if (($?==0)) ; then
           # we don't need to keep the files once it is archived
           rm $SourceFile
         fi	  
       else
         # archive already exists - append file to it
-        tar --append --file=processed/L67${TimeStamp}.tar $SourceFile
+        zip -ur $PROCESSED/L67${TimeStamp}.zip $SourceFile
       	if (($?==0)) ; then
           # we don't need to keep the files once it is archived
           rm $SourceFile
@@ -325,11 +350,7 @@ function ProcessList
     fi;
 
   done
-  # compress any tar archive file created
-  if [[ -f $PROCESSED/L67${TimeStamp}.tar ]]
-  then
-    gzip $PROCESSED/L67${TimeStamp}.tar
-  fi
+  echo "Processed $CNT files"
 }
 
 
@@ -338,62 +359,38 @@ function ProcessList
 #
 function GenStats
 {
-  if [ "$debug" = "Y" ]
-  then
-    set -x
-  fi
+  [[ "$debug" == "Y" ]] && set -x
 
   rm -f $MesgFile
 
-  for InFile in $(grep -i $FileType $TMPFILE|awk '{print $1}')
+  for InFile in $(grep -i $FileType $LIST_OF_FILES | awk '{print $1}')
   do
     DestFile=$DATA_HOME/${InFile%.*}
 
-    (if [[ -f $DestFile ]]
-    then
-      awk -v FileName=$InFile \
-        'BEGIN{DupRec=0}
-        /ORA-00001:/{
-            DupRec=DupRec+1;
-          }
-        /Rows successfully loaded./{
-            GoodRec=$1
-          }
-        /not loaded due to data errors./{
-            ErrorRec=$1
-          }
-        /WHEN clauses were failed/{
-            Discard=$1
-          }
-        /Total logical records read:/{
-            TotalRec=$5
-          }
-        END {
-          printf("Processed %s: %d loaded, %d error(s), %d duplicate(s).  ",FileName,GoodRec,ErrorRec-DupRec,DupRec)
-          if (Discard==TotalRec)
-          {
-            printf("File is empty.")
-          }
-          printf("\n")
-        }' $LOG_HOME/$InFile.log
-    else
-      print "ERROR: $InFile not processed due to an error."
-    fi; ) >> $MesgFile
+    ( if [[ -f $DestFile ]]
+     then
+       awk -v FileName=$InFile -f $LIB_HOME/getsqlldrstats.awk $LOG_HOME/$InFile.log
+     else
+       print "ERROR: $InFile not processed due to an error."
+     fi; ) >> $MesgFile
+
+    [[ "$debug" == "Y" ]] && set -x
 
   done
 
   if [ -s $MesgFile ]
   then
-    compressAttachedFile $MesgFile
-    if [[ -f ${GZIPFILE} ]] ; then
-      $LIB_HOME/notify.ksh -m "L67 data loaded for $InFile" -a $ADDRESSES -s "$FileType Notification on $hostname" \
-        ${GZIPFILE}
-    else
-      $LIB_HOME/notify.ksh -m "L67 data loaded for $InFile" -a $ADDRESSES -s "$FileType Notification on $hostname" 
-    fi
+    $LIB_HOME/notify.ksh \
+      -m "L67 data loaded for $InFile" \
+      -a $ADDRESSES \
+      -s "$FileType Notification on $hostname" \
+      ${MesgFile}
   fi
 }
 
 
-main $*
-print "$0 ended at " $(date)
+main $* 2>&1 | tee -a $LOG_HOME/${TimeStamp}_${APP}.log
+RC=$?
+
+print "$THIS ended at $(date) with RC=$RC"
+exit $RC

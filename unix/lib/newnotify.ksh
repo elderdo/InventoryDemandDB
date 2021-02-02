@@ -1,8 +1,11 @@
-#!/bin/ksh
+#!/bin/ksh -x
 #   $Author:   zf297a  $
 # $Revision:   1.6  $
 #     $Date:   09 Apr 2009 21:04:28  $
 # $Workfile:   notify.ksh  $
+# Rev     Date     By            Desc
+# 1.6     04/09/09 DSE           cur rev
+# 1.7     11/30/20 DSE           allow # comments for addresses.txt
 THIS=$(basename $0)
 APP=$(echo $THIS | cut -d. -f1)
 DATA=/apps/CRON/AMD/data
@@ -12,6 +15,7 @@ if [[ -f "$DATA/debug.txt" ]] ; then
   debug=$(cat $DATA/debug.txt)
   [[ "$debug" == "Y" ]] && set -x
 fi
+CMD=
 
 USAGE="usage: ${THIS} [-a addr_file] [-f from] [-t recipient addresses] [-c cc addresses_file] [-C cc addresses] [-s subject] [-m message] [-b] [-o] [-p]  [file1 file2....]
 \t-d data_directory - directory where data can be stored
@@ -74,25 +78,26 @@ else
 fi
 
 OPTIND=1
-while getopts :h:of:c:a:bpt:C:s:m: arguments
+while getopts a:bc:C:f:h:m:ops:t:x: arguments
 do
 	case $arguments in
-	  o) AMD_NOTIFY=N;;
-	  p) EMAIL_CONTENT_TYPE=plain;;
-	  m) MSG=$OPTARG;;
-	  f) FROM=$OPTARG;;
-	  t) TO=$OPTARG;;
-	  c) CC_FILE=$OPTARG;;
-	  h) BCC_FILE=$OPTARG;;
-	  C) CC=$OPTARG;;
-	  s) SUBJ=$OPTARG;;
 	  a) ADDR_FILE=$OPTARG;;
 	  b) debug=Y
 	     set -x;;
+	  c) CC_FILE=$OPTARG;;
+	  C) CC=$OPTARG;;
 	  d) DATA_HOME=$OPTARG;;
+	  f) FROM=$OPTARG;;
+	  h) BCC_FILE=$OPTARG;;
+	  m) MSG=$OPTARG;;
+	  o) AMD_NOTIFY=N;;
+	  p) EMAIL_CONTENT_TYPE=plain;;
+	  s) SUBJ=$OPTARG;;
+	  t) TO=$OPTARG;;
+	  x) CMD=$OPTARG;;
 	  :) print "You forgot to enter a filename for $OPTARG"
 	     exit 4;;
-	  \?) print "$OPTARG is not a valid switch."
+   \?) print "$OPTARG is not a valid switch."
 	     print "$USAGE"
 	     exit 4;;
 	esac
@@ -181,9 +186,9 @@ fi
 TO=${TO:-"Douglas.S.Elder@boeing.com"}
 
 
-SUBJ=${SUBJ:-Test of ${THIS}@$AMDENV}
+SUBJ=${SUBJ:-Test of $0@$AMDENV}
 
-FROM=${FROM:-"${THIS}@$hostname"}
+FROM=${FROM:-"$0_on_$hostname"}
 
 
 if [[ "$AMD_NOTIFY" == "N" ]] ; then 
@@ -199,62 +204,46 @@ if [[ "$AMD_NOTIFY" == "N" ]] ; then
 	return 0
 fi
 
-if [[ "${debug:-N}" == "Y" ]] ; then
-	EMAIL_COMMAND="cat"
+if [[ "${CMD}" != "" ]] ; then
+	EMAIL_COMMAND="$CMD"
 else
 	EMAIL_COMMAND="/usr/sbin/sendmail  -t"
 fi
 
-# see if uuencode exists
-# UUENCODE will be zero if it exists
-which uuencode 2> /dev/null > /dev/null
-UUENCODE=$?
-
 {
+  echo MIME-Version: 1.0
+  echo Subject: ${SUBJ}
+  echo From: ${FROM}
+  echo To: ${TO}
+  echo Cc: ${CC}
+  echo bcc: ${BCC}
+  echo Content-Type: multipart/mixed; boundary=DMW.Boundary.605592468
+  echo 
+  echo --DMW.Boundary.605592468
+  echo Content-Type: text/${EMAIL_CONTENT_TYPE:-html}
+  echo Content-Disposition: inline
+  echo "<h2>** This is system generated message.  Do not reply to it. **</h2><br>"
+  echo 
+  echo ${MSG:-This is a test message}
+  echo 
 
-cat << EOF
-MIME-Version: 1.0
-Subject: ${SUBJ}
-From: ${FROM}
-To: ${TO}
-Cc: ${CC}
-bcc: ${BCC}
-EOF
-
-cat << EOF
-Content-Type: multipart/mixed; boundary=DMW.Boundary.605592468
-
---DMW.Boundary.605592468
-Content-Type: text/${EMAIL_CONTENT_TYPE:-html}
-Content-Disposition: inline
-EOF
-
-
-cat << EOF
-<h2>** This is system generated message.  Do not reply to it. **</h2><br>
-
-${MSG:-This is a test message}
-
-EOF
-
-if [[ -n $1 && -f $1 && "$UUENCODE" == "0" ]]
-then
-	for file in $*
-	do
-		if [[ -e $file ]]
-		then
-			# sed -e '/^[ \t]*$/d' -e 's/$/<br>/' ${file}
-			BASE=$(basename $file)
-			print -R "--DMW.Boundary.605592468"
-			print "Content-Type: application/7bit\; name=\"$BASE\""
-			print "Content-Disposition: attachment\; filename=\"$BASE\""
-			print "Content-Transfer-Encoding: uuencode"
-			print
-			uuencode < $file $BASE
-		else
-			print "${file} does not exist."
-		fi
-	done
-fi
-
+  if [[ -n $1 && -f $1 ]]
+  then
+    for file in $*
+    do
+      if [[ -e $file ]]
+      then
+        # sed -e '/^[ \t]*$/d' -e 's/$/<br>/' ${file}
+        BASE=$(basename $file)
+        print -R "--DMW.Boundary.605592468"
+        print "Content-Type: application/7bit\; name=\"$BASE\""
+        print "Content-Disposition: attachment\; filename=\"$BASE\""
+        print "Content-Transfer-Encoding: uuencode"
+        print
+        uuencode < $file $BASE
+      else
+        print "${file} does not exist."
+      fi
+    done
+  fi
 } | $EMAIL_COMMAND

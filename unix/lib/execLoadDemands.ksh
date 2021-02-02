@@ -22,9 +22,23 @@
 # Rev 4.0 04/19/2018 added function checkForLoadErrors - invoke
 #                    for every load which just performed whether it is one
 #                    or several
+THIS=$(basename $0)
+APP=$(echo $THIS | cut -d. -f1)
+
+DATA=/apps/CRON/AMD/data
+debug=N
+if [[ -f $DATA/debug.txt ]] ; then
+  debug=$(cat $DATA/debug.txt)
+  [[ "$debug" == "Y" ]] && set -x
+fi
+
+doexit=N
+if [[ -f $DATA/doexit.txt ]] ; then
+  doexit=$(cat $DATA/doexit.txt)
+fi
 
 
-USAGE="Usage: ${0##*/}  [ -c -d -f -m ]\n\n
+USAGE="Usage: ${THIS}  [ -c -d -f -m ]\n\n
 \twhere\n
 \t-c show counts from tmp_amd_demands and\n
 \t   amd_demands after each step\n
@@ -103,6 +117,7 @@ DEMAND_LOG=$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP:+${AMD_CUR_STEP}_}${thisFile%\.
 
 
 function checkForErrors {
+  [[ "$debug" == "Y" ]] && set -x
   if [[ -e $DEMAND_LOG ]] ; then
     $LIB_HOME/checkforerrors.ksh ${CHECK4ERROROPT:-} $DEMAND_LOG
     if (($?!=0)) ; then
@@ -112,9 +127,7 @@ function checkForErrors {
 }
 
 function counts {
-  if [[ "$debug" == "Y" ]] ; then
-    set -x
-  fi
+  [[ "$debug" == "Y" ]] && set -x
   sqlplus $DB_CONNECTION_STRING << EOF
   set echo on
   set feedback on
@@ -125,9 +138,7 @@ EOF
 }
 function execSqlplus {
 
-  if [[ "$debug" == "Y" ]] ; then
-    set -x
-  fi
+  [[ "$debug" == "Y" ]] && set -x
   if [[ "${FOREGROUND:-N}" == "Y" || "$2" == "-f" ]] ; then
     print "$0.ksh $1 started at $(date)"
     $LIB_HOME/execSqlplus.ksh -e $DEMAND_LOG $1
@@ -148,16 +159,23 @@ function execSqlplus {
 
 function processL67_File
 {
+  [[ "$debug" == "Y" ]] && set -x
+  typeset RC=0
    $LIB_HOME/amd_LoadFtpFile.ksh L67 >$DEMAND_LOG 2>&1
    RC=$?
    $LIB_HOME/checkforerrors.ksh $DEMAND_LOG
    if (($?!=0 || RC!=0)) ; then
      print "Warning: $0 ended without a return code of zero"
+     if [[ "$debug" == "Y" && $doexit == "Y" ]] ; then
+       exit $RC
+     fi
    fi
+   return $RC
 }
 
 function checkForLoadErrors 
 {
+  [[ "$debug" == "Y" ]] && set -x
   for f in $* 
    do
      echo "scanning for log $f"
@@ -173,6 +191,8 @@ function checkForLoadErrors
 }
 
 function loadDemands {
+
+  [[ "$debug" == "Y" ]] && set -x
 
   execSqlplus loadAmdBssmSourceTmpAmdDemands -f
   checkForLoadErrors loadAmdBssmSourceTmpAmdDemands
@@ -200,6 +220,8 @@ function loadDemands {
 }
 
 function execSteps {
+
+  [[ "$debug" == "Y" ]] && set -x
 
     typeset -Z3 array
     cnt=0
@@ -238,6 +260,7 @@ function execSteps {
 
 # prompt with menu
 function mainMenu {
+  [[ "$debug" == "Y" ]] && set -x
   PS3="select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? "
 
   select item in "${steps[@]}"
@@ -253,19 +276,18 @@ function mainMenu {
 # run all the steps
 function main
 {
+  [[ "$debug" == "Y" ]] && set -x
 	echo "main started at $(date)" 
 	execSteps 1-${#steps[*]}
 	echo "main ended at $(date)" 
 }
 
 
-
-steps[1]="execSqlplus truncateDemands -f"
-steps[2]="processL67_File"
+steps[1]="processL67_File"
+steps[2]="execSqlplus truncateDemands -f"
 steps[3]="loadDemands"
 steps[4]="checkForErrors"
 steps[5]="return"
-
 
 
 if [[ "${USE_MENU:-N}" == "Y" ]] ; then

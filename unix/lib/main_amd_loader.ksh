@@ -29,84 +29,99 @@
 # rev 1.69 5/18/17 douglas.s.elder@boeing.com create bssm files both ways
 #                                     via views and with old queries
 #                                     then compare the two
-# rev 1.70 5/18/17 douglas.s.elder@boeing.com added -k dir option to
+# rev 1.70  5/18/17 douglas.s.elder@boeing.com added -k dir option to
 #                                     override the default of bssm.
 #                                     The bssm flat files created via views
 #                                     are written to this directory.
 #                                     used ksh -n main... to clean up obsolete script commands
-# rev 1.71 5/19/17 douglas.s.elder@boeing.com fixed number of steps - had  2
+# rev 1.71  5/19/17 douglas.s.elder@boeing.com fixed number of steps - had  2
 #                                             step 28's, made the 2nd 28 into
 #                                             step 29 and step 29 into step 30 
-# rev 1.72 5/19/17 douglas.s.elder@boeing.com added BSSM_DIR=bssm
+# rev 1.72  5/19/17 douglas.s.elder@boeing.com added BSSM_DIR=bssm
 #                                                   so it has an initial value
 #                                                   which can be overridden
 #                                                   via -k dir
-# rev 1.73 5/21/17 douglas.s.elder@boeing.com corrected -o argument for genBssmFiles.ksh
+# rev 1.73  5/21/17 douglas.s.elder@boeing.com corrected -o argument for genBssmFiles.ksh
 #                                             for genBssmFiles.ksh, added 
 #                                             check for the -c commad_file 
 #                                             to make sure the command file 
 #                                             exists, got rid of obsolete
 #                                             -gt and just tested to see if 
 #                                             the number of args was not zero
-# rev 1.74 9/14/17 douglas.s.elder@boeing.com eliminated mkdir and rm of bssm files
+# rev 1.74  9/14/17 douglas.s.elder@boeing.com eliminated mkdir and rm of bssm files
 #                                             created by genBssmFiles.ksh since it
 #                                             does those commands
-# rev 1.75 9/14/17 douglas.s.elder@boeing.com add addiitonal debugging to bssmFlatFiles
+# rev 1.75  9/14/17 douglas.s.elder@boeing.com add addiitonal debugging to bssmFlatFiles
+# rev 1.76 10/30/20 douglas.s.elder@boeing.com added std env var's
 #
-USAGE="usage: ${0##*/} [ -m ] [ -d ] [ -h ] [ -l logHomedir ] [ -s srcHomedir ] [ -b binHomedir ]
-[ -i libHome  ] [ -c commandFile ]  [ -n ] [ -x ] [ -t 999 ] [ -a REPLICATE ] [ -w REPLICATE_WESM ]
-[ -e AMDLOAD1 ] [ -f AMDLOAD2 ] [ -u ] [ -o ] [ -q ] [ -v ] [ -r ] [ -k dir ] [ -y ] [ -z ] [ startStep endStep  ]\n\n
-\twhere\n
-\t-m will enable a selection menu\n
-\t-c commandFile allows for a file of step names to be processed.\n
-\t-d enables debug\n
-\t-n signals not to use the tee command\n
-\t-x show runEnqueue debug errors\n
-\t-t 999\tset the SPARE_PARTS_NEW_DATA_THRESHOLD for data\n
-\t\twhere 999 is the min # or rows for tmp_amd_spare_parts.\n
-\t\tThe default is 99999\n
-\t-a REPLICATE where REPLICATE is the file containing\n
-\t\tthe sql for the ReplicateGold step\n
-\t-w REPLICATE_WESM where REPLICATE_WESM is the file containing\n
-\t\tthe sql for the ReplicateWesm step\n
-\t-e AMDLOAD1\twhere AMDLOAD1 is the file for step AmdLoad1\n
-\t-f AMDLOAD2\twhere AMDLOAD2 is the file for step AmdLoad2\n
-\t-j abort job for all errors or warnings\n
-\t-k dir - default is bssm\n
-\t-o\tturn off notification via email\n
-\t-q\tquit sending all email and pager notifications\n
-\t-v\tSend notification that the Bssm Flat Files have been created\n
-\t\tdefault is to NOT send notification\n
-\t-r\tsend remsh output to stdout via a tee\n
-\t\tdefault is to send stdout for remsh to a log file\n
-\t-y\tdo not be strict when executing steps: ie run them even if they\n
-\t\tcompleted previously\n
-\t-z\tuse sgoldlb as the GOLD data source\n
-\t\tdefault is pgoldlb\n
-\tstartStep can be from 1 to 27\n
-\t\tdefault is 1\n
-\tendStep must be >= startStep & <= 27\n
-\t\tdefault is 27"
+THIS=$(basename $0)
+APP=$(echo $THIS | cut -d. -f1)
+DEBUG_FILE=/apps/CRON/AMD/data/debug.txt
 
-if [[ "$debug" == "Y" ]] ; then
+if [[ -e $DEBUG_FILE ]] ; then
+  DEBUG=$(cat $DEBUG_FILE)
+else
+  DEBUG=N
+fi
+
+if [[ "$DEBUG" == "Y" ]] ; then
   set -x
 fi
 
-if [[ "$#" != "0" && "$1" == "?" ]] ; then
-  print $USAGE
-  exit 0
-fi
-
-# import common definitions
-. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
-
-BSSM_DIR=$DATA_HOME
+BSSM_DIR=${DATA_HOME:-/apps/CRON/AMD/data}
 
 CUR_USER=$(logname)
 if [[ -z $CUR_USER ]] ; then
   CUR_USER=amduser
 fi
 
+# import common definitions
+. $UNVAR/apps/CRON/AMD/lib/amdconfig.ksh
+
+function echoerr {
+  echo "@" 1>&2;
+}
+
+function usage {
+
+  echoerr "usage: $THIS [ -m ] [ -d ] [ -h ] [ -l logHomedir ] \
+    [ -s srcHomedir ] [ -b binHomedir ]
+  [ -i libHome  ] [ -c commandFile ]  [ -n ] [ -x ] \
+    [ -t 999 ] [ -a REPLICATE ] [ -w REPLICATE_WESM ]
+  [ -e AMDLOAD1 ] [ -f AMDLOAD2 ] [ -u ] [ -o ] [ -q ] [ -v ] [ -r ] [ -k dir ] [ -y ] [ -z ] [ startStep endStep  ]\n\n
+  \twhere\n
+  \t-m will enable a selection menu\n
+  \t-c commandFile allows for a file of step names to be processed.\n
+  \t-d enables debug\n
+  \t-n signals not to use the tee command\n
+  \t-x show runEnqueue debug errors\n
+  \t-t 999\tset the SPARE_PARTS_NEW_DATA_THRESHOLD for data\n
+  \t\twhere 999 is the min # or rows for tmp_amd_spare_parts.\n
+  \t\tThe default is 99999\n
+  \t-a REPLICATE where REPLICATE is the file containing\n
+  \t\tthe sql for the ReplicateGold step\n
+  \t-w REPLICATE_WESM where REPLICATE_WESM is the file containing\n
+  \t\tthe sql for the ReplicateWesm step\n
+  \t-e AMDLOAD1\twhere AMDLOAD1 is the file for step AmdLoad1\n
+  \t-f AMDLOAD2\twhere AMDLOAD2 is the file for step AmdLoad2\n
+  \t-j abort job for all errors or warnings\n
+  \t-k dir - default is bssm\n
+  \t-o\tturn off notification via email\n
+  \t-q\tquit sending all email and pager notifications\n
+  \t-v\tSend notification that the Bssm Flat Files have been created\n
+  \t\tdefault is to NOT send notification\n
+  \t-r\tsend remsh output to stdout via a tee\n
+  \t\tdefault is to send stdout for remsh to a log file\n
+  \t-y\tdo not be strict when executing steps: ie run them even if they\n
+  \t\tcompleted previously\n
+  \t-z\tuse sgoldlb as the GOLD data source\n
+  \t\tdefault is pgoldlb\n
+  \tstartStep can be from 1 to 27\n
+  \t\tdefault is 1\n
+  \tendStep must be >= startStep & <= 27\n
+  \t\tdefault is 27"
+
+}
 
 while getopts :jk:rqovxnmdl:s:b:i:c:t:a:e:f:w:zy arguments
 do
@@ -140,9 +155,9 @@ do
     w) ESCM_HOME=${OPTARG} ;;
     z) THE_DB_LINK=sgoldlb ;;
     y) STRICT=N ;;
-    d) debug=Y
+    d) DEBUG=Y
        set -x ;;
-    *) print -u2 $USAGE
+    *) usage
        exit 4;;
   esac
 done
@@ -179,6 +194,7 @@ function abort {
 }
 
 function recordStartOfStep {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh -r startStep $1
   RC=$?
   if [[ "$RC" == 4 ]] ; then
@@ -199,11 +215,13 @@ function recordStartOfStep {
 }
 
 function recordEndOfStep {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh -r endStep $1
   return $?
 }
 
 function recordStep {
+  [[ "$DEBUG" == "Y" ]] && set -x
   THE_CUR_STEP=$1
 
   case $THE_CUR_STEP in
@@ -237,6 +255,7 @@ function recordStep {
 
 function execSteps {
 
+  [[ "$DEBUG" == "Y" ]] && set -x
     #echo debug: execSteps start
     typeset -Z3 array
     cnt=0
@@ -287,6 +306,7 @@ function execSteps {
 }
 
 function mainMenu {
+  [[ "$DEBUG" == "Y" ]] && set -x
   PS3="select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? "
   select item in ${steps[*]}
   do
@@ -297,8 +317,8 @@ function mainMenu {
   done
 }
 
-function main
-{
+function main {
+  [[ "$DEBUG" == "Y" ]] && set -x
     
   echo "main started at $(date)" 
   let curStep=${1:-1}
@@ -314,8 +334,8 @@ function main
 }
 
 
-function StartJob
-{
+function StartJob {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh -r $0 >> $AMD_LOADER_LOG 2>&1
   START_JOB_RC=$?
 
@@ -332,16 +352,16 @@ function StartJob
 
 }
 
-function cleanTraceTables
-{
+function cleanTraceTables {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh $0 >> $AMD_LOADER_LOG 2>&1
   if (($?!=0)) ; then
     abort "$0 error."
   fi
 }
 
-function replicateGold
-{
+function replicateGold {
+  [[ "$DEBUG" == "Y" ]] && set -x
   case ${THE_DB_LINK:-amd_pgoldlb_link} in
     amd_pgoldlb_link) LINK_OPT=-p ;;
     amd_sgoldlb_link) LINK_OPT=-s ;;
@@ -354,8 +374,8 @@ function replicateGold
   fi
 }
 
-function replicateWesm
-{
+function replicateWesm {
+  [[ "$DEBUG" == "Y" ]] && set -x
    LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
    $LIB_HOME/replicateWesm.ksh > $LOG_NAME 2>&1
    if (($?!=0)) ; then
@@ -363,8 +383,8 @@ function replicateWesm
    fi
 }
 
-function processL67
-{
+function processL67 {
+  [[ "$DEBUG" == "Y" ]] && set -x
    LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
    $LIB_HOME/amd_LoadFtpFile.ksh L67 >$LOG_NAME 2>&1
    RC=$?
@@ -374,8 +394,8 @@ function processL67
    fi
 }
 
-function processGDSS
-{
+function processGDSS {
+  [[ "$DEBUG" == "Y" ]] && set -x
    LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
    $LIB_HOME/amd_LoadFtpFile.ksh GDSS >$LOG_NAME 2>&1
    RC=$?
@@ -386,8 +406,8 @@ function processGDSS
 }
 
 
-function truncateAmd
-{
+function truncateAmd {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh $0 >> $AMD_LOADER_LOG 2>&1
   if (($?!=0)) ; then
     abort "$0 error."
@@ -395,6 +415,7 @@ function truncateAmd
 }
 
 function loadTmpDmndFrcstConsumables {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   ${debug:+ksh -x} $LIB_HOME/loadTmpDmndFrcstConsumables.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -405,6 +426,7 @@ function loadTmpDmndFrcstConsumables {
 }
 
 function loadAmdDmndFrcstConsumables {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/${0}.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -415,8 +437,8 @@ function loadAmdDmndFrcstConsumables {
 }
 
   
-function AmdLoad1
-{
+function AmdLoad1 {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/AmdLoad1.ksh ${debug:+-d} > $LOG_NAME 2>&1
     if (($?!=0)) ; then
@@ -425,8 +447,8 @@ function AmdLoad1
 }
     
 
-function plannersDiff
-{
+function plannersDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/plannersDiff.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -436,8 +458,8 @@ function plannersDiff
     fi
 }
 
-function pairsAndParts
-{
+function pairsAndParts {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
 
   param="${SPARE_PARTS_NEW_DATA_THRESHOLD:+-s $SPARE_PARTS_NEW_DATA_THRESHOLD}"
@@ -452,8 +474,8 @@ function pairsAndParts
 }
 
 
-function AmdLoad2
-{
+function AmdLoad2 {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/AmdLoad2.ksh ${debug:+-d} > $LOG_NAME 2>&1
   if (($?!=0)) ; then
@@ -461,8 +483,8 @@ function AmdLoad2
   fi
 }
       
-function invDiff
-{
+function invDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/invDiff.ksh ${debug:+-d} >$LOG_NAME 2>&1
   RC=$?
@@ -473,8 +495,8 @@ function invDiff
 }
 
 
-function partFactorsDiff
-{
+function partFactorsDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/partFactorsDiff.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -486,8 +508,8 @@ function partFactorsDiff
     fi
 }
 
-function partLocForecastsDiff
-{
+function partLocForecastsDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/partLocForecastsDiff.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -498,8 +520,8 @@ function partLocForecastsDiff
 }
 
 
-function locPartLeadtimeDiff
-{
+function locPartLeadtimeDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/locPartLeadtimeDiff.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -511,8 +533,8 @@ function locPartLeadtimeDiff
 
 
 
-function AmdLoad3
-{
+function AmdLoad3 {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh $0 >> $AMD_LOADER_LOG 2>&1
   if (($?!=0)) ; then
     abort "$0 error."
@@ -522,8 +544,8 @@ function AmdLoad3
 if [[ -e $DATA_HOME/dynam.ksh ]] ; then
   . $DATA_HOME/dynam.ksh
 else
-function DynamSql
-{
+function DynamSql {
+  [[ "$DEBUG" == "Y" ]] && set -x
   return
 }
 fi
@@ -531,15 +553,15 @@ fi
 if [[ -e $DATA_HOME/dynamPostProcess.ksh ]] ; then
   . $DATA_HOME/dynamPostProcess.ksh
 else
-function DynamSqlPostProcess
-{
+function DynamSqlPostProcess {
+  [[ "$DEBUG" == "Y" ]] && set -x
   return
 }
 fi
 
 
-function locPartOverrideDiff
-{
+function locPartOverrideDiff {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/locPartOverrideDiff.ksh >$LOG_NAME 2>&1
   RC=$?
@@ -560,13 +582,13 @@ function locPartOverrideDiff
   fi
 }
 
-function loadLRU_Breakdown
-{
+function loadLRU_Breakdown {
+  [[ "$DEBUG" == "Y" ]] && set -x
   $LIB_HOME/execSqlplus.ksh $0
 }
 
-function loadRmads
-{
+function loadRmads {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/amd_LoadRmads.ksh ${debug:+-d}  >$LOG_NAME 2>&1
   RC=$?
@@ -576,13 +598,11 @@ function loadRmads
     fi
 }
 
-function bssmFlatFiles
-{
-  if [[ $debug == "Y" ]] ; then
+function bssmFlatFiles {
+  KSH_X=
+  if [[ "$DEBUG" == "Y" ]] ; then
     set -x
     KSH_X="ksh -x "
-  else
-    KSH_X=
   fi
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
 
@@ -606,8 +626,8 @@ function bssmFlatFiles
 }
 
 
-function archive 
-{
+function archive {
+  [[ "$DEBUG" == "Y" ]] && set -x
   LOG_NAME="$LOG_HOME/${TimeStamp}_${AMD_CUR_STEP}_${0}.log"
   $LIB_HOME/archive.ksh >> $LOG_NAME 2>&1
   if (($?!=0)) ; then
@@ -618,26 +638,20 @@ function archive
   fi
 }
 
-function amdAnalyze 
-{
-
-  if [ "$debug" = "Y" ] ; then
+function amdAnalyze {
+  opt=
+  if [[ "$DEBUG" == "Y" ]] ; then
+    set -x 
     opt=-d
-  else
-    opt=
   fi
-
   $LIB_HOME/execSqlplus.ksh $opt analyzeTablesIndexes >> $AMD_LOADER_LOG 2>&1
   if (($?!=0)) ; then
     abort "$0 error."
   fi
 }
 
-function EndJob
-{
-  if [[ "$debug" == "Y" ]] ; then
-    set -x
-  fi
+function EndJob {
+  [[ "$DEBUG" == "Y" ]] && set -x
 
   $LIB_HOME/execSqlplus.ksh $0 >> $AMD_LOADER_LOG 2>&1
   if (($?!=0)) ; then
@@ -688,6 +702,7 @@ function footer
 }
 
 function checkStepName {
+  [[ "$DEBUG" == "Y" ]] && set -x
   cnt=1
   while (( cnt <= ${#steps[*]} ))
   do

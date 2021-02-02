@@ -7,6 +7,15 @@
 # Rev 1.02 DouglasElder 06/03/16 use ...Diff.sql
 # Rev 1.03 DouglasElder 02/15/18 use == vs = and use (( )) for numeric compares
 #
+
+HOME=/apps/CRON/AMD
+DATA=$HOME/data
+if [[ -f "$DATA/debug.txt" ]] ; then
+  DEBUG=$(cat $DATA/debug.txt)
+else
+  DEBUG=N
+fi
+
 USAGE="usage: ${0##*/} [-m] [-s 999] [-o step_override_file]\n
 \twhere\n
 \t-m use a menu to execute the steps\n
@@ -25,9 +34,10 @@ if [[ -z $CUR_USER ]] ; then
 fi
 
 
-while getopts :ms:o: arguments
+while getopts "dms:o:" arguments
 do
 	case $arguments in
+	  d) DEBUG=Y;set -x;;
 	  m) AMD_SPOPART_MENU=Y;;
 	  s) SPARE_PARTS_NEW_DATA_THRESHOLD=${OPTARG};;
 	  o)   STEPS_FILE=${OPTARG}
@@ -68,6 +78,7 @@ function abort {
 }
 
 function execSqlplus {
+  [[ "$DEBUG" == "Y" ]] && set -x 
 	$LIB_HOME/execSqlplus.ksh $1
 	if (($?!=0)) ; then
 		abort "$0 failed for $1"
@@ -75,6 +86,7 @@ function execSqlplus {
 }
 
 function checkThreshold {
+  [[ "$DEBUG" == "Y" ]] && set -x 
 	AMD_COUNT=$($LIB_HOME/oraCheck.ksh "select count(*) from tmp_amd_spare_parts;")  
 	AMD_THRESHOLD=${SPARE_PARTS_NEW_DATA_THRESHOLD:-99999} 
 	AMD_TABLE="tmp_amd_spare_parts"
@@ -92,6 +104,7 @@ function checkThreshold {
 }
 
 function execSteps {
+  [[ "$DEBUG" == "Y" ]] && set -x 
 
 		typeset -Z3 array
 		cnt=0
@@ -128,6 +141,7 @@ function execSteps {
 }
 
 function mainMenu {
+  [[ "$DEBUG" == "Y" ]] && set -x 
 	PS3="select n or n-n (range) ..... for multiple steps [hit return to re-display menu]? "
 
 	select item in "${steps[@]}"
@@ -140,8 +154,8 @@ function mainMenu {
 	done
 }
 
-function main
-{
+function main {
+  [[ "$DEBUG" == "Y" ]] && set -x 
 	print "${THIS_FILE}'s main started at $(date) exec'ed by $CUR_USER" 
 	execSteps 1-${#steps[*]}
 	print "${THIS_FILE}'s main ended at $(date) exec'ed by $CUR_USER" 

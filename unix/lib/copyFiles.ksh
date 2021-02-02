@@ -99,6 +99,7 @@ fi
 
 function main
 {
+  [[ "$debug" == "Y" ]] && set -x
 
   ProcessFiles
 
@@ -111,6 +112,7 @@ function main
 #
 function ProcessFiles
 {
+  [[ "$debug" == "Y" ]] && set -x
   cd $FTPDir
   for InFile in $(ls -l L67* 2> /dev/null | grep ^- | awk '{print $9}')
   do
